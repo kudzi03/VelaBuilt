@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { CHAPTERS, damp, journey, setChapter } from "@/lib/journey";
+import { CHAPTERS, clamp01, damp, journey, setChapter } from "@/lib/journey";
 
 /**
  * The only place scroll is read.
@@ -27,11 +27,55 @@ export function JourneyDriver({ targetId }: { readonly targetId: string }) {
     let previousSmooth = journey.smooth;
     let running = false;
 
+    /**
+     * Scroll position at which each chapter section sits centred in the
+     * viewport. The chapters are not equal heights — a chapter with a system
+     * lab in it is far taller than the destination — so mapping scroll to the
+     * corridor linearly would put the camera in the wrong room while the
+     * reader is in the right one. Anchoring station i to section i means the
+     * camera arrives exactly when the reader does.
+     */
+    let anchors: number[] = [];
+
+    const measureAnchors = () => {
+      const viewport = window.innerHeight;
+      anchors = CHAPTERS.map((chapter) => {
+        const section = document.getElementById(chapter.id);
+        if (!section) return 0;
+        const rect = section.getBoundingClientRect();
+        const top = rect.top + window.scrollY;
+        return Math.max(0, top + rect.height / 2 - viewport / 2);
+      });
+
+      // Guard against a section failing to render: anchors must ascend.
+      for (let i = 1; i < anchors.length; i += 1) {
+        if (anchors[i]! <= anchors[i - 1]!) anchors[i] = anchors[i - 1]! + 1;
+      }
+    };
+
     const measure = () => {
-      const rect = target.getBoundingClientRect();
-      const scrolled = -rect.top;
-      const runway = rect.height - window.innerHeight;
-      journey.progress = runway > 0 ? Math.min(1, Math.max(0, scrolled / runway)) : 0;
+      if (anchors.length !== CHAPTERS.length) measureAnchors();
+
+      const scrolled = window.scrollY;
+      const last = CHAPTERS.length - 1;
+
+      let station = 0;
+      if (scrolled <= anchors[0]!) {
+        station = 0;
+      } else if (scrolled >= anchors[last]!) {
+        station = last;
+      } else {
+        for (let i = 0; i < last; i += 1) {
+          const from = anchors[i]!;
+          const to = anchors[i + 1]!;
+          if (scrolled >= from && scrolled < to) {
+            station = i + (scrolled - from) / (to - from);
+            break;
+          }
+        }
+      }
+
+      journey.progress = clamp01(station / last);
     };
 
     const tick = (now: number) => {
@@ -74,6 +118,9 @@ export function JourneyDriver({ targetId }: { readonly targetId: string }) {
     };
 
     const onResize = () => {
+      // Section heights change with the viewport, so the anchors must be
+      // re-derived rather than reused.
+      anchors = [];
       measure();
       start();
     };

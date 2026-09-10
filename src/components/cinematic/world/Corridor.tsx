@@ -68,26 +68,45 @@ export function Corridor() {
         roughness={0.8}
       />
 
-      {/* Continuous wall seams — the identity's thin illuminated line. */}
+      {/* Continuous wall seams — the identity's thin illuminated line.
+          The line itself is 6cm of geometry, which is sub-pixel by twenty
+          metres out, so each one is paired with an additive strip that carries
+          its light into the distance. Without the pair the corridor loses all
+          its champagne the moment the camera pulls back. */}
       {([-1, 1] as const).map((side) =>
         [2.45, 8.6].map((y) => (
-          <Seam
-            key={`wall-${side}-${y}`}
-            position={[side * (CORRIDOR.halfWidth - 0.02), y, MID_Z]}
-            size={[0.035, 0.035, LENGTH]}
-            opacity={y > 5 ? 0.5 : 0.85}
-            glow={0}
-          />
+          <group key={`wall-${side}-${y}`}>
+            <Seam
+              position={[side * (CORRIDOR.halfWidth - 0.02), y, MID_Z]}
+              size={[0.12, 0.12, LENGTH]}
+              opacity={y > 5 ? 0.7 : 1}
+              glow={0}
+            />
+            <Glow
+              position={[side * (CORRIDOR.halfWidth - 0.12), y, MID_Z]}
+              rotation={[0, side * -Math.PI / 2, 0]}
+              scale={[LENGTH, y > 5 ? 2.6 : 3.6]}
+              strength={y > 5 ? 0.2 : 0.32}
+              falloff="cross"
+            />
+          </group>
         )),
       )}
 
       {/* Ceiling strip running the length of the journey. */}
       <Seam
         position={[0, CORRIDOR.height - 0.15, MID_Z]}
-        size={[0.5, 0.03, LENGTH]}
+        size={[0.55, 0.05, LENGTH]}
         color={PALETTE.champagne}
-        opacity={0.32}
+        opacity={0.5}
         glow={0}
+      />
+      <Glow
+        position={[0, CORRIDOR.height - 0.4, MID_Z]}
+        rotation={[Math.PI / 2, 0, Math.PI / 2]}
+        scale={[LENGTH, 3.4]}
+        strength={0.22}
+        falloff="cross"
       />
 
       <WallRibs />
@@ -171,24 +190,24 @@ function Threshold({ z }: { readonly z: number }) {
         <Seam
           key={`edge-${side}`}
           position={[side * aperture, lintel / 2, 0.82]}
-          size={[0.04, lintel, 0.04]}
-          opacity={0.75}
-          glow={0.7}
+          size={[0.09, lintel, 0.09]}
+          opacity={0.95}
+          glow={1.5}
         />
       ))}
       <Seam
         position={[0, lintel, 0.82]}
-        size={[aperture * 2, 0.04, 0.04]}
-        opacity={0.75}
-        glow={0.7}
+        size={[aperture * 2, 0.09, 0.09]}
+        opacity={0.95}
+        glow={1.5}
       />
 
       {/* The threshold's spill on the floor. */}
       <Glow
         position={[0, 0.02, 0.9]}
         rotation={[-Math.PI / 2, 0, 0]}
-        scale={[aperture * 2.4, 7]}
-        strength={0.22}
+        scale={[aperture * 2.4, 9]}
+        strength={0.4}
       />
     </group>
   );

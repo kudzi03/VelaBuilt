@@ -4,8 +4,8 @@ import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { journey, clamp01, damp } from "@/lib/journey";
-import { linearColor } from "./materials";
-import { operatorPosition } from "./path";
+import { worldColor } from "./materials";
+import { JOURNEY_LENGTH, operatorPosition } from "./path";
 
 /**
  * THE OPERATOR — the silent protagonist.
@@ -44,8 +44,8 @@ const SKIN = {
 
 /** Metres per stride, used to convert travel into a walk cycle. */
 const STRIDE = 0.82;
-/** Metres the journey covers end to end. */
-const JOURNEY_METRES = 334;
+/** Metres the journey covers end to end, taken from the path itself. */
+const JOURNEY_METRES = JOURNEY_LENGTH;
 
 export function Operator({ quality }: { readonly quality: "A" | "B" }) {
   const root = useRef<THREE.Group>(null);
@@ -66,17 +66,17 @@ export function Operator({ quality }: { readonly quality: "A" | "B" }) {
   const materials = useMemo(
     () => ({
       coat: new THREE.MeshStandardMaterial({
-        color: linearColor(SKIN.coat),
+        color: worldColor(SKIN.coat),
         roughness: 0.74,
         metalness: 0.12,
       }),
       body: new THREE.MeshStandardMaterial({
-        color: linearColor(SKIN.body),
+        color: worldColor(SKIN.body),
         roughness: 0.62,
         metalness: 0.2,
       }),
       skin: new THREE.MeshStandardMaterial({
-        color: linearColor(SKIN.skin),
+        color: worldColor(SKIN.skin),
         roughness: 0.55,
         metalness: 0.05,
       }),

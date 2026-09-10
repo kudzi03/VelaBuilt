@@ -60,7 +60,7 @@ function useMaterial<T extends THREE.Material>(factory: () => T, timed = false):
 export function Seam({
   position,
   size,
-  color = PALETTE.champagneLight,
+  color = PALETTE.champagne,
   glow = 1,
   opacity = 0.92,
   rotation,
@@ -106,14 +106,17 @@ export function Glow({
   color = PALETTE.champagne,
   strength = 0.5,
   rotation,
+  falloff = "radial",
 }: {
   readonly position: readonly [number, number, number];
   readonly scale: readonly [number, number];
   readonly color?: string;
   readonly strength?: number;
   readonly rotation?: readonly [number, number, number];
+  /** Use "cross" for anything long and thin — see createGlowMaterial. */
+  readonly falloff?: "radial" | "cross";
 }) {
-  const material = useMaterial(() => createGlowMaterial(color, strength));
+  const material = useMaterial(() => createGlowMaterial(color, strength, falloff));
   return (
     <mesh
       material={material}

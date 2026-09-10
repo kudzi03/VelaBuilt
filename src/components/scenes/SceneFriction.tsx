@@ -30,7 +30,7 @@ export function SceneFriction() {
         data-chapter={0}
         className="relative flex min-h-[100svh] flex-col justify-end pb-16 pt-[calc(var(--nav-height)+4rem)] lg:pb-24"
       >
-        <div className="shell w-full">
+        <div className="shell on-world w-full">
           <div className="flex items-end justify-between gap-10">
             <div className="max-w-4xl">
               <Reveal>
@@ -87,7 +87,7 @@ export function SceneFriction() {
         </div>
 
         {/* ---- Capabilities, stated plainly ----------------------------- */}
-        <div className="shell mt-10 w-full">
+        <div className="shell on-world mt-10 w-full">
           <h2 className="sr-only">What VelaBuilt builds</h2>
           <ul className="grid gap-8 sm:grid-cols-3">
             {CAPABILITIES.map((capability, index) => (
@@ -152,7 +152,7 @@ export function SceneFriction() {
               {DISCONNECTED.map((item) => (
                 <li
                   key={item}
-                  className="border border-[color:var(--color-hairline)] px-3.5 py-2 text-[0.7rem] uppercase tracking-[0.18em] text-[color:var(--color-muted)]"
+                  className="border border-[color:var(--color-hairline)] px-3.5 py-2 text-[0.78rem] uppercase tracking-[0.18em] text-[color:var(--color-muted)]"
                 >
                   {item}
                 </li>
@@ -168,7 +168,7 @@ export function SceneFriction() {
         aria-labelledby="solutions-heading"
         className="relative py-24 lg:py-32"
       >
-        <div className="shell">
+        <div className="shell on-world">
           <div className="grid gap-12 lg:grid-cols-[auto_1fr_auto] lg:items-end">
             <Reveal>
               <StackedLabel lines={["Built", "for", "what's", "next"]} />

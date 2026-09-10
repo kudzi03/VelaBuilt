@@ -23,7 +23,7 @@ export function FlowChain({
         <Fragment key={step}>
           <li
             data-emphasised={emphasise === index}
-            className="border border-[color:var(--color-hairline)] px-3.5 py-2 text-[0.66rem] uppercase tracking-[0.2em] text-[color:var(--color-ivory-dim)] transition-colors duration-500 data-[emphasised=true]:border-[rgb(224_195_152/0.45)] data-[emphasised=true]:text-[color:var(--color-champagne)]"
+            className="border border-[color:var(--color-hairline)] px-3.5 py-2 text-[0.75rem] uppercase tracking-[0.2em] text-[color:var(--color-ivory-dim)] transition-colors duration-500 data-[emphasised=true]:border-[rgb(224_195_152/0.45)] data-[emphasised=true]:text-[color:var(--color-champagne)]"
           >
             {step}
           </li>

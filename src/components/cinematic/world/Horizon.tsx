@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import * as THREE from "three";
-import { linearColor, PALETTE } from "./materials";
+import { worldColor, PALETTE } from "./materials";
 
 /**
  * The champagne horizon the whole identity is built around, and the place the
@@ -28,9 +28,9 @@ export function Horizon({
       uniforms: {
         uBand: { value: band },
         uStrength: { value: strength },
-        uWarm: { value: linearColor(PALETTE.champagneLight) },
-        uCore: { value: linearColor(PALETTE.champagne) },
-        uDeep: { value: linearColor(PALETTE.champagneDeep) },
+        uWarm: { value: worldColor(PALETTE.champagneLight) },
+        uCore: { value: worldColor(PALETTE.champagne) },
+        uDeep: { value: worldColor(PALETTE.champagneDeep) },
       },
       vertexShader: /* glsl */ `
         varying vec2 vUv;
@@ -56,18 +56,30 @@ export function Horizon({
           float wide  = exp(-abs(d) * 1.5) * 0.28;
 
           // The light gathers toward the centre of the opening.
-          float lateral = exp(-pow((vUv.x - 0.5) * 2.35, 2.0));
+          float lateral = exp(-pow((vUv.x - 0.5) * 2.9, 2.0));
+
+          // Envelope to zero at every edge of the plane. Without it the quad's
+          // own rectangle is visible wherever the falloff has not reached zero
+          // by the time it runs out of geometry — and an additive rectangle
+          // hanging in the air is the one thing this scene cannot have.
+          float envelope =
+            smoothstep(0.0, 0.22, vUv.y) * smoothstep(1.0, 0.66, vUv.y) *
+            smoothstep(0.0, 0.10, vUv.x) * smoothstep(1.0, 0.90, vUv.x);
 
           vec3 col = uDeep * wide;
           col += uCore * halo * 0.75;
           col += uWarm * above * 1.15;
-          col *= lateral * uStrength;
+          col *= lateral * uStrength * envelope;
 
           // A hard, thin line where the light meets the ground.
           float line = exp(-abs(d) * 420.0);
-          col += uWarm * line * 1.5 * lateral;
+          col += uWarm * line * 1.5 * lateral * envelope;
 
-          float alpha = clamp(max(max(above, halo * 0.8), wide) * lateral, 0.0, 1.0);
+          float alpha = clamp(
+            max(max(above, halo * 0.8), wide) * lateral * envelope,
+            0.0,
+            1.0
+          );
           gl_FragColor = vec4(col, alpha);
           #include <colorspace_fragment>
         }

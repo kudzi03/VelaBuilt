@@ -44,7 +44,7 @@ export function SceneEnquiry() {
               {["Inbox", "Then nothing"].map((item) => (
                 <li
                   key={item}
-                  className="border border-[color:var(--color-hairline)] px-3 py-1.5 text-[0.66rem] uppercase tracking-[0.2em] text-[color:var(--color-faint)]"
+                  className="border border-[color:var(--color-hairline)] px-3 py-1.5 text-[0.75rem] uppercase tracking-[0.2em] text-[color:var(--color-faint)]"
                 >
                   {item}
                 </li>

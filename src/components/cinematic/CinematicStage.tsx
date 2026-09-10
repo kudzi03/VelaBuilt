@@ -66,7 +66,12 @@ export function CinematicStage({ targetId }: { readonly targetId: string }) {
       data-tier={capability.tier}
     >
       {/* Always present. The 3D layer sits on top of it when it exists. */}
-      <StaticWorld horizon={0.56} intensity={showWorld ? 0.35 : 1} />
+      {/* Sits lower and reads fully when it *is* the experience; higher and
+          dimmer when it is only the ground beneath the corridor. */}
+      <StaticWorld
+        horizon={showWorld ? 0.56 : 0.64}
+        intensity={showWorld ? 0.5 : 1}
+      />
 
       {showWorld ? (
         <div className="absolute inset-0">
@@ -74,13 +79,19 @@ export function CinematicStage({ targetId }: { readonly targetId: string }) {
         </div>
       ) : null}
 
-      {/* Keeps text legible over whichever world is behind it. */}
+      {/* Keeps text legible over whichever world is behind it.
+          Two gradients, because the corridor is bright in two places: along
+          the left, where the copy sits, and across the lit floor at the foot
+          of the frame, where a section's last lines would otherwise sit on
+          champagne. Neither is heavy enough to flatten the world. */}
       <div
         aria-hidden="true"
         className="absolute inset-0"
         style={{
-          background:
-            "linear-gradient(90deg, rgb(5 5 6 / 0.82) 0%, rgb(5 5 6 / 0.42) 38%, rgb(5 5 6 / 0.28) 70%, rgb(5 5 6 / 0.6) 100%)",
+          background: [
+            "linear-gradient(180deg, rgb(5 5 6 / 0.35) 0%, rgb(5 5 6 / 0.05) 34%, rgb(5 5 6 / 0.28) 72%, rgb(5 5 6 / 0.62) 100%)",
+            "linear-gradient(90deg, rgb(5 5 6 / 0.66) 0%, rgb(5 5 6 / 0.3) 42%, rgb(5 5 6 / 0.18) 74%, rgb(5 5 6 / 0.44) 100%)",
+          ].join(", "),
         }}
       />
 

@@ -471,9 +471,12 @@ function DiscoverabilityStation({ detailed }: { readonly detailed: boolean }) {
 function DestinationStation({ detailed }: { readonly detailed: boolean }) {
   return (
     <group>
-      {/* The corridor opens. The light was there from the first frame. */}
-      <Horizon position={[0, 12, -58]} width={300} height={110} band={0.3} strength={1.05} />
-      <Glow position={[0, 1.2, -50]} scale={[120, 26]} strength={0.5} />
+      {/* The corridor opens. The light was there from the first frame.
+          The plane is placed so its hard light line lands just above the
+          floor — the band is at (band - 0.5) × height from the plane's centre,
+          so the y position and the band fraction have to be read together. */}
+      <Horizon position={[0, 24, -58]} width={300} height={110} band={0.3} strength={0.95} />
+      <Glow position={[0, 1.4, -50]} scale={[120, 22]} strength={0.32} />
 
       {/* Systems still running — behind him, and no longer needing him. */}
       {(detailed

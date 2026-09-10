@@ -11,7 +11,7 @@ const chapter = CHAPTERS[5]!;
 export function SceneDestination() {
   return (
     <ChapterFrame chapter={chapter} id="destination" headingId="destination-heading">
-      <div className="flex flex-col items-center text-center">
+      <div className="on-world on-world-center flex flex-col items-center text-center">
         <Reveal>
           <Monogram
             className="mx-auto h-14 w-auto text-[color:var(--color-champagne)]"

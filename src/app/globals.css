@@ -62,6 +62,10 @@
     --nav-height: 4.75rem;
     /* Journey progress 0→1, written by the scroll driver, read by CSS. */
     --journey: 0;
+
+    /* Film grain. Inlined as an SVG data URI so it costs no request and no
+       binary asset — large fields of near-black band badly without it. */
+    --grain-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
   }
 
   html {
@@ -78,7 +82,11 @@
 
   body {
     margin: 0;
-    background-color: var(--color-void);
+    /* Deliberately transparent. The page colour lives on <html>, which paints
+       as the canvas background — before negative-z-index descendants. Give
+       <body> its own opaque background and it paints *over* the cinematic
+       stage at z-index -10, hiding the world completely. */
+    background-color: transparent;
     color: var(--color-ivory-dim);
     font-family: var(--font-sans);
     font-weight: 300;
@@ -173,12 +181,14 @@
     line-height: 1.18;
   }
 
-  /* The recurring wide-tracked uppercase label from the identity. */
+  /* The recurring wide-tracked uppercase label from the identity.
+     Held at 12px and above: wide tracking buys elegance, not legibility, and
+     the identity is not worth making anyone squint for. */
   .label {
     font-family: var(--font-sans);
-    font-size: clamp(0.6rem, 0.72vw, 0.7rem);
+    font-size: clamp(0.75rem, 0.8vw, 0.82rem);
     font-weight: 400;
-    letter-spacing: 0.3em;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
     line-height: 1.9;
     color: var(--color-muted);
@@ -321,9 +331,9 @@
     color: var(--btn-fg);
     border: 1px solid var(--btn-border);
     font-family: var(--font-sans);
-    font-size: 0.7rem;
+    font-size: 0.78rem;
     font-weight: 500;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     line-height: 1;
     cursor: pointer;
@@ -426,6 +436,55 @@
     border-color: #b4593f;
   }
 
+  /* ---- Copy sitting over the world ----------------------------------- */
+
+  /*
+   * A chapter's text sits directly on lit architecture. Rather than dimming
+   * the whole corridor — which would flatten it everywhere, including where
+   * there is nothing to read — each text block darkens the world immediately
+   * behind itself and fades back to nothing at its edges. The result reads as
+   * the architecture falling into shadow around the copy, which is how the
+   * identity's own key art is lit.
+   *
+   * `isolation: isolate` matters: it makes the block its own stacking context
+   * so the shield sits behind the text and in front of the canvas, instead of
+   * escaping to the page's stacking context and disappearing behind the world.
+   */
+  .on-world {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .on-world::before {
+    content: "";
+    position: absolute;
+    /* Vertical bleed only. A negative inline inset pushes the shield past the
+       viewport edge and gives the document 40px of horizontal scroll on a
+       phone — the shell's own gutters already give the gradient room. */
+    inset-block: -3.5rem;
+    inset-inline: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+      104% 82% at 24% 50%,
+      rgb(5 5 6 / 0.92) 0%,
+      rgb(5 5 6 / 0.74) 38%,
+      rgb(5 5 6 / 0.34) 68%,
+      transparent 100%
+    );
+  }
+
+  /* For centred compositions — the destination, the opening frame. */
+  .on-world-center::before {
+    background: radial-gradient(
+      76% 68% at 50% 50%,
+      rgb(5 5 6 / 0.88) 0%,
+      rgb(5 5 6 / 0.6) 46%,
+      rgb(5 5 6 / 0.22) 74%,
+      transparent 100%
+    );
+  }
+
   /* ---- Cinematic backdrop (also the Tier C experience) --------------- */
 
   /* Champagne horizon light. Pure CSS so it paints on first frame,
@@ -437,8 +496,8 @@
     background:
       radial-gradient(
         120% 62% at 50% 46%,
-        rgb(201 164 107 / 0.16) 0%,
-        rgb(142 112 66 / 0.07) 32%,
+        rgb(201 164 107 / 0.26) 0%,
+        rgb(142 112 66 / 0.11) 32%,
         transparent 68%
       ),
       linear-gradient(180deg, #08080a 0%, #050506 55%, #030304 100%);
@@ -467,8 +526,8 @@
     aspect-ratio: 3 / 1;
     background: radial-gradient(
       ellipse at center,
-      rgb(243 226 199 / 0.3) 0%,
-      rgb(201 164 107 / 0.13) 30%,
+      rgb(243 226 199 / 0.42) 0%,
+      rgb(201 164 107 / 0.18) 30%,
       transparent 70%
     );
     filter: blur(28px);
@@ -484,18 +543,18 @@
     background-image:
       repeating-linear-gradient(
         90deg,
-        rgb(201 164 107 / 0.16) 0 1px,
+        rgb(201 164 107 / 0.30) 0 1px,
         transparent 1px 7.5rem
       ),
       repeating-linear-gradient(
         0deg,
-        rgb(201 164 107 / 0.1) 0 1px,
+        rgb(201 164 107 / 0.20) 0 1px,
         transparent 1px 5rem
       );
     transform: perspective(46rem) rotateX(72deg);
     transform-origin: 50% 0;
-    mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.85), transparent 78%);
-    opacity: 0.5;
+    mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.9), transparent 82%);
+    opacity: 0.8;
     pointer-events: none;
   }
 
@@ -600,7 +659,19 @@
    ========================================================================== */
 
 @layer utilities {
+  /*
+   * Content is visible by default and is only hidden once we know JavaScript
+   * is running to reveal it again. The `js` class is set by a tiny script in
+   * <head>, before first paint, so there is no flash — and with scripting off
+   * or broken, every section simply renders as ordinary visible content
+   * instead of an invisible page.
+   */
   .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .js .reveal {
     opacity: 0;
     transform: translateY(1.6rem);
     transition:
@@ -609,7 +680,7 @@
     transition-delay: var(--reveal-delay, 0ms);
   }
 
-  .reveal[data-revealed="true"] {
+  .js .reveal[data-revealed="true"] {
     opacity: 1;
     transform: none;
   }
@@ -646,6 +717,9 @@
     scroll-behavior: auto !important;
   }
 
+  /* Wins over `.js .reveal`, so a reduced-motion visitor sees every section
+     immediately rather than waiting on an entrance that will not play. */
+  .js .reveal,
   .reveal {
     opacity: 1;
     transform: none;

@@ -79,9 +79,13 @@ export function probeCapability(): Capability {
   const cores = nav.hardwareConcurrency ?? 8;
   if (memory <= 2 || cores <= 2) return TIER_C;
 
+  // Tier B is for phones, tablets, small windows and genuinely modest
+  // machines. A four-core laptop runs the full corridor comfortably — the
+  // scene is emissive geometry, not a lit, shadowed, post-processed one — so
+  // the bar for Tier A is deliberately not set at "workstation".
   const coarse = window.matchMedia("(pointer: coarse)").matches;
   const narrow = window.innerWidth < 1024;
-  const modest = memory < 8 || cores < 8;
+  const modest = memory < 4 || cores < 4;
 
   if (coarse || narrow || modest) {
     return { tier: "B", dpr: [1, 1.5], reducedMotion: false, webgl: true };

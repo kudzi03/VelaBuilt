@@ -72,6 +72,20 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en-GB" className={`${cormorant.variable} ${inter.variable}`}>
+      <head>
+        {/*
+         * Marks the document as scripted before first paint. Section entrance
+         * animations start from "hidden" only when this class is present, so a
+         * visitor without JavaScript — or with it broken — gets the whole page
+         * as ordinary visible content rather than a blank one. Inline and in
+         * <head> deliberately: anything later would flash.
+         */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.classList.add("js")`,
+          }}
+        />
+      </head>
       <body>
         <a
           href="#main"

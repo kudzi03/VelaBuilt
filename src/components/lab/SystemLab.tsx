@@ -103,7 +103,7 @@ export function SystemLab({ initialId = "crm" }: { readonly initialId?: SystemId
                   >
                     {unit.name}
                   </span>
-                  <span className="text-[0.7rem] leading-relaxed text-[color:var(--color-faint)]">
+                  <span className="text-[0.78rem] leading-relaxed text-[color:var(--color-faint)]">
                     {unit.flow.length} steps
                   </span>
                 </button>
@@ -142,7 +142,7 @@ export function SystemLab({ initialId = "crm" }: { readonly initialId?: SystemId
                   <button
                     type="button"
                     onClick={() => setSelected(id)}
-                    className="border border-[color:var(--color-hairline-strong)] px-3 py-1.5 text-[0.66rem] uppercase tracking-[0.2em] text-[color:var(--color-ivory-dim)] transition-colors duration-400 hover:border-[rgb(224_195_152/0.5)] hover:text-[color:var(--color-champagne)]"
+                    className="border border-[color:var(--color-hairline-strong)] px-3 py-1.5 text-[0.75rem] uppercase tracking-[0.2em] text-[color:var(--color-ivory-dim)] transition-colors duration-400 hover:border-[rgb(224_195_152/0.5)] hover:text-[color:var(--color-champagne)]"
                   >
                     {unit.name}
                   </button>

@@ -69,7 +69,7 @@ export function OfferBody({
               </li>
             ))}
           </ul>
-          <p className="mt-6 max-w-[46ch] text-xs leading-relaxed text-[color:var(--color-faint)]">
+          <p className="mt-6 max-w-[46ch] text-sm leading-relaxed text-[color:var(--color-muted)]">
             {service.boundary}
           </p>
         </div>

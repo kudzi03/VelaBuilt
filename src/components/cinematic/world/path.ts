@@ -14,8 +14,18 @@ import { CHAPTERS, lerp } from "@/lib/journey";
  * motivated turns instead of a rail pointed permanently forward.
  */
 
-export const JOURNEY_START_Z = 12;
-export const JOURNEY_END_Z = -322;
+/**
+ * How far back from a station's centre the camera comes to rest. The station
+ * is a place in the room, not a mark to stand on: arriving 14 metres short
+ * frames it rather than landing inside it, and it stops the camera overshooting
+ * the destination at the end of the journey.
+ */
+const CAMERA_STANDOFF = 14;
+
+const LAST = CHAPTERS.length - 1;
+
+export const JOURNEY_START_Z = CHAPTERS[0]!.z + CAMERA_STANDOFF;
+export const JOURNEY_END_Z = CHAPTERS[LAST]!.z + CAMERA_STANDOFF;
 
 /** Metres of corridor per unit of journey progress. */
 export const JOURNEY_LENGTH = JOURNEY_START_Z - JOURNEY_END_Z;
@@ -51,8 +61,18 @@ function blendedBias(progress: number): { x: number; y: number } {
   return { x: x / weight, y: y / weight };
 }
 
+/**
+ * Depth along the corridor. Interpolates the chapters' own z positions rather
+ * than a straight line between two endpoints, so progress 0.4 puts the camera
+ * at station 2 exactly — however the chapters are spaced.
+ */
 export function pathZ(progress: number): number {
-  return lerp(JOURNEY_START_Z, JOURNEY_END_Z, progress);
+  const station = Math.min(1, Math.max(0, progress)) * LAST;
+  const index = Math.min(LAST - 1, Math.floor(station));
+  const t = station - index;
+  const from = CHAPTERS[index]!.z;
+  const to = CHAPTERS[index + 1]!.z;
+  return lerp(from, to, t) + CAMERA_STANDOFF;
 }
 
 /** Camera position at a point in the journey. */
@@ -82,8 +102,9 @@ export function operatorPosition(progress: number, out: THREE.Vector3): THREE.Ve
   const drift = Math.sin(progress * Math.PI * 2.35) * 1.45;
   const lateral = drift * 0.5 + Math.sin(progress * Math.PI * 3.1 + 0.6) * 1.15;
 
-  // He slows into the final chamber and stops facing the horizon.
-  const lead = 9.5 - Math.max(0, progress - 0.9) * 34;
+  // Into the final chamber he draws away from the camera rather than toward
+  // it: the machinery no longer needs him, so he walks on into the light.
+  const lead = 9.5 + Math.max(0, progress - 0.84) * 78;
 
   return out.set(lateral, 0, pathZ(progress) - lead);
 }

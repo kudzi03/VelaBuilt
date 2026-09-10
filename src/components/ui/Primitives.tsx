@@ -143,7 +143,7 @@ export function CategoryBadge({
 }) {
   return (
     <span
-      className={`inline-flex items-center border px-2.5 py-1 text-[0.58rem] font-medium uppercase leading-none tracking-[0.24em] ${
+      className={`inline-flex items-center border px-2.5 py-1 text-[0.75rem] font-medium uppercase leading-none tracking-[0.24em] ${
         tone === "champagne"
           ? "border-[rgb(224_195_152/0.35)] text-[color:var(--color-champagne)]"
           : "border-[color:var(--color-hairline-strong)] text-[color:var(--color-muted)]"

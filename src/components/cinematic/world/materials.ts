@@ -9,9 +9,11 @@ import * as THREE from "three";
  * a corridor lit by emissive geometry costs a fraction of one lit by real
  * lights with a bloom pass, and holds its look on a mid-range phone.
  *
- * Colour note: three converts shader output from linear to sRGB on write, so
- * every colour handed to a uniform is converted to linear first. Skipping that
- * is what makes hand-written shaders look washed out next to lit materials.
+ * Colour note: with colour management on, `new THREE.Color("#rrggbb")` already
+ * converts sRGB to the linear working space. Calling convertSRGBToLinear() on
+ * top of that applies the transform twice and drags every value toward black —
+ * so `worldColor` deliberately does nothing but construct the colour, and the
+ * shaders end with <colorspace_fragment> to convert once on the way out.
  */
 
 export const PALETTE = {
@@ -23,12 +25,13 @@ export const PALETTE = {
   cold: "#7d8794",
 } as const;
 
-export function linearColor(hex: string): THREE.Color {
-  return new THREE.Color(hex).convertSRGBToLinear();
+/** An authored sRGB hex, in three's linear working space. Converted once. */
+export function worldColor(hex: string): THREE.Color {
+  return new THREE.Color(hex);
 }
 
-export const FOG_DENSITY = 0.0165;
-const FOG_COLOR = linearColor(PALETTE.void);
+export const FOG_DENSITY = 0.0115;
+const FOG_COLOR = worldColor(PALETTE.void);
 
 /** Shared exponential-squared fog, matched to the scene's own fog. */
 const FOG_UNIFORMS = () => ({
@@ -61,7 +64,7 @@ export interface FloorUniforms {
 export function createFloorMaterial(wallX: number): THREE.ShaderMaterial {
   const uniforms: FloorUniforms = {
     uTime: { value: 0 },
-    uAccent: { value: linearColor(PALETTE.champagne) },
+    uAccent: { value: worldColor(PALETTE.champagne) },
     uWallX: { value: wallX },
     uSeamSpacing: { value: 14 },
     ...FOG_UNIFORMS(),
@@ -97,10 +100,10 @@ export function createFloorMaterial(wallX: number): THREE.ShaderMaterial {
 
         // The wall seams, reflected: long streaks running with the corridor.
         float toWall = abs(abs(x) - uWallX);
-        float wallStreak = exp(-toWall * toWall * 0.32);
+        float wallStreak = exp(-toWall * toWall * 0.10);
 
         // The ceiling strip, reflected down the centre line.
-        float centreStreak = exp(-x * x * 0.055) * 0.55;
+        float centreStreak = exp(-x * x * 0.028) * 0.75;
 
         // Transverse floor seams at fixed intervals — architectural rhythm.
         float rowDist = abs(fract(z / uSeamSpacing + 0.5) - 0.5) * uSeamSpacing;
@@ -110,7 +113,7 @@ export function createFloorMaterial(wallX: number): THREE.ShaderMaterial {
 
         // Break the polish so it reads as stone rather than plastic.
         float mottle = 0.82 + 0.18 * sin(x * 1.7 + z * 0.31) * sin(z * 0.13);
-        col += uAccent * light * 0.16 * mottle;
+        col += uAccent * light * 0.5 * mottle;
 
         ${FOG_FRAGMENT}
         col = mix(col, uFogColor, fogFactor);
@@ -149,7 +152,7 @@ export function createPanelMaterial({
     uniforms: {
       uTime: { value: 0 },
       uActivity: { value: activity },
-      uAccent: { value: linearColor(accent) },
+      uAccent: { value: worldColor(accent) },
       uOpacity: { value: opacity },
       uSeed: { value: seed },
       uRows: { value: rows },
@@ -182,7 +185,7 @@ export function createPanelMaterial({
         vec2 uv = vUv;
 
         // Dark glass, lit slightly from above.
-        vec3 col = vec3(0.011, 0.011, 0.014) + vec3(0.016, 0.016, 0.020) * pow(uv.y, 2.0);
+        vec3 col = vec3(0.018, 0.018, 0.023) + vec3(0.030, 0.030, 0.038) * pow(uv.y, 2.0);
 
         // Frame.
         float edge = min(min(uv.x, 1.0 - uv.x), min(uv.y, 1.0 - uv.y));
@@ -191,7 +194,7 @@ export function createPanelMaterial({
 
         // Header rule.
         float header = 1.0 - smoothstep(0.0, 0.0035, abs(uv.y - 0.845));
-        col += uAccent * header * (0.18 + 0.42 * uActivity);
+        col += uAccent * header * (0.30 + 0.55 * uActivity);
 
         // Generated interface content.
         float ri = floor(uv.y * uRows);
@@ -201,11 +204,11 @@ export function createPanelMaterial({
         float inRow = step(0.075, uv.x) * step(uv.x, 0.075 + width);
         float bar = inRow * (1.0 - smoothstep(0.10, 0.26, abs(rowY - 0.5)));
         bar *= step(uv.y, 0.80) * step(0.07, uv.y);
-        col += uAccent * bar * (0.05 + 0.30 * uActivity) * (0.45 + 0.55 * h);
+        col += uAccent * bar * (0.10 + 0.48 * uActivity) * (0.45 + 0.55 * h);
 
         // A single line of activity passing through a live panel.
         float scan = exp(-46.0 * abs(fract(uTime * 0.09 + uSeed * 0.37) - uv.y));
-        col += uAccent * scan * 0.22 * uActivity;
+        col += uAccent * scan * 0.30 * uActivity;
 
         ${FOG_FRAGMENT}
         col = mix(col, uFogColor, fogFactor);
@@ -227,11 +230,11 @@ export function createPanelMaterial({
 
 /** Thin illuminated architectural seam. Unlit, so it costs almost nothing. */
 export function createSeamMaterial(
-  color: string = PALETTE.champagneLight,
+  color: string = PALETTE.champagne,
   opacity = 0.9,
 ): THREE.MeshBasicMaterial {
   return new THREE.MeshBasicMaterial({
-    color: linearColor(color),
+    color: worldColor(color),
     transparent: opacity < 1,
     opacity,
     toneMapped: false,
@@ -247,10 +250,18 @@ export function createSeamMaterial(
 export function createGlowMaterial(
   color: string = PALETTE.champagne,
   strength = 0.5,
+  /**
+   * "radial" falls off from the centre in both directions — a point source.
+   * "cross" falls off across the short axis only and stays constant along the
+   * long one, which is what a seam running the length of a corridor does. A
+   * radial falloff on a 390-metre strip lights its middle and abandons both
+   * ends, so every long seam must use "cross".
+   */
+  falloff: "radial" | "cross" = "radial",
 ): THREE.ShaderMaterial {
   return new THREE.ShaderMaterial({
     uniforms: {
-      uColor: { value: linearColor(color) },
+      uColor: { value: worldColor(color) },
       uStrength: { value: strength },
     },
     vertexShader: /* glsl */ `
@@ -265,8 +276,19 @@ export function createGlowMaterial(
       uniform float uStrength;
       varying vec2 vUv;
       void main() {
-        vec2 d = (vUv - 0.5) * 2.0;
-        float falloff = exp(-dot(d, d) * 3.4);
+        ${
+          falloff === "cross"
+            ? `
+        float d = (vUv.y - 0.5) * 2.0;
+        float falloff = exp(-d * d * 4.2);
+        // Fade the last few percent of each end so the strip has no hard stop.
+        falloff *= smoothstep(0.0, 0.03, vUv.x) * smoothstep(1.0, 0.97, vUv.x);
+        `
+            : `
+        vec2 v = (vUv - 0.5) * 2.0;
+        float falloff = exp(-dot(v, v) * 3.4);
+        `
+        }
         gl_FragColor = vec4(uColor * falloff * uStrength, falloff);
         #include <colorspace_fragment>
       }
@@ -281,7 +303,7 @@ export function createGlowMaterial(
 /** Dark architectural stone for walls, slabs and monoliths. */
 export function createStoneMaterial(roughness = 0.62): THREE.MeshStandardMaterial {
   return new THREE.MeshStandardMaterial({
-    color: linearColor("#0a0a0d"),
+    color: worldColor("#070709"),
     roughness,
     metalness: 0.28,
   });

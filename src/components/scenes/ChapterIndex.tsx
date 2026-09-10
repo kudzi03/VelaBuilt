@@ -43,7 +43,7 @@ export function ChapterIndex() {
               >
                 <span
                   data-active={isActive}
-                  className="text-[0.58rem] uppercase tracking-[0.22em] text-[color:var(--color-faint)] opacity-0 transition-all duration-500 group-hover:opacity-100 group-focus-visible:opacity-100 data-[active=true]:text-[color:var(--color-champagne)] data-[active=true]:opacity-100"
+                  className="text-[0.75rem] uppercase tracking-[0.22em] text-[color:var(--color-faint)] opacity-0 transition-all duration-500 group-hover:opacity-100 group-focus-visible:opacity-100 data-[active=true]:text-[color:var(--color-champagne)] data-[active=true]:opacity-100"
                 >
                   {chapter.label}
                 </span>
