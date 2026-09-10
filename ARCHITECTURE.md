@@ -5,12 +5,33 @@ React Three Fiber.
 
 ## The rule everything else follows
 
-**WebGL decorates the website. WebGL is not the website.**
+**The cinematic layer decorates the website. It is not the website.**
 
-Every word, link, heading and control exists in semantic HTML. The 3D corridor
+Every word, link, heading and control exists in semantic HTML. The environment
 is a fixed backdrop behind that HTML. Delete the canvas and the site is intact:
 same content, same structure, same outline. This is verified on every change by
 `scripts/fallbacks.mjs`.
+
+## The pipeline
+
+The environments are photographic. The five supplied architectural renders are
+the production art, and everything a still cannot do is layered around them:
+
+| Layer | Technique |
+| --- | --- |
+| Environment | Cinematic plate, AVIF/WebP, responsive widths, ~67 KB at full width |
+| Camera | Virtual camera in the shader: cover framing, focal push, drift |
+| Depth | Analytic depth ramp per scene, driving real parallax |
+| Light | Luminance-keyed bloom, per-scene grade, atmospheric haze |
+| Interaction | Selective room dimming and illuminated chains (System Lab) |
+| Transitions | Light-led dissolve keyed off the incoming room's own luminance |
+
+Building an approximation of these rooms from primitives was tried first and
+abandoned: it could not reach the fidelity of the references, and the frame
+budget is far better spent grading real architecture than drawing a worse
+version of it. See VISUAL_RECONSTRUCTION_PLAN.md.
+
+Plates are regenerated with `node scripts/build-plates.mjs <source dir>`.
 
 ## Four layers
 
@@ -39,6 +60,7 @@ language model.
 | `systems.ts` | System Lab modules, their sequences, their connections, and what a person still decides |
 | `work.ts` | Work items and the three category definitions |
 | `faq.ts` | FAQs, scoped per page. Only rendered questions are eligible for schema |
+| `scenes.ts` | The plates: framing, depth model, camera move and grade per chapter |
 | `enquiry-flow.ts` | The enquiry questions and branching, shared by client and server |
 
 ## The journey
@@ -78,28 +100,29 @@ while the reader is in the right one.
 ## The 3D layer
 
 ```
-CinematicStage       decides the tier, mounts the canvas at idle
-├── StaticWorld      the CSS world — first paint, and all of Tier C
-├── WorldCanvas      the R3F canvas (dynamic import, ssr: false)
-│   ├── Rig          camera from journey progress; responsive field of view
-│   ├── Corridor     floor, walls, seams, instanced ribs, thresholds
-│   ├── Stations     the six chapters, culled by distance
-│   └── Operator     the character rig
-└── JourneyDriver    scroll → journey
+CinematicStage        decides the tier, mounts the compositor at idle
+├── CssPlate          the plate as a plain image — first paint, and all of Tier C
+├── PlateSequence     Tier C's journey: the same rooms, crossfading
+├── PlateCanvas       the R3F canvas (dynamic import, ssr: false)
+│   ├── Compositor    blends two scenes' camera and grade into the shader
+│   ├── plateShader   framing, parallax, bloom, haze, grade, dissolve, dimming
+│   └── plateTextures lazy load, two resident, disposed when walked away from
+└── JourneyDriver     scroll → journey
 ```
+
+`PageBackdrop` puts the same rooms behind the inner pages, held well back.
 
 Design decisions that matter:
 
-- **No post-processing.** Glow is authored as additive geometry, so the scene
-  is one pass to one target. A bloom pass would cost more than the corridor.
-- **No shadow maps.** The corridor is lit by emissive architecture.
-- **Three lights**, one of which travels with the camera.
-- **`frameloop="demand"`** — frames are rendered when the journey moves.
-- **Visibility culling, not unmounting** — returning to a station never pays to
-  rebuild it.
-- **Every material and geometry is disposed on unmount.**
-- **One clock** drives every time-based uniform, so a hundred panels animate at
-  the cost of one loop.
+- **One full-screen quad.** No scene geometry, no lights, no shadow maps, no
+  post-processing pass. The whole environment is one draw call.
+- **`frameloop="demand"`** — frames stop entirely when the run leaves the view.
+- **Two plates resident.** A decoded plate is ~6 MB of GPU memory; only the
+  current room and the one being walked into are kept, and the rest are freed.
+- **The camera holds** on the outgoing room until the next plate has decoded,
+  so a slow network never dissolves into black.
+- **Cover framing matches CSS `object-position`,** so the canvas and the image
+  fallback frame each room identically.
 
 ## Routes
 

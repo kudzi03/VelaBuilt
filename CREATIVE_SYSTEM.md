@@ -13,7 +13,8 @@ the machinery runs behind him and he simply walks toward the horizon.
 
 He is not a mascot. He never addresses the visitor, never speaks, never gestures
 at the interface. He is the silent protagonist, usually in near-silhouette,
-small against the architecture.
+small against the architecture — and he is a real person, photographed as part
+of the environment art rather than modelled.
 
 ## The test every cinematic moment must pass
 
@@ -31,7 +32,7 @@ its own sake.
 | `--color-ivory` | `#f2efe9` | Headings, primary text |
 | `--color-ivory-dim` | `#c9c5bd` | Body copy |
 | `--color-muted` | `#8b8880` | Secondary copy, labels |
-| `--color-faint` | `#5f5d58` | Footnotes |
+| `--color-faint` | `#85827a` | Footnotes. Held at AA on both grounds |
 | `--color-champagne-light` | `#f0dcba` | Hot cores of light |
 | `--color-champagne` | `#e0c398` | **The accent.** Seams, labels, arrows |
 | `--color-champagne-deep` | `#8e7042` | Rules, dim edges |
@@ -63,31 +64,41 @@ Slow, motivated, weighted, elegant.
 - Easing: `--ease-cinematic` `cubic-bezier(0.16, 1, 0.3, 1)`.
 - Entrances: one shared `.reveal` — 1100ms, opacity and a 1.6rem rise.
 
-**Every major transition is motivated by something physically in the scene.**
-Chapter changes happen because the camera passes through a threshold — a real
-doorway in the corridor — not because a transition was applied over the top.
+**Every major transition is motivated by light already in the scene.** Rooms
+hand over with a luminance-led dissolve: the incoming room's bright areas
+arrive first, so it reads as walking into its light rather than as a crossfade.
+Where two chapters share a room, there is no dissolve at all — the camera
+simply keeps moving, which is what makes them feel continuous.
 
-The Operator's walk cycle is driven by actual scroll velocity: stop scrolling
-and he stops walking. Nothing loops in place.
+Nothing loops. The camera moves only because the visitor is moving; stop
+scrolling and the room settles.
 
 **Never**: bouncy easing, spin transitions, glitches, constant zooming,
 scroll-jacking, parallax for its own sake.
 
 ## Materials
 
-Four materials carry the whole world, all hand-written (`world/materials.ts`):
+The materials are photographed, not simulated. Polished black stone, smoked
+glass, brushed champagne metal and the long specular reflections that make the
+floors read cannot be reached in real time inside this frame budget, and the
+supplied renders already have them. The compositor's job is to light and move
+that architecture, not to rebuild it.
 
-1. **Lit black stone** — floor, with the corridor's light smeared into it.
-2. **Champagne seams** — thin illuminated architectural lines.
-3. **Additive bloom** — authored where a real source would flare.
-4. **Black glass** — interface panels with generated content.
+What the compositor adds on top of a plate:
 
-Two traps, both hit during the build and documented so they are not hit again:
+1. **Grade** — per-scene exposure, contrast, saturation and warmth. Warmth
+   rides on the highlights only, so the shadows stay deep rather than brown.
+2. **Bloom** — keyed off the plate's own practicals, never applied flat.
+3. **Haze** — the far end of a room fills with air, which is what opens depth.
+4. **Grain and vignette** — held light. On a photograph, heavy grain reads as
+   dirt on the lens rather than as film.
 
-- `new THREE.Color(hex)` **already** converts sRGB → linear under colour
-  management. Converting again drags everything toward black.
-- A radial glow falloff on a long strip lights its middle and abandons both
-  ends. Long seams use the `cross` falloff.
+Traps hit during the build, recorded so they are not hit again:
+
+- A cover fit **multiplies** the visible window; dividing samples beyond the
+  plate and smears its edge pixels across the frame.
+- Framing must be applied inside the cover mapping. A focal point that only
+  drives the zoom pivot has no effect on what is actually in shot.
 
 ## Copy
 
@@ -103,26 +114,20 @@ real data. Concepts are labelled `CONCEPT`. Demonstrations are labelled
 `SYSTEM DEMO`. Delivered work is labelled `CLIENT WORK` and appears only once it
 exists and the client has agreed.
 
-## Character asset specification
+## The Operator
 
-The Operator is currently a **procedural rig built from primitives** — capsules
-and a cylinder coat, no purchased or scraped assets, no licence encumbrance. It
-reads correctly because he is small, dark and nearly always in silhouette.
+He is **the man in the plates** — a real person in a tailored suit, walking
+through real architecture. The procedural capsule rig that stood in for him has
+been deleted from the production experience; a mannequin of stacked primitives
+was worse than no character at all, and the renders already contain him.
 
-It is isolated behind one component (`world/Operator.tsx`) and one contract.
-Replacing it does not touch the world, the camera, the stations or the page.
+Because he is part of the environment art, he is lit correctly, reflected in
+the floor, and correctly scaled against the room in every scene. He never
+addresses the visitor and never speaks.
 
-**To swap in a production character**, replace the `<group>` contents with a
-loaded skinned mesh and drive its `AnimationMixer` from the three values the
-component already computes:
-
-| Value | Range | Meaning |
-| --- | --- | --- |
-| `phase` | 0→2π | Walk cycle position, advanced by distance travelled |
-| `speed` | 0→1 | How fast the journey is moving; 0 means standing |
-| `attention` | 0→1 | How much he is looking up at the architecture |
-
-**Requirements for the final asset:**
+**If a rigged character is ever added** — for a scene that needs him to move
+independently of the plate — it belongs in front of the plate as a separate
+layer, not as a replacement for it. Requirements for such an asset:
 
 - Licence permitting commercial use and web distribution. No scraped models.
 - glTF/GLB, Draco or Meshopt compressed, **under 2.5 MB**.
@@ -140,15 +145,16 @@ component already computes:
 
 Only these. Everything else is either done or not worth the weight.
 
-1. **The rigged Operator** above. The single biggest upgrade.
-2. **The VelaBuilt identity board and master monogram artwork.** The monogram is
-   currently redrawn as vector paths from the reference; the authoritative
-   artwork should replace `Monogram.tsx` and `icon.svg`.
-3. **Two or three environment textures** — brushed metal, dark stone, a subtle
-   floor normal map. KTX2/Basis, under 512 KB each. The corridor is currently
-   entirely procedural, which is clean but slightly too clean.
-4. **Reel 01 keyframes**, to confirm the corridor's proportions match the
-   Instagram world rather than merely resembling it.
+1. **The monogram as vector artwork.** It is currently redrawn by hand from the
+   master render; the original paths would be sharper at small sizes.
+2. **Higher-resolution plates.** The supplied renders are 1672×941, which is
+   slightly soft on a 2× desktop display. 2560px wide would fix it at roughly
+   double the bytes.
+3. **A portrait render of each room**, framed for phones. The portrait band
+   currently crops the landscape plate to its most legible region, which works,
+   but a purpose-framed vertical would be better.
+4. **A second render of the System Lab with the room unlit**, so the dimmed
+   state could cross-dissolve to real darkness rather than to a shadow overlay.
 5. **A photographic or rendered OG card**, if a stronger social image is wanted
    than the generated one.
 

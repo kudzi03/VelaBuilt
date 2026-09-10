@@ -1,6 +1,6 @@
 # Implementation Status
 
-Last updated: 2026-09-10
+Last updated: 2026-09-10 (visual reconstruction)
 
 ## State
 
@@ -25,19 +25,30 @@ reader does. Chapter changes are motivated by thresholds the camera physically
 passes through. Scroll is never hijacked; every chapter is an anchor and the
 journey can be skipped.
 
-**The world** — hand-written materials (lit stone, champagne seams, additive
-bloom, black glass), instanced ribs, distance culling, one clock, full
-disposal, no post-processing, no shadow maps, three lights,
-`frameloop="demand"`, DPR capped per tier, responsive field of view.
+**The world** — the five supplied architectural renders, used as cinematic
+plates and driven by a compositor: virtual camera with cover framing and focal
+push, analytic depth parallax, luminance-keyed bloom, per-scene grade,
+atmospheric haze, light-led dissolves between rooms, and selective dimming for
+the System Lab. One full-screen quad, no scene geometry, no lights, no
+post-processing pass, two plates resident at a time.
 
-**The Operator** — procedural licence-free rig, gait driven by real scroll
-velocity, isolated behind one component and a three-value contract so a
-production character swaps in without touching anything else.
+**The Operator** — the man in the plates. A real person in real architecture,
+correctly lit, reflected and scaled. The procedural capsule rig is deleted.
 
-**Progressive enhancement** — Tier A (full corridor), Tier B (phones and
-tablets: fewer stations, lower DPR, simplified geometry), Tier C (reduced
-motion, no WebGL, constrained device, data saver, or no JavaScript — the CSS
-world, with identical content). Verified, not assumed.
+**The System Lab** — rebuilt as the chamber itself. Stations sit on the
+architecture; selecting one dims the rest of the room and runs light out along
+the chain it hands off to. Module data, connections, oversight statements and
+keyboard operation are unchanged from the previous build.
+
+**Progressive enhancement** — Tier A (full compositor), Tier B (phones and
+tablets: lower DPR, cheaper bloom, reduced parallax), Tier C (reduced motion,
+no WebGL, constrained device, data saver, or no JavaScript — the same rooms as
+plain responsive images, crossfading between chapters). Verified, not assumed.
+
+**Mobile** — a designed portrait composition, not a shrunken desktop: the room
+is held as a band across the upper frame at a legible scale with the copy on
+solid ground beneath it, each room framed on the part of itself that survives a
+phone crop, and the System Lab's labels move to a real control rail.
 
 **Content** — three offers with problems, capabilities, process and explicit
 boundaries; ten System Lab modules with sequences, connections and stated human
@@ -107,6 +118,15 @@ browser:
     `<dialog>` is centred by the UA's `margin: auto`, which the CSS reset
     zeroes along with every other margin.
 12. `--color-faint` failed WCAG AA at body size on panel backgrounds.
+
+### Found during the visual reconstruction
+
+13. The compositor's cover fit divided by the scale instead of multiplying,
+    sampling beyond the plate and smearing its edge pixels across the frame.
+14. Framing was applied to the zoom pivot but not to the crop, so naming a
+    focal point had no effect on what was actually in shot — which is why the
+    portrait crop could not be corrected until the cover fit was fixed.
+15. A backtick inside a GLSL comment terminated the shader's template literal.
 
 ## Not done, and why
 

@@ -439,6 +439,169 @@
     border-color: #b4593f;
   }
 
+  /* ---- The cinematic stage -------------------------------------------- */
+
+  /*
+   * On a landscape screen the room fills the frame. In portrait, a 16:9 plate
+   * cropped to a phone is a vertical slice of one column — none of the
+   * architecture survives, and it reads as a texture rather than a place. So
+   * the portrait composition is a different one on purpose: the room is held
+   * as a band across the upper frame at a legible scale, and the copy runs
+   * beneath it on the deep ground, which is how the identity's own phone
+   * mockup is laid out.
+   */
+  .stage-layer {
+    position: absolute;
+    inset: 0;
+  }
+
+  .plate-img {
+    object-position: var(--plate-pos, 50% 50%);
+  }
+
+  @media (max-aspect-ratio: 5 / 7) {
+    .stage-layer {
+      bottom: auto;
+      height: 58svh;
+    }
+
+    .plate-img {
+      object-position: var(--plate-pos-portrait, var(--plate-pos, 50% 50%));
+    }
+
+    /* Below the band the copy is on solid ground and needs no shield. */
+    .stage-scrim {
+      opacity: 0.4;
+    }
+
+    /* The band does not end, it falls away. */
+    .stage-layer::after {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      bottom: 0;
+      height: 46%;
+      pointer-events: none;
+      background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgb(5 5 6 / 0.72) 62%,
+        var(--color-void) 100%
+      );
+    }
+  }
+
+  /* ---- The System Lab room ------------------------------------------- */
+
+  /* A station is a light on the architecture with its name beside it. The hit
+     area is deliberately larger than the mark so it is reachable on a phone. */
+  .lab-station {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.7rem;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 700ms var(--ease-cinematic);
+    opacity: 0.62;
+  }
+
+  /* Stations on the right half hang their label inboard, so the ones at the
+     edge of the room cannot run off the edge of the frame. */
+  .lab-station[data-side="right"] {
+    flex-direction: row-reverse;
+  }
+
+  .lab-station[data-state="connected"] {
+    opacity: 0.9;
+  }
+
+  .lab-station[data-state="active"] {
+    opacity: 1;
+  }
+
+  .lab-station__node {
+    width: 0.45rem;
+    height: 0.45rem;
+    flex-shrink: 0;
+    border-radius: 9999px;
+    background: var(--color-champagne-deep);
+    box-shadow: 0 0 0 0 rgb(224 195 152 / 0.45);
+    transition:
+      background-color 600ms var(--ease-cinematic),
+      box-shadow 700ms var(--ease-cinematic);
+  }
+
+  .lab-station[data-state="connected"] .lab-station__node {
+    background: var(--color-champagne);
+    box-shadow: 0 0 10px 1px rgb(224 195 152 / 0.4);
+  }
+
+  .lab-station[data-state="active"] .lab-station__node {
+    background: var(--color-champagne-light);
+    box-shadow:
+      0 0 16px 3px rgb(240 220 186 / 0.7),
+      0 0 44px 10px rgb(224 195 152 / 0.28);
+  }
+
+  .lab-station__name {
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-ivory-dim);
+    text-shadow: 0 1px 10px rgb(4 4 5 / 0.9), 0 1px 2px rgb(4 4 5 / 0.8);
+    transition: color 600ms var(--ease-cinematic);
+  }
+
+  .lab-station[data-state="active"] .lab-station__name {
+    color: var(--color-champagne-light);
+  }
+
+  @media (max-width: 63.99rem) {
+    .lab-station__name {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .lab-station {
+      padding: 0.9rem;
+      opacity: 1;
+    }
+  }
+
+  /* Light running along the handoff, rather than a static line drawn on top. */
+  .lab-thread {
+    stroke-dasharray: 5 7;
+    animation: lab-thread-travel 2.4s linear infinite;
+  }
+
+  .lab-thread--secondary {
+    animation-duration: 3.6s;
+  }
+
+  @keyframes lab-thread-travel {
+    to {
+      stroke-dashoffset: -24;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lab-thread {
+      animation: none;
+      stroke-dasharray: none;
+    }
+  }
+
   /* ---- Copy sitting over the world ----------------------------------- */
 
   /*
@@ -468,24 +631,51 @@
     inset-inline: 0;
     z-index: -1;
     pointer-events: none;
-    background: radial-gradient(
-      104% 82% at 24% 50%,
-      rgb(5 5 6 / 0.92) 0%,
-      rgb(5 5 6 / 0.74) 38%,
-      rgb(5 5 6 / 0.34) 68%,
-      transparent 100%
-    );
+    /* Two parts: a pool under the primary column, and a band across the
+       whole content run. Chapters are two-column, and a left-anchored radial
+       leaves the right-hand list sitting unprotected on a lit floor. */
+    background:
+      radial-gradient(
+        104% 80% at 24% 50%,
+        rgb(5 5 6 / 0.8) 0%,
+        rgb(5 5 6 / 0.52) 42%,
+        rgb(5 5 6 / 0.16) 74%,
+        transparent 100%
+      ),
+      linear-gradient(
+        180deg,
+        transparent 0%,
+        rgb(5 5 6 / 0.46) 16%,
+        rgb(5 5 6 / 0.5) 82%,
+        transparent 100%
+      );
   }
 
   /* For centred compositions — the destination, the opening frame. */
   .on-world-center::before {
+    /* The destination is the payoff frame: its horizon is the brightest
+       thing in the sequence and must not be pooled out to make type safe.
+       The shadow on the type does that work instead. */
     background: radial-gradient(
-      76% 68% at 50% 50%,
-      rgb(5 5 6 / 0.88) 0%,
-      rgb(5 5 6 / 0.6) 46%,
-      rgb(5 5 6 / 0.22) 74%,
+      58% 54% at 50% 50%,
+      rgb(5 5 6 / 0.5) 0%,
+      rgb(5 5 6 / 0.28) 52%,
       transparent 100%
     );
+  }
+
+  /* Text set over a plate. A soft, wide shadow lets the room stay bright
+     behind the words instead of being dimmed until they are safe. */
+  .on-world h1,
+  .on-world h2,
+  .on-world h3,
+  .on-world p,
+  .on-world li,
+  .on-world span,
+  .on-world a {
+    text-shadow:
+      0 1px 2px rgb(5 5 6 / 0.55),
+      0 2px 18px rgb(5 5 6 / 0.45);
   }
 
   /* ---- Cinematic backdrop (also the Tier C experience) --------------- */

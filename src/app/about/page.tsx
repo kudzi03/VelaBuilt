@@ -4,7 +4,7 @@ import { disclosures, site } from "@/content/site";
 import { services } from "@/content/services";
 import { pageMetadata } from "@/lib/seo";
 import { breadcrumbSchema, graph } from "@/lib/schema";
-import { StaticWorld } from "@/components/cinematic/StaticWorld";
+import { PageBackdrop } from "@/components/cinematic/PageBackdrop";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Reveal } from "@/components/ui/Reveal";
 import { ArrowRight, Label } from "@/components/ui/Primitives";
@@ -32,7 +32,7 @@ export default function AboutPage() {
   return (
     <>
       <section className="relative overflow-hidden pb-20 pt-[calc(var(--nav-height)+5rem)]">
-        <StaticWorld horizon={0.75} intensity={0.8} variant="ambient" />
+        <PageBackdrop plate="atrium" focal={[0.62, 0.48]} presence={0.4} />
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />

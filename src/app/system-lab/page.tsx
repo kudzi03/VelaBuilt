@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { systemModules } from "@/content/systems";
 import { pageMetadata } from "@/lib/seo";
 import { breadcrumbSchema, graph } from "@/lib/schema";
-import { SystemLab } from "@/components/lab/SystemLab";
-import { StaticWorld } from "@/components/cinematic/StaticWorld";
+import { SystemLabRoom } from "@/components/lab/SystemLabRoom";
+import { PageBackdrop } from "@/components/cinematic/PageBackdrop";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { FlowChain } from "@/components/ui/FlowChain";
 import { Reveal } from "@/components/ui/Reveal";
@@ -26,7 +26,7 @@ export default function SystemLabPage() {
   return (
     <>
       <section className="relative overflow-hidden pb-20 pt-[calc(var(--nav-height)+5rem)]">
-        <StaticWorld horizon={0.76} intensity={0.8} variant="ambient" />
+        <PageBackdrop plate="system-lab" focal={[0.5, 0.44]} presence={0.5} />
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />
@@ -57,7 +57,7 @@ export default function SystemLabPage() {
           <h2 id="lab-heading" className="sr-only">
             System modules
           </h2>
-          <SystemLab />
+          <SystemLabRoom drivesBackdrop />
         </div>
       </section>
 

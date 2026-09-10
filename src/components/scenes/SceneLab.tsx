@@ -2,7 +2,7 @@ import Link from "next/link";
 import { CHAPTERS } from "@/lib/journey";
 import { ChapterFrame } from "./ChapterFrame";
 import { Reveal } from "@/components/ui/Reveal";
-import { SystemLab } from "@/components/lab/SystemLab";
+import { SystemLabRoom } from "@/components/lab/SystemLabRoom";
 import { ArrowRight, CategoryBadge } from "@/components/ui/Primitives";
 
 const chapter = CHAPTERS[3]!;
@@ -27,7 +27,7 @@ export function SceneLab() {
       </Reveal>
 
       <Reveal delay={140} className="mt-12">
-        <SystemLab />
+        <SystemLabRoom />
       </Reveal>
 
       <Reveal delay={200} className="mt-10">

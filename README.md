@@ -28,11 +28,24 @@ node scripts/interaction.mjs   # keyboard walk + the whole enquiry flow
 node scripts/peek.mjs 0 0.5 1  # capture the 3D world at points in the journey
 ```
 
+## The environment art
+
+The five architectural renders in `public/cinematic/` are the production
+environment art, generated from the supplied source renders by:
+
+```bash
+node scripts/build-plates.mjs /path/to/03_New_Cinematic_Worlds
+```
+
+That writes the responsive AVIF/WebP set plus the inline placeholders in
+`src/content/plate-lqip.json`. The sources themselves live outside the repo.
+
 ## The documents
 
 | | |
 | --- | --- |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | How it is built and where things live |
+| [VISUAL_RECONSTRUCTION_PLAN.md](VISUAL_RECONSTRUCTION_PLAN.md) | Why the primitive world was replaced, and with what |
 | [CREATIVE_SYSTEM.md](CREATIVE_SYSTEM.md) | The visual and motion language, and the character asset spec |
 | [SEO_AEO_GEO.md](SEO_AEO_GEO.md) | Discoverability for people, search engines and AI systems |
 | [SECURITY.md](SECURITY.md) | Secrets, the enquiry endpoint, headers, and known limits |
@@ -40,7 +53,7 @@ node scripts/peek.mjs 0 0.5 1  # capture the 3D world at points in the journey
 
 ## One rule
 
-**WebGL decorates the website. WebGL is not the website.**
+**The cinematic layer decorates the website. It is not the website.**
 
 Every word, link and control exists in semantic HTML. Remove the canvas and the
 site is intact. That is checked automatically, on every change, by

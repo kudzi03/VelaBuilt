@@ -1,55 +1,76 @@
 /**
- * The VelaBuilt monogram: an interlocked V and B drawn with didone stroke
- * contrast — thick stems, thin arms, fine serifs. Drawn as vector rather than
- * set as type so it holds its proportions at every size and in the 3D world.
+ * The VelaBuilt monogram.
+ *
+ * Drawn from the supplied master artwork: a chisel-cut blade forming the V,
+ * and a B built from two open swashes rather than closed bowls. It is a
+ * sculptural mark, not a typographic one — the earlier version set it as a
+ * didone V beside a conventional B, which is a different logo.
+ *
+ * Vector rather than an image so it stays crisp at any size, inherits colour,
+ * and can carry the brushed-metal gradient without a second asset.
  */
 
 interface MonogramProps {
   readonly className?: string;
   readonly title?: string;
+  /** Brushed champagne, as the mark appears on dark ground. */
+  readonly metal?: boolean;
 }
 
-export function Monogram({ className, title }: MonogramProps) {
+/** The blade of the V. */
+const V_BLADE = "M21.2 28.2 L29.0 31.8 L50.8 90.2 L46.2 96.8 Z";
+
+/** The upper swash of the B. */
+const B_UPPER =
+  "M45.0 24.6 C63.0 22.2 74.6 30.2 72.6 42.2 C70.8 51.6 62.6 57.0 53.6 57.8 C61.0" +
+  " 51.8 66.2 44.6 64.8 37.4 C63.4 30.6 55.4 25.8 45.0 24.6 Z";
+
+/** The lower swash. */
+const B_LOWER =
+  "M51.0 59.4 C70.4 57.2 82.4 66.4 79.8 79.4 C77.4 91.0 66.0 96.6 54.4 95.6 C64.8" +
+  " 90.0 71.4 81.4 69.8 72.6 C68.2 64.6 61.4 60.4 51.0 59.4 Z";
+
+export function Monogram({ className, title, metal = false }: MonogramProps) {
+  const gradientId = "vb-metal";
+
   return (
     <svg
-      viewBox="0 0 52 44"
+      viewBox="0 0 100 100"
       className={className}
       role={title ? "img" : "presentation"}
       aria-hidden={title ? undefined : true}
       aria-label={title}
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="butt"
+      fill={metal ? `url(#${gradientId})` : "currentColor"}
     >
       {title ? <title>{title}</title> : null}
-      {/* V — thick left stem, thin right arm */}
-      <path d="M4 7 L16.5 37" strokeWidth="3.1" />
-      <path d="M16.5 37 L29 7" strokeWidth="1.15" />
-      {/* Fine serifs at the V terminals */}
-      <path d="M0.8 6.6 H8" strokeWidth="1.05" />
-      <path d="M25.6 6.6 H32.2" strokeWidth="1.05" />
-      {/* B — stem interlocked with the V's rising arm */}
-      <path d="M27.4 7 L27.4 37" strokeWidth="3.1" />
-      <path
-        d="M28.8 7.6 H37.2 A7.1 7.1 0 0 1 37.2 21.4 H28.8"
-        strokeWidth="1.3"
-      />
-      <path
-        d="M28.8 21.4 H38.6 A7.9 7.9 0 0 1 38.6 36.6 H28.8"
-        strokeWidth="1.3"
-      />
-      {/* Stem serifs */}
-      <path d="M23.9 7 H30.9" strokeWidth="1.05" />
-      <path d="M23.9 37 H30.9" strokeWidth="1.05" />
+
+      {metal ? (
+        <defs>
+          <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#8e7042" />
+            <stop offset="28%" stopColor="#f3e2c7" />
+            <stop offset="52%" stopColor="#e0c398" />
+            <stop offset="78%" stopColor="#f0dcba" />
+            <stop offset="100%" stopColor="#8e7042" />
+          </linearGradient>
+        </defs>
+      ) : null}
+
+      <path d={V_BLADE} />
+      <path d={B_UPPER} />
+      <path d={B_LOWER} />
     </svg>
   );
 }
 
-/** Monogram plus wordmark, as used in the header and footer. */
+/**
+ * Monogram plus wordmark. The wordmark is set in the display serif, matching
+ * the identity's own web application of the brand.
+ */
 export function Wordmark({ className }: { readonly className?: string }) {
   return (
     <span className={`inline-flex items-center gap-3 ${className ?? ""}`}>
-      <Monogram className="h-6 w-auto text-[color:var(--color-champagne)]" />
+      <Monogram className="h-7 w-auto text-[color:var(--color-champagne)]" />
       <span
         className="text-[1.35rem] leading-none tracking-[0.01em] text-[color:var(--color-ivory)]"
         style={{ fontFamily: "var(--font-display)" }}

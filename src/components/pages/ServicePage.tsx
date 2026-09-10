@@ -2,13 +2,14 @@ import Link from "next/link";
 import { services, type Service } from "@/content/services";
 import { faqsFor } from "@/content/faq";
 import { graph, breadcrumbSchema, faqSchema, serviceSchema } from "@/lib/schema";
-import { StaticWorld } from "@/components/cinematic/StaticWorld";
+import { PageBackdrop } from "@/components/cinematic/PageBackdrop";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { FaqSection } from "@/components/ui/FaqSection";
 import { Reveal } from "@/components/ui/Reveal";
 import { ArrowRight, Label } from "@/components/ui/Primitives";
 import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
 import type { Focus } from "@/content/enquiry-flow";
+import type { PlateId } from "@/content/scenes";
 
 /**
  * A service page that stands entirely on its own.
@@ -18,6 +19,13 @@ import type { Focus } from "@/content/enquiry-flow";
  * plain HTML. That is what makes the page useful to a visitor arriving cold
  * from search — and what makes it legible to an answer engine.
  */
+/** Each offer opens in the room that explains it. */
+const ROOMS: Record<Service["slug"], PlateId> = {
+  "website-conversion-systems": "website-chamber",
+  "lead-follow-up-systems": "enquiry-chamber",
+  "website-engine-optimization": "gateway",
+};
+
 export function ServicePage({
   service,
   focus,
@@ -43,7 +51,7 @@ export function ServicePage({
     <>
       {/* ---- Opening ---------------------------------------------------- */}
       <section className="relative overflow-hidden pb-24 pt-[calc(var(--nav-height)+5rem)] lg:pb-32 lg:pt-[calc(var(--nav-height)+7rem)]">
-        <StaticWorld horizon={0.72} intensity={0.85} variant="ambient" />
+        <PageBackdrop plate={ROOMS[service.slug]} focal={[0.52, 0.46]} presence={0.42} />
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />

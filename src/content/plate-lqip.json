@@ -1,0 +1,22 @@
+{
+  "atrium": {
+    "src": "data:image/webp;base64,UklGRkoAAABXRUJQVlA4ID4AAADwAwCdASoUAAsAPu1krU6ppaSiMAgBMB2JZwC+SCHfZGX60nmGY2AAAP7ugqNqoDC/3dangqTJWF2TwcAAAA==",
+    "aspect": 1.7768
+  },
+  "website-chamber": {
+    "src": "data:image/webp;base64,UklGRlAAAABXRUJQVlA4IEQAAADwAwCdASoUAAsAPu1kqk2ppaQiMAgBMB2JZwC7ACP7pOiIOgrUWbYAAP7sHX9eynVvpO915e29mXlGGfbaBrFndSgAAA==",
+    "aspect": 1.7768
+  },
+  "enquiry-chamber": {
+    "src": "data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAABQAwCdASoUAAsAPu1iqU2ppaQiMAgBMB2JZwC+SDKK1CEAAAD+7rfTjQIlU1xnSkJWuFw5NCPsUazAAAA=",
+    "aspect": 1.7768
+  },
+  "system-lab": {
+    "src": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAACQAwCdASoUAAsAPu1kqU2ppaOiMAgBMB2JZwCdAB4+pXL6uBQAAP7w33pKy+7LzOwoR5SQ5wIZUD+7E/QFu0ezUAA=",
+    "aspect": 1.7768
+  },
+  "gateway": {
+    "src": "data:image/webp;base64,UklGRkwAAABXRUJQVlA4IEAAAAAQBACdASoUAAsAPu1iqU2ppaQiMAgBMB2JZwC06CHh6ShnM+57tjzWPAD+70eRPlccJ73dg0++KcnXZYV54GAA",
+    "aspect": 1.7768
+  }
+}

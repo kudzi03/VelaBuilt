@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { workByCategory, workCategories, workItems } from "@/content/work";
 import { pageMetadata } from "@/lib/seo";
 import { breadcrumbSchema, graph } from "@/lib/schema";
-import { StaticWorld } from "@/components/cinematic/StaticWorld";
+import { PageBackdrop } from "@/components/cinematic/PageBackdrop";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { WorkCategoryKey, WorkGrid } from "@/components/work/WorkGrid";
 import { Reveal } from "@/components/ui/Reveal";
@@ -27,7 +27,7 @@ export default function WorkPage() {
   return (
     <>
       <section className="relative overflow-hidden pb-20 pt-[calc(var(--nav-height)+5rem)]">
-        <StaticWorld horizon={0.74} intensity={0.8} variant="ambient" />
+        <PageBackdrop plate="atrium" focal={[0.42, 0.5]} presence={0.4} />
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />

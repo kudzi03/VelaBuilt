@@ -162,7 +162,19 @@ for (const viewport of VIEWPORTS) {
           // Decorative layers are deliberately larger than the frame and are
           // clipped by an overflow-hidden parent; only real content counts.
           const decorative = element.closest("[aria-hidden='true']") !== null;
-          if (!decorative && style.position !== "fixed" && style.overflowX !== "auto") {
+          // Anything inside a horizontal scroller is meant to run past the
+          // frame; only overflow the visitor cannot reach is a fault.
+          let scroller = element.parentElement;
+          let scrollable = false;
+          while (scroller && scroller !== document.body) {
+            const parentStyle = getComputedStyle(scroller);
+            if (parentStyle.overflowX === "auto" || parentStyle.overflowX === "scroll") {
+              scrollable = true;
+              break;
+            }
+            scroller = scroller.parentElement;
+          }
+          if (!decorative && !scrollable && style.position !== "fixed" && style.overflowX !== "auto") {
             results.wide.push(
               `${element.tagName.toLowerCase()}.${String(element.className).slice(0, 40)} right=${Math.round(rect.right)}`,
             );
