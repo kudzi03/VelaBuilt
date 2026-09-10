@@ -599,6 +599,10 @@
     max-height: 100svh;
     padding: 0;
     border: 0;
+    /* A modal <dialog> is centred by the UA's `margin: auto`, which the CSS
+       reset zeroes along with every other margin. Without this it opens
+       pinned to the top-left corner. */
+    margin: auto;
     background: transparent;
     color: var(--color-ivory-dim);
     overflow: hidden;

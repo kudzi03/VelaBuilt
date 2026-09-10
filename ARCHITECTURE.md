@@ -141,5 +141,6 @@ npm run check          # all three
 bash scripts/serve.sh          # restart the production server on :3000
 node scripts/qa.mjs            # every route, desktop + phone
 node scripts/fallbacks.mjs     # reduced motion, no WebGL, no JavaScript
+node scripts/interaction.mjs   # keyboard walk + the whole enquiry flow
 node scripts/peek.mjs 0 0.5 1  # capture the world at points in the journey
 ```

@@ -81,6 +81,8 @@ scripts, `npm audit` clean.
 | Enquiry endpoint | 10 cases incl. strict keys, cross-flow answers, honeypot, timing, rate limit |
 | Structured data | Parses on every page with the expected types |
 | Log hygiene | No submitted email present in server logs |
+| `scripts/interaction.mjs` | Skip link first, 12 focus stops all named, visible and ringed; dialog opens, traps focus, closes on Escape, centres; flow branches, validates, submits and confirms |
+| Contrast | Every text node meets WCAG AA against its real background |
 | 404 | Returns 404 with the designed page |
 
 ## Bugs found and fixed during QA
@@ -101,6 +103,10 @@ browser:
 9. `--grain-url` was never defined, so film grain never rendered.
 10. Camera path and station coordinates disagreed, so the camera overshot the
     final station.
+11. The enquiry dialog opened pinned to the top-left corner: a modal
+    `<dialog>` is centred by the UA's `margin: auto`, which the CSS reset
+    zeroes along with every other margin.
+12. `--color-faint` failed WCAG AA at body size on panel backgrounds.
 
 ## Not done, and why
 

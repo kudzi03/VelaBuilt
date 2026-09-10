@@ -24,6 +24,7 @@ npm run build && npm start
 bash scripts/serve.sh          # production server on :3000
 node scripts/qa.mjs            # every route, desktop + phone
 node scripts/fallbacks.mjs     # reduced motion, no WebGL, no JavaScript
+node scripts/interaction.mjs   # keyboard walk + the whole enquiry flow
 node scripts/peek.mjs 0 0.5 1  # capture the 3D world at points in the journey
 ```
 
