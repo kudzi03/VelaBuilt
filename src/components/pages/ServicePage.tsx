@@ -43,7 +43,7 @@ export function ServicePage({
     <>
       {/* ---- Opening ---------------------------------------------------- */}
       <section className="relative overflow-hidden pb-24 pt-[calc(var(--nav-height)+5rem)] lg:pb-32 lg:pt-[calc(var(--nav-height)+7rem)]">
-        <StaticWorld horizon={0.72} intensity={0.85} />
+        <StaticWorld horizon={0.72} intensity={0.85} variant="ambient" />
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />

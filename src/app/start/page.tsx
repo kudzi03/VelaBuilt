@@ -40,7 +40,7 @@ export default async function StartPage({
   return (
     <>
       <section className="relative min-h-[100svh] overflow-hidden pb-20 pt-[calc(var(--nav-height)+3.5rem)]">
-        <StaticWorld horizon={0.78} intensity={0.7} />
+        <StaticWorld horizon={0.78} intensity={0.7} variant="ambient" />
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />

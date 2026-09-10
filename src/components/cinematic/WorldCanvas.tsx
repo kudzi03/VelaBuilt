@@ -129,28 +129,9 @@ function DistantLight() {
  * something is actually moving.
  */
 function Rig() {
-  const { camera, invalidate, size } = useThree();
+  const invalidate = useThree((state) => state.invalidate);
   const position = useMemo(() => new THREE.Vector3(), []);
   const target = useMemo(() => new THREE.Vector3(), []);
-  const lastProgress = useRef(-1);
-
-  /**
-   * A 40° lens frames the corridor on a wide screen and crops it to a slot on
-   * a phone, with the Operator filling half the frame. Widening the vertical
-   * field as the viewport narrows keeps roughly the same amount of
-   * architecture in shot at every aspect — the composition is designed once
-   * and holds, rather than being designed for a laptop and cropped elsewhere.
-   */
-  useEffect(() => {
-    const aspect = size.width / Math.max(1, size.height);
-    const fov = Math.min(62, Math.max(40, 40 * Math.sqrt(1.6 / Math.max(0.3, aspect))));
-    const perspective = camera as THREE.PerspectiveCamera;
-    if (Math.abs(perspective.fov - fov) > 0.5) {
-      perspective.fov = fov;
-      perspective.updateProjectionMatrix();
-      invalidate();
-    }
-  }, [camera, invalidate, size.width, size.height]);
 
   // Any journey movement, or any live animation, asks for the next frame.
   useEffect(() => {
@@ -163,14 +144,32 @@ function Rig() {
     return () => cancelAnimationFrame(frame);
   }, [invalidate]);
 
-  useFrame(() => {
+  // The camera comes from the frame state rather than from useThree: the rig
+  // writes to it every frame, and mutating a value a hook handed back is the
+  // kind of thing that quietly stops working when a library changes.
+  useFrame((state) => {
+    const camera = state.camera as THREE.PerspectiveCamera;
     const progress = journey.smooth;
+
     cameraPosition(progress, position);
     lookTarget(progress, target);
-
     camera.position.copy(position);
     camera.lookAt(target);
-    lastProgress.current = progress;
+
+    /**
+     * A 40° lens frames the corridor on a wide screen and crops it to a slot
+     * on a phone, with the Operator filling half the frame. Widening the
+     * vertical field as the viewport narrows keeps roughly the same amount of
+     * architecture in shot at every aspect — the composition is designed once
+     * and holds, rather than being designed for a laptop and cropped
+     * everywhere else.
+     */
+    const aspect = state.size.width / Math.max(1, state.size.height);
+    const fov = Math.min(62, Math.max(40, 40 * Math.sqrt(1.6 / Math.max(0.3, aspect))));
+    if (Math.abs(camera.fov - fov) > 0.5) {
+      camera.fov = fov;
+      camera.updateProjectionMatrix();
+    }
   });
 
   return null;

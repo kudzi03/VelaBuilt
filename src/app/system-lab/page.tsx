@@ -26,7 +26,7 @@ export default function SystemLabPage() {
   return (
     <>
       <section className="relative overflow-hidden pb-20 pt-[calc(var(--nav-height)+5rem)]">
-        <StaticWorld horizon={0.76} intensity={0.8} />
+        <StaticWorld horizon={0.76} intensity={0.8} variant="ambient" />
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />

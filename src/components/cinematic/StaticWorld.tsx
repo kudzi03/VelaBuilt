@@ -18,14 +18,23 @@ export function StaticWorld({
   horizon = 0.52,
   intensity = 1,
   grid = true,
+  /**
+   * "full" draws the hard horizon line and the floor — the opening frame, and
+   * the whole of Tier C. "ambient" keeps only the glow: on an inner page the
+   * hard line lands wherever the section happens to end and reads as a rule
+   * struck through the copy.
+   */
+  variant = "full",
   className,
 }: {
   readonly horizon?: number;
   readonly intensity?: number;
   readonly grid?: boolean;
+  readonly variant?: "full" | "ambient";
   readonly className?: string;
 }) {
   const top = `${horizon * 100}%`;
+  const full = variant === "full";
 
   return (
     <div
@@ -35,7 +44,7 @@ export function StaticWorld({
     >
       {/* Champagne horizon: the light the whole identity is built around. */}
       <span className="horizon-bloom" style={{ top }} />
-      <span className="horizon-line" style={{ top }} />
+      {full ? <span className="horizon-line" style={{ top }} /> : null}
 
       {/* Architectural seams down each side of the frame. */}
       <span
@@ -53,7 +62,7 @@ export function StaticWorld({
         }}
       />
 
-      {grid ? <span className="floor-grid" style={{ top }} /> : null}
+      {grid && full ? <span className="floor-grid" style={{ top }} /> : null}
 
       <span className="vignette" />
       <span className="grain" />

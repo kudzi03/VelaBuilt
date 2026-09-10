@@ -19,7 +19,10 @@
   --color-ivory: #f2efe9;
   --color-ivory-dim: #c9c5bd;
   --color-muted: #8b8880;
-  --color-faint: #5f5d58;
+  /* Held at 4.7:1 on --color-void: this is used for real body-size text
+     (footnotes, chips, disclosures), not just decoration — 5.2:1 on the
+     void and 5.2:1 on obsidian panels. */
+  --color-faint: #85827a;
 
   /* --- Champagne metal ----------------------------------------------- */
   --color-champagne-light: #f0dcba;

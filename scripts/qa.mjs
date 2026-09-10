@@ -107,6 +107,49 @@ for (const viewport of VIEWPORTS) {
         canvas: Boolean(document.querySelector("canvas")),
         tiny: [],
         wide: [],
+        contrast: [],
+      };
+
+      // Relative luminance and contrast ratio, per WCAG 2.
+      const luminance = (rgb) => {
+        const channel = (value) => {
+          const v = value / 255;
+          return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        };
+        return (
+          0.2126 * channel(rgb[0]) + 0.7152 * channel(rgb[1]) + 0.0722 * channel(rgb[2])
+        );
+      };
+
+      const parseColor = (value) => {
+        const match = value.match(/rgba?\(([^)]+)\)/);
+        if (!match) return null;
+        const parts = match[1].split(",").map((n) => Number.parseFloat(n));
+        // Text mid-fade is invisible, not low-contrast — skip it.
+        if (parts.length > 3 && parts[3] < 0.95) return null;
+        return parts.slice(0, 3);
+      };
+
+      const contrast = (foreground, background) => {
+        const a = parseColor(foreground);
+        const b = parseColor(background);
+        if (!a || !b) return 0;
+        const la = luminance(a);
+        const lb = luminance(b);
+        return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+      };
+
+      /** First opaque background colour up the ancestor chain. */
+      const effectiveBackground = (element) => {
+        let node = element;
+        while (node && node !== document.documentElement) {
+          const background = getComputedStyle(node).backgroundColor;
+          const parsed = parseColor(background);
+          if (parsed) return background;
+          node = node.parentElement;
+        }
+        // The page ground: <html> carries it, since <body> is transparent.
+        return "rgb(5, 5, 6)";
       };
 
       const viewportWidth = doc.clientWidth;
@@ -128,15 +171,31 @@ for (const viewport of VIEWPORTS) {
 
         const text = element.textContent?.trim() ?? "";
         if (text.length > 0 && element.children.length === 0) {
-          const size = Number.parseFloat(getComputedStyle(element).fontSize);
+          const style = getComputedStyle(element);
+          const size = Number.parseFloat(style.fontSize);
           if (size > 0 && size < 12) {
             results.tiny.push(`${Math.round(size * 10) / 10}px "${text.slice(0, 30)}"`);
+          }
+
+          // WCAG AA contrast against the background actually behind the text.
+          // Most of the site sits on near-black, but a primary button is dark
+          // ink on ivory — assuming one ground would report every CTA as
+          // failing and make the whole check worthless.
+          const ratio = contrast(style.color, effectiveBackground(element));
+          const weight = Number.parseInt(style.fontWeight, 10) || 400;
+          const large = size >= 24 || (size >= 18.66 && weight >= 700);
+          const required = large ? 3 : 4.5;
+          if (ratio > 0 && ratio < required) {
+            results.contrast.push(
+              `${ratio.toFixed(2)}:1 (needs ${required}) ${style.color} "${text.slice(0, 26)}"`,
+            );
           }
         }
       }
 
       results.wide = [...new Set(results.wide)].slice(0, 5);
       results.tiny = [...new Set(results.tiny)].slice(0, 5);
+      results.contrast = [...new Set(results.contrast)].slice(0, 6);
       return results;
     });
 
@@ -145,6 +204,7 @@ for (const viewport of VIEWPORTS) {
     }
     for (const wide of audit.wide) note(route, viewport.name, `overflows viewport: ${wide}`);
     for (const tiny of audit.tiny) note(route, viewport.name, `tiny text ${tiny}`);
+    for (const low of audit.contrast) note(route, viewport.name, `low contrast ${low}`);
     if (audit.h1Count !== 1) note(route, viewport.name, `${audit.h1Count} <h1> elements`);
     if (!audit.title) note(route, viewport.name, "missing <title>");
     if (!audit.description) note(route, viewport.name, "missing meta description");
