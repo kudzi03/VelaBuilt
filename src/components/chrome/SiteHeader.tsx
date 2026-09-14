@@ -60,7 +60,7 @@ export function SiteHeader() {
   return (
     <header
       data-settled={settled}
-      className="fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,border-color] duration-700 data-[settled=true]:border-b data-[settled=true]:border-[color:var(--color-hairline)] data-[settled=true]:bg-[rgb(5_5_6/0.72)] data-[settled=true]:backdrop-blur-xl"
+      className="site-header fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,border-color] duration-700 data-[settled=true]:border-b data-[settled=true]:border-[color:var(--color-hairline)] data-[settled=true]:bg-[rgb(5_5_6/0.72)] data-[settled=true]:backdrop-blur-xl"
       style={{ ["--nav-height" as string]: "4.75rem" }}
     >
       <nav
@@ -86,7 +86,7 @@ export function SiteHeader() {
                 <Link
                   href={item.href}
                   aria-current={active ? "page" : undefined}
-                  className="label relative py-2 transition-colors duration-500 hover:text-[color:var(--color-ivory)] aria-[current=page]:text-[color:var(--color-champagne)]"
+                  className="label relative py-2 text-[color:var(--color-ivory-dim)] transition-colors duration-500 hover:text-[color:var(--color-ivory)] aria-[current=page]:text-[color:var(--color-champagne)]"
                 >
                   {item.label}
                 </Link>

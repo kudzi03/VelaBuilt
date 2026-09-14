@@ -37,7 +37,11 @@ export function SiteFooter() {
           <div className="grid gap-10 sm:grid-cols-3">
             {footerNav.map((column) => (
               <nav key={column.heading} aria-label={column.heading}>
-                <Label tone="champagne" as="h2" className="mb-6">
+                {/* Not a heading: these name link groups, and the <nav>
+                    landmark already carries the same name for screen readers.
+                    As <h2>s they put three "Solutions/Studio/Contact" entries
+                    at the top level of every page's outline. */}
+                <Label tone="champagne" className="mb-6">
                   {column.heading}
                 </Label>
                 <ul className="flex flex-col gap-3.5">

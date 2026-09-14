@@ -25,14 +25,14 @@ export function FaqSection({
     <section id={id} aria-labelledby={`${id}-heading`} className="relative py-24 lg:py-32">
       <div className="shell">
         <div className="grid gap-12 lg:grid-cols-[auto_1fr] lg:gap-24">
-          <Reveal>
+          <Reveal className="scrim">
             <Label tone="champagne">Questions</Label>
             <h2 id={`${id}-heading`} className="display-lg mt-5 max-w-[12ch]">
               {heading}
             </h2>
           </Reveal>
 
-          <Reveal delay={120}>
+          <Reveal delay={120} className="scrim">
             <ul className="border-t border-[color:var(--color-hairline)]">
               {entries.map((entry) => (
                 <li key={entry.question} className="border-b border-[color:var(--color-hairline)]">

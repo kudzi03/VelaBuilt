@@ -89,7 +89,7 @@ export const SCENES: readonly Scene[] = [
   {
     chapter: "website",
     plate: "website-chamber",
-    alt: "The same building, seen toward a lit portal. Monumental black glass surfaces carry the VelaBuilt mark and the words A More Capable Tomorrow. The floor throws long champagne reflections toward a glazed opening onto a mountain sunset.",
+    alt: "The same building, seen toward a lit opening at the top of low steps. A tall black column carries the VelaBuilt mark and the words Ideas, Systems, Reality, between screens reading A More Capable Tomorrow and A Brighter Tomorrow. A man in a suit walks away from camera toward a mountain sunset beyond the glass.",
     focal: [0.52, 0.55],
     // The lit portal at the centre of the chamber.
     portraitFocal: [0.5, 0.56],

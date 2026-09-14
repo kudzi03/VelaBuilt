@@ -178,8 +178,10 @@ export function SystemLabRoom({
           })}
         </ul>
 
-        {/* The chamber's own signage, as HTML — never baked into the image. */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-6 p-5 sm:p-7">
+        {/* The chamber's own signage, as HTML — never baked into the image.
+            It sits on the floor of a photograph, so it carries its own
+            shadow: solid (90%) under the text line, falling away above it. */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-6 bg-[linear-gradient(0deg,rgb(5_5_6/0.9)_0%,rgb(5_5_6/0.9)_78%,rgb(5_5_6/0)_100%)] p-5 sm:p-7">
           <Label className="!text-[0.78rem]">Structure only · no customer data</Label>
           <Label tone="champagne" className="!text-[0.78rem]">
             {active.name}

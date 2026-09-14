@@ -130,13 +130,13 @@ const confirmation = await page.evaluate(() => {
   return {
     thanked: /thank you/i.test(text),
     reference: /VB-\d{4}-/.test(text),
-    stages: /Enquiry/.test(text) && /Review/.test(text) && /Follow-up/.test(text),
+    stages: /Inquiry/.test(text) && /Review/.test(text) && /Follow-up/.test(text),
     usingASystem: /VelaBuilt system right now/i.test(text),
   };
 });
 if (!confirmation.thanked) fail("no confirmation shown after submitting");
 if (!confirmation.reference) fail("no reference shown");
-if (!confirmation.stages) fail("the enquiry→review→follow-up stages were not shown");
+if (!confirmation.stages) fail("the inquiry→review→follow-up stages were not shown");
 console.log("enquiry:", JSON.stringify(confirmation));
 
 await page.screenshot({ path: "/tmp/velabuilt-qa/enquiry-confirmation.png" });

@@ -66,7 +66,7 @@ export default function HomePage() {
                   Explore our work.
                 </h2>
               </div>
-              <p className="max-w-[44ch] text-sm leading-relaxed text-[color:var(--color-muted)]">
+              <p className="scrim max-w-[44ch] text-sm leading-relaxed text-[color:var(--color-muted)]">
                 We publish concepts and working demonstrations. Client work appears
                 here when it is delivered and the client has agreed to it — not
                 before.

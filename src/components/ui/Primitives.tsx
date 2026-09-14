@@ -11,7 +11,7 @@ export function Label({
   readonly children: ReactNode;
   readonly tone?: "muted" | "champagne";
   readonly className?: string;
-  readonly as?: "p" | "span" | "div" | "h2";
+  readonly as?: "p" | "span" | "div";
 }) {
   return (
     <Tag

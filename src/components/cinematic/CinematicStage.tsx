@@ -131,15 +131,22 @@ function PlateSequence() {
         if (index === 0) return null;
         if (index > reached + 1) return null;
 
+        const current = index === chapter;
+
         return (
           <div
             key={CHAPTERS[index]!.id}
+            // Every plate keeps its description; plates that are faded out are
+            // hidden from assistive technology instead, so only the room on
+            // screen is announced. Blanking the alt to "" said the image was
+            // decorative, which it is not.
+            aria-hidden={current ? undefined : true}
             className="absolute inset-0 transition-opacity duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none"
-            style={{ opacity: index === chapter ? 1 : 0 }}
+            style={{ opacity: current ? 1 : 0 }}
           >
             <CssPlate
               plate={scene.plate}
-              alt={index === chapter ? scene.alt : ""}
+              alt={scene.alt}
               focal={scene.focal}
               portraitFocal={scene.portraitFocal}
             />

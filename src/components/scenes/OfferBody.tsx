@@ -69,7 +69,9 @@ export function OfferBody({
               </li>
             ))}
           </ul>
-          <p className="mt-6 max-w-[46ch] text-sm leading-relaxed text-[color:var(--color-muted)]">
+          {/* The boundary is read, not glanced at, and sits in the right-hand
+              column where the plates are brightest: a fixed shield. */}
+          <p className="scrim mt-6 max-w-[46ch] text-sm leading-relaxed text-[color:var(--color-muted)]">
             {service.boundary}
           </p>
         </div>

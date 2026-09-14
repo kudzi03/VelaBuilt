@@ -232,6 +232,17 @@
     color: transparent;
   }
 
+  /* The foil is transparent text showing a clipped gradient. A forced-colours
+     mode (Windows High Contrast) can drop the gradient while leaving the text
+     fill transparent, and the word disappears. Hand it back to the system. */
+  @media (forced-colors: active) {
+    .foil {
+      background: none;
+      color: CanvasText;
+      -webkit-text-fill-color: CanvasText;
+    }
+  }
+
   /* ---- Layout ------------------------------------------------------- */
 
   .shell {
@@ -268,6 +279,11 @@
     background:
       linear-gradient(180deg, rgb(255 255 255 / 0.035) 0%, transparent 42%),
       linear-gradient(165deg, var(--color-graphite-raised) 0%, var(--color-obsidian) 100%);
+    /* Never visible — the gradient above is opaque. It exists because
+       contrast checkers ignore background-image, fall through to the hairline
+       grid behind the card, and report its copy as failing over a photograph.
+       This names the surface the text actually sits on (its lightest end). */
+    background-color: var(--color-graphite-raised);
     border: 1px solid var(--color-hairline);
     overflow: hidden;
   }
@@ -504,8 +520,6 @@
     border: 0;
     cursor: pointer;
     white-space: nowrap;
-    transition: opacity 700ms var(--ease-cinematic);
-    opacity: 0.62;
   }
 
   /* Stations on the right half hang their label inboard, so the ones at the
@@ -514,14 +528,9 @@
     flex-direction: row-reverse;
   }
 
-  .lab-station[data-state="connected"] {
-    opacity: 0.9;
-  }
-
-  .lab-station[data-state="active"] {
-    opacity: 1;
-  }
-
+  /* Idle and connected stations recede through the light and the ink, not
+     through opacity on the whole button: fading the button faded the name's
+     backplate with it and put the text straight back on the lit glass. */
   .lab-station__node {
     width: 0.45rem;
     height: 0.45rem;
@@ -529,9 +538,19 @@
     border-radius: 9999px;
     background: var(--color-champagne-deep);
     box-shadow: 0 0 0 0 rgb(224 195 152 / 0.45);
+    opacity: 0.62;
     transition:
+      opacity 700ms var(--ease-cinematic),
       background-color 600ms var(--ease-cinematic),
       box-shadow 700ms var(--ease-cinematic);
+  }
+
+  .lab-station[data-state="connected"] .lab-station__node {
+    opacity: 0.9;
+  }
+
+  .lab-station[data-state="active"] .lab-station__node {
+    opacity: 1;
   }
 
   .lab-station[data-state="connected"] .lab-station__node {
@@ -547,14 +566,32 @@
   }
 
   .lab-station__name {
+    position: relative;
+    isolation: isolate;
     font-family: var(--font-sans);
     font-size: 0.78rem;
     font-weight: 400;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--color-ivory-dim);
+    color: var(--color-muted);
     text-shadow: 0 1px 10px rgb(4 4 5 / 0.9), 0 1px 2px rgb(4 4 5 / 0.8);
     transition: color 600ms var(--ease-cinematic);
+  }
+
+  /* A name is signage on lit glass. The plate behind it is a photograph, so
+     its contrast is not a fixed number — this backplate makes it one: at
+     90% black even a pure-white pixel behind it leaves muted ink at 4.6:1.
+     Drawn outside the text box, so it moves nothing. */
+  .lab-station__name::before {
+    content: "";
+    position: absolute;
+    inset: -0.3em -0.6em;
+    z-index: -1;
+    background: rgb(5 5 6 / 0.9);
+  }
+
+  .lab-station[data-state="connected"] .lab-station__name {
+    color: var(--color-ivory-dim);
   }
 
   .lab-station[data-state="active"] .lab-station__name {
@@ -602,6 +639,38 @@
     }
   }
 
+  /* ---- The header over the opening frame ------------------------------ */
+
+  /*
+   * Before the visitor scrolls, the header is transparent over the hero plate
+   * and its nav sat on whatever the plate put there — including the atrium's
+   * vertical light strips, which took it to 2:1. Nav ink is ivory-dim, and
+   * this shadow holds 72% black under the nav line: the same density as the
+   * settled bar, so the ratio is at least 5:1 in both states, over any pixel.
+   * Desktop only — the phone header carries no text links.
+   */
+  @media (min-width: 64rem) {
+    .site-header::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 -1.5rem;
+      z-index: -1;
+      pointer-events: none;
+      background: linear-gradient(
+        180deg,
+        rgb(5 5 6 / 0.72) 0%,
+        rgb(5 5 6 / 0.72) 64%,
+        rgb(5 5 6 / 0) 100%
+      );
+      transition: opacity 700ms var(--ease-cinematic);
+    }
+
+    /* Settled, the bar's own 72% background takes over. */
+    .site-header[data-settled="true"]::before {
+      opacity: 0;
+    }
+  }
+
   /* ---- Copy sitting over the world ----------------------------------- */
 
   /*
@@ -619,6 +688,12 @@
   .on-world {
     position: relative;
     isolation: isolate;
+    /* Muted ink is lifted one step over the world. The shield varies with the
+       plate behind it, and at #8b8880 the brightest plates took small muted
+       copy to 4.1:1. Measured against rendered pixels on every muted element
+       over the world, this holds at least 4.8:1. Longer muted copy that sits
+       on the brightest plates uses .scrim instead, which does not vary. */
+    --color-muted: #9c9990;
   }
 
   .on-world::before {
@@ -676,6 +751,38 @@
     text-shadow:
       0 1px 2px rgb(5 5 6 / 0.55),
       0 2px 18px rgb(5 5 6 / 0.45);
+  }
+
+  /*
+   * A fixed shield, for copy that is read rather than glanced at — the FAQ at
+   * the end of the homepage sits on the brightest plate in the sequence, the
+   * horizon behind the globe. `.on-world` lets the room stay bright behind
+   * the words; answers of several lines need a ratio that does not depend on
+   * where the horizon falls. The core is 90% black, which holds muted ink at
+   * 4.6:1 over even a pure-white pixel; only the bleed beyond the block's own
+   * box is feathered, so the text never sits on the fade. Outside the box, so
+   * no layout moves. Without mask support it is a plain rectangle — still
+   * the same ratio.
+   */
+  .scrim {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .scrim::before {
+    --scrim-bleed-x: calc(var(--spacing-gutter) * 0.75);
+    --scrim-bleed-y: 2.5rem;
+    content: "";
+    position: absolute;
+    /* Horizontal bleed stays inside the shell gutter: no horizontal scroll. */
+    inset: calc(var(--scrim-bleed-y) * -1) calc(var(--scrim-bleed-x) * -1);
+    z-index: -1;
+    pointer-events: none;
+    background: rgb(5 5 6 / 0.9);
+    mask-image:
+      linear-gradient(90deg, transparent 0, #000 var(--scrim-bleed-x), #000 calc(100% - var(--scrim-bleed-x)), transparent 100%),
+      linear-gradient(180deg, transparent 0, #000 var(--scrim-bleed-y), #000 calc(100% - var(--scrim-bleed-y)), transparent 100%);
+    mask-composite: intersect;
   }
 
   /* ---- Cinematic backdrop (also the Tier C experience) --------------- */
