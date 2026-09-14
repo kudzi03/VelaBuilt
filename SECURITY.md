@@ -18,7 +18,9 @@ integration and nothing else.
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
-| `NEXT_PUBLIC_SITE_URL` | Production | Canonical origin. Public. |
+| `NEXT_PUBLIC_SITE_URL` | At domain cutover | Canonical origin. Public. See DOMAIN-SETUP.md |
+| `CANONICAL_HOST_REDIRECT` | No | `1` to 301 the old Vercel host to the canonical origin |
+| `CANONICAL_REDIRECT_FROM` | No | Comma-separated hosts to redirect (default `vela-built.vercel.app`) |
 | `ENQUIRY_ADAPTER` | No | `log` (default) or `webhook` |
 | `ENQUIRY_WEBHOOK_URL` | With `webhook` | Server-to-server inbound endpoint |
 | `ENQUIRY_WEBHOOK_SECRET` | No | HMAC-SHA256 signing key, min 24 chars |

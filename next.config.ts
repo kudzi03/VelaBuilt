@@ -1,4 +1,54 @@
 import type { NextConfig } from "next";
+import { resolveSiteOrigin } from "./src/lib/site-origin";
+
+/**
+ * CANONICAL ORIGIN
+ *
+ * Resolved once, here, and inlined into every bundle below as
+ * NEXT_PUBLIC_SITE_URL — so server and client code can never disagree about
+ * the host. See src/lib/site-origin.ts for the precedence rules.
+ */
+const canonical = resolveSiteOrigin(process.env);
+
+/**
+ * LEGACY HOST → CANONICAL HOST (301)
+ *
+ * Off by default. Turn on with CANONICAL_HOST_REDIRECT=1 only after the
+ * canonical domain serves this deployment (DOMAIN-SETUP.md, step 5). Redirects
+ * are compiled at build time, so changing the flag needs a redeploy.
+ *
+ * Guards:
+ *   · Requires NEXT_PUBLIC_SITE_URL to be set explicitly. Redirecting to a
+ *     fallback origin would be redirecting to a guess.
+ *   · Never redirects a host to itself.
+ *   · /api/* is exempt. A 301 turns a POST into a GET, so an enquiry sent from
+ *     a page still open on the old host would be lost rather than delivered.
+ *
+ * CANONICAL_REDIRECT_FROM overrides the legacy host list (comma-separated).
+ */
+const LEGACY_HOSTS = ["vela-built.vercel.app"];
+
+function legacyHostRedirects() {
+  if (process.env.CANONICAL_HOST_REDIRECT !== "1") return [];
+
+  if (canonical.source !== "NEXT_PUBLIC_SITE_URL") {
+    throw new Error(
+      "CANONICAL_HOST_REDIRECT=1 requires NEXT_PUBLIC_SITE_URL to be set explicitly.",
+    );
+  }
+
+  const canonicalHost = new URL(canonical.origin).host;
+  const fromHosts = (process.env.CANONICAL_REDIRECT_FROM?.split(",") ?? LEGACY_HOSTS)
+    .map((host) => host.trim().toLowerCase())
+    .filter((host) => host && host !== canonicalHost);
+
+  return fromHosts.map((host) => ({
+    source: "/:path((?!api/).*)",
+    has: [{ type: "host" as const, value: host.replaceAll(".", "\\.") }],
+    destination: `${canonical.origin}/:path`,
+    statusCode: 301 as const,
+  }));
+}
 
 /**
  * SECURITY HEADERS
@@ -77,6 +127,8 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
 
+  env: { NEXT_PUBLIC_SITE_URL: canonical.origin },
+
   // Type errors must fail the build, never be silently ignored. Linting runs
   // as its own step (`npm run lint`) — Next 16 no longer runs it during build.
   typescript: { ignoreBuildErrors: false },
@@ -88,6 +140,10 @@ const nextConfig: NextConfig = {
   experimental: {
     // three.js and drei are large; import only what each page uses.
     optimizePackageImports: ["@react-three/drei", "three", "motion"],
+  },
+
+  async redirects() {
+    return legacyHostRedirects();
   },
 
   async headers() {

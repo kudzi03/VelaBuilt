@@ -24,6 +24,7 @@
  *   4. Outbound requests are time-boxed. A hanging integration is an outage.
  */
 
+import { site } from "@/content/site";
 import { serverEnv } from "@/lib/env";
 import type { EnquiryInput } from "./schema";
 
@@ -89,7 +90,7 @@ const webhookAdapter: EnquiryAdapter = {
         website: record.website ?? null,
       },
       message: record.message ?? null,
-      source: "velabuilt.com/start",
+      source: `${new URL(site.url).host}/start`,
     });
 
     const headers: Record<string, string> = {

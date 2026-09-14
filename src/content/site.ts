@@ -6,39 +6,20 @@
  * entity consistent for people, search engines and answer engines alike.
  */
 
-const DEFAULT_ORIGIN = "https://velabuilt.com";
-
-/**
- * The canonical origin. Overridden in production via NEXT_PUBLIC_SITE_URL.
- *
- * `??` is not enough here. The bundler inlines every NEXT_PUBLIC_* reference at
- * build time and substitutes an **empty string** when the variable is absent,
- * so the nullish fallback never fires and `new URL("")` throws while Next is
- * collecting page data — which fails the whole build, not just one route. A
- * malformed value has to fall back for the same reason.
- *
- * Falling back rather than throwing is deliberate: an unconfigured deployment
- * should still build and serve. It gets the real canonical host, which is also
- * the correct canonical for a preview deployment.
- */
-function canonicalOrigin(): string {
-  const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (!raw) return DEFAULT_ORIGIN;
-
-  try {
-    // Round-trips through URL so a trailing slash, a stray path or a missing
-    // scheme can never reach a canonical tag, a sitemap entry or an OG URL.
-    return new URL(raw).origin;
-  } catch {
-    return DEFAULT_ORIGIN;
-  }
-}
+import { resolveSiteOrigin } from "@/lib/site-origin";
 
 export const site = {
   name: "VelaBuilt",
   legalName: "VelaBuilt",
-  /** Override in production via NEXT_PUBLIC_SITE_URL. */
-  url: canonicalOrigin(),
+  /**
+   * The canonical origin. next.config.ts resolves it once at build time and
+   * inlines it as NEXT_PUBLIC_SITE_URL, so this reads the same value in every
+   * bundle. Only that variable is passed through — never `process.env` whole —
+   * so the bundler can inline it. See src/lib/site-origin.ts.
+   */
+  url: resolveSiteOrigin({
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+  }).origin,
   email: "hello@velabuilt.com",
   locale: "en_GB",
 

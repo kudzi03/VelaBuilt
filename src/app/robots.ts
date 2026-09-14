@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { site } from "@/content/site";
 import { absoluteUrl } from "@/lib/seo";
 
 /**
@@ -19,6 +20,7 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: absoluteUrl("/sitemap.xml"),
-    host: absoluteUrl("/"),
+    // The bare origin: Host names a host, not a page, so no trailing slash.
+    host: site.url,
   };
 }
