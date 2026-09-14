@@ -138,7 +138,7 @@ export function SceneFriction() {
           <Reveal delay={140}>
             <div className="prose-vb max-w-[52ch]">
               <p>
-                The website sits in one place. The enquiries land somewhere else.
+                The website sits in one place. The inquiries land somewhere else.
                 What was promised on the phone is in someone&rsquo;s head, the
                 quote is in an inbox, and the follow-up is on a sticky note.
               </p>

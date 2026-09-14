@@ -26,7 +26,7 @@ const STAGES = [
   },
   {
     title: "Establish what is true",
-    body: "What the site does today, where enquiries go, what is measured and what is guessed. We would rather find out that a rebuild is unnecessary than sell one.",
+    body: "What the site does today, where inquiries go, what is measured and what is guessed. We would rather find out that a rebuild is unnecessary than sell one.",
   },
   {
     title: "Demonstrate, don’t describe",
@@ -49,7 +49,7 @@ const PRINCIPLES = [
   },
   {
     title: "No invented proof",
-    body: "No fabricated testimonials, no borrowed client logos, no ranking screenshots, no dashboards of made-up numbers. Concepts are labelled concepts. Demonstrations are labelled demonstrations.",
+    body: "No fabricated testimonials, no borrowed client logos, no ranking screenshots, no dashboards of made-up numbers. Concepts are labeled concepts. Demonstrations are labeled demonstrations.",
   },
   {
     title: "Automation with a person in it",

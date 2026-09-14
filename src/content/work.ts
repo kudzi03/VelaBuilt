@@ -59,7 +59,7 @@ export const workItems: readonly WorkItem[] = [
     title: "Follow-Up & Recovery",
     category: "system-demo",
     problem:
-      "An enquiry arrives on a Friday afternoon and is remembered on Tuesday, if at all.",
+      "An inquiry arrives on a Friday afternoon and is remembered on Tuesday, if at all.",
     response:
       "An interactive walkthrough of capture, qualification, sequenced follow-up, escalation and booking — with the point a person takes over made explicit.",
     disciplines: ["CRM", "Follow-up", "Booking", "AI assistance"],

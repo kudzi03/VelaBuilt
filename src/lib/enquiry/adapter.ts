@@ -166,7 +166,7 @@ const emailAdapter: EnquiryAdapter = {
     });
 
     const info = await transport.sendMail({
-      from: { name: `${site.name} enquiries`, address: env.ENQUIRY_FROM_EMAIL ?? env.SMTP_USER },
+      from: { name: `${site.name} inquiries`, address: env.ENQUIRY_FROM_EMAIL ?? env.SMTP_USER },
       to: env.ENQUIRY_NOTIFY_EMAIL ?? site.email,
       replyTo: { name: record.name, address: record.email },
       subject: enquirySubject(record.focus, record.reference),

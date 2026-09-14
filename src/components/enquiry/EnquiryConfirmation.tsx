@@ -15,7 +15,7 @@ import { BookingLink } from "@/components/chrome/ContactLinks";
 const STAGES = [
   {
     key: "enquiry",
-    title: "Enquiry",
+    title: "Inquiry",
     body: "Received, recorded and referenced. It is no longer in anyone’s memory.",
   },
   {

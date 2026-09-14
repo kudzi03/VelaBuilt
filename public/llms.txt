@@ -14,14 +14,14 @@ pages linked below.
 ## Solutions
 
 - [Website Conversion System](/website-conversion-systems): A premium website
-  rebuilt around trust and enquiry — positioning, design, user experience,
+  rebuilt around trust and inquiry — positioning, design, user experience,
   performance and the conversion path from first visit to first contact. For
   businesses whose website no longer reflects the quality of the work, or leaves
   visitors unsure what to do next.
 - [Lead Follow-Up & Recovery System](/lead-follow-up-systems): Infrastructure
-  that catches every enquiry, qualifies it, follows it up on a schedule and puts
+  that catches every inquiry, qualifies it, follows it up on a schedule and puts
   the right conversations in the calendar without anyone remembering to. For
-  businesses already receiving enquiries that lose opportunities to inconsistent
+  businesses already receiving inquiries that lose opportunities to inconsistent
   follow-up.
 - [Website Engine Optimization](/website-engine-optimization): Technical
   foundations and information architecture that make a business straightforward
@@ -36,15 +36,15 @@ pages linked below.
   what a person still decides.
 - [Approach](/approach): How a project runs, and the principles held to.
 - [About](/about): What VelaBuilt is, who it works with, and what it does not claim.
-- [Work](/work): Concept studies and system demonstrations, each labelled.
-- [Start a project](/start): The enquiry form.
+- [Work](/work): Concept studies and system demonstrations, each labeled.
+- [Start a project](/start): The inquiry form.
 - [Privacy](/privacy): What the site collects and why.
 
 ## What VelaBuilt does not claim
 
 - No client results are published that cannot be evidenced.
-- Work labelled CONCEPT is a study, not a delivered client project.
-- Work labelled SYSTEM DEMO uses sample data, not real customer records.
+- Work labeled CONCEPT is a study, not a delivered client project.
+- Work labeled SYSTEM DEMO uses sample data, not real customer records.
 - No performance, revenue or ranking guarantees are made anywhere on the site.
 - At the time of writing there is no published client work; the site launched
   with concepts and demonstrations rather than invented case studies.

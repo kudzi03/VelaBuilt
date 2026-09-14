@@ -33,7 +33,7 @@ export function organizationSchema(): Json {
     sameAs: [site.social.instagram],
     knowsAbout: [
       "Web design",
-      "Conversion optimisation",
+      "Conversion optimization",
       "Business process automation",
       "Customer relationship management",
       "Applied AI systems",
@@ -50,7 +50,7 @@ export function webSiteSchema(): Json {
     url: site.url,
     name: site.name,
     description: site.shortDescription,
-    inLanguage: "en-GB",
+    inLanguage: "en-US",
     publisher: { "@id": ORGANIZATION_ID },
   };
 }

@@ -102,7 +102,7 @@ export const SCENES: readonly Scene[] = [
   {
     chapter: "enquiry",
     plate: "enquiry-chamber",
-    alt: "A vast dark hall in which glass slabs hang far apart, each labelled for a different system — website enquiries, email, calendar, CRM, spreadsheets, WhatsApp, booking, notes. A thin champagne thread runs between them. The man stands alone at the centre.",
+    alt: "A vast dark hall in which glass slabs hang far apart, each labeled for a different system — website enquiries, email, calendar, CRM, spreadsheets, WhatsApp, booking, notes. A thin champagne thread runs between them. The man stands alone at the center.",
     focal: [0.52, 0.5],
     // The man, with the nearest scattered systems around him.
     portraitFocal: [0.36, 0.5],
@@ -115,7 +115,7 @@ export const SCENES: readonly Scene[] = [
   {
     chapter: "lab",
     plate: "system-lab",
-    alt: "A circular chamber lit in champagne. A dark sphere carrying the VelaBuilt mark is suspended at its centre, ringed by illuminated architecture. Glass stations stand around the perimeter, labelled CRM, Follow-up, Booking, Calendar, AI Assistance and Data.",
+    alt: "A circular chamber lit in champagne. A dark sphere carrying the VelaBuilt mark is suspended at its center, ringed by illuminated architecture. Glass stations stand around the perimeter, labeled CRM, Follow-up, Booking, Calendar, AI Assistance and Data.",
     focal: [0.5, 0.47],
     portraitFocal: [0.5, 0.46],
     horizon: 0.62,
@@ -127,7 +127,7 @@ export const SCENES: readonly Scene[] = [
   {
     chapter: "discoverability",
     plate: "gateway",
-    alt: "An open hall facing an enormous illuminated globe laced with light. Black stone slabs on either side carry the words Discover, Build, Automate, Grow. The man stands small at the centre of the composition.",
+    alt: "An open hall facing an enormous illuminated globe laced with light. Black stone slabs on either side carry the words Discover, Build, Automate, Grow. The man stands small at the center of the composition.",
     focal: [0.5, 0.45],
     portraitFocal: [0.5, 0.46],
     horizon: 0.64,

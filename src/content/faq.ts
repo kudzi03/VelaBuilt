@@ -18,7 +18,7 @@ export const faqs: readonly FaqEntry[] = [
   {
     question: "What does VelaBuilt actually build?",
     answer:
-      "Three things: websites, follow-up systems and the technical foundations that make a business discoverable. In practice that means a premium website that makes a business easier to trust and contact, infrastructure that catches and follows up every enquiry, and the structure that lets people, search engines and AI systems understand what the business does.",
+      "Three things: websites, follow-up systems and the technical foundations that make a business discoverable. In practice that means a premium website that makes a business easier to trust and contact, infrastructure that catches and follows up every inquiry, and the structure that lets people, search engines and AI systems understand what the business does.",
     scope: "home",
   },
   {
@@ -30,7 +30,7 @@ export const faqs: readonly FaqEntry[] = [
   {
     question: "Do you only do websites, or the systems behind them?",
     answer:
-      "Both, and they are usually the same problem. A website that generates enquiries a business cannot follow up is not finished work, so we build the capture, the records and the follow-up as part of the same architecture where it is needed.",
+      "Both, and they are usually the same problem. A website that generates inquiries a business cannot follow up is not finished work, so we build the capture, the records and the follow-up as part of the same architecture where it is needed.",
     scope: "home",
   },
   {
@@ -48,7 +48,7 @@ export const faqs: readonly FaqEntry[] = [
   {
     question: "Do you use AI in the systems you build?",
     answer:
-      "Where it removes work a person would otherwise repeat — reading and classifying enquiries, drafting replies, structuring information. It proposes; a person decides anything that commits the business, and low-confidence cases escalate to a human by design.",
+      "Where it removes work a person would otherwise repeat — reading and classifying inquiries, drafting replies, structuring information. It proposes; a person decides anything that commits the business, and low-confidence cases escalate to a human by design.",
     scope: "home",
   },
   {
@@ -72,7 +72,7 @@ export const faqs: readonly FaqEntry[] = [
   {
     question: "Will automated follow-up sound like a robot chasing my customers?",
     answer:
-      "Not if it is built properly. Messages use your language and stop the moment a person replies, the sequence is short rather than relentless, and anything that needs judgement is escalated to you instead of being answered automatically.",
+      "Not if it is built properly. Messages use your language and stop the moment a person replies, the sequence is short rather than relentless, and anything that needs judgment is escalated to you instead of being answered automatically.",
     scope: "lead-follow-up-systems",
   },
   {

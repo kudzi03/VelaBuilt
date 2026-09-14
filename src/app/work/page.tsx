@@ -12,7 +12,7 @@ import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
 export const metadata: Metadata = pageMetadata({
   title: "Work",
   description:
-    "Concept studies and working system demonstrations from VelaBuilt, each labelled for what it is. Client work is published only when delivered and agreed.",
+    "Concept studies and working system demonstrations from VelaBuilt, each labeled for what it is. Client work is published only when delivered and agreed.",
   path: "/work",
 });
 
@@ -117,7 +117,7 @@ export default function WorkPage() {
               "@type": "CollectionPage",
               name: "Work — VelaBuilt",
               description:
-                "Concept studies and system demonstrations, each labelled for what it is.",
+                "Concept studies and system demonstrations, each labeled for what it is.",
               about: workCategories.map((category) => ({
                 "@type": "Thing",
                 name: category.label,

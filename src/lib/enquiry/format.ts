@@ -84,7 +84,7 @@ export function enquiryText(draft: EnquiryDraft): string {
 
 export function enquirySubject(focus?: Focus | null, reference?: string): string {
   const topic = focus ? focusLabel[focus] : "Start a project";
-  return reference ? `Enquiry ${reference} — ${topic}` : `Enquiry — ${topic}`;
+  return reference ? `Inquiry ${reference} — ${topic}` : `Inquiry — ${topic}`;
 }
 
 /**

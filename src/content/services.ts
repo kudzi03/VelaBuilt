@@ -49,7 +49,7 @@ export const services: readonly Service[] = [
     name: "Website Conversion System",
     shortName: "Website Conversion",
     summary:
-      "A premium website rebuilt around trust and enquiry: positioning, design, user experience, performance and the conversion path from first visit to first contact.",
+      "A premium website rebuilt around trust and inquiry: positioning, design, user experience, performance and the conversion path from first visit to first contact.",
     audience:
       "Businesses whose website no longer reflects the quality of the work, or leaves visitors unsure what to do next.",
     problems: [
@@ -84,7 +84,7 @@ export const services: readonly Service[] = [
       },
       {
         title: "Instrument and hand over",
-        body: "Analytics, enquiry tracking and documentation, so you can see what the site is doing after we leave.",
+        body: "Analytics, inquiry tracking and documentation, so you can see what the site is doing after we leave.",
       },
     ],
     headline: ["Your business already has value.", "The website should look like it."],
@@ -100,18 +100,18 @@ export const services: readonly Service[] = [
     name: "Lead Follow-Up & Recovery System",
     shortName: "Lead Follow-Up",
     summary:
-      "Infrastructure that catches every enquiry, qualifies it, follows it up on a schedule, and puts the right conversations in the calendar — without anyone remembering to.",
+      "Infrastructure that catches every inquiry, qualifies it, follows it up on a schedule, and puts the right conversations in the calendar — without anyone remembering to.",
     audience:
-      "Businesses already receiving enquiries, quote requests or estimates that lose opportunities to inconsistent follow-up.",
+      "Businesses already receiving inquiries, quote requests or estimates that lose opportunities to inconsistent follow-up.",
     problems: [
-      "Enquiries arrive, and then depend on somebody remembering.",
+      "Inquiries arrive, and then depend on somebody remembering.",
       "Quotes and estimates go out and are never chased.",
       "The details live in an inbox, a phone, a notebook and a spreadsheet.",
       "Nobody can say how many opportunities are open right now.",
       "Good leads go cold while you are on site, on a job, or with a client.",
     ],
     capabilities: [
-      "Enquiry capture",
+      "Inquiry capture",
       "CRM structure",
       "Qualification & scoring",
       "Email & messaging follow-up",
@@ -123,11 +123,11 @@ export const services: readonly Service[] = [
     process: [
       {
         title: "Map what happens now",
-        body: "Every route an enquiry can take into the business, and every point it can stop. Usually the leak is not where people expect.",
+        body: "Every route an inquiry can take into the business, and every point it can stop. Usually the leak is not where people expect.",
       },
       {
         title: "Design the path",
-        body: "One agreed route from enquiry to booked conversation, including what happens on day one, day three and day ten if nobody replies.",
+        body: "One agreed route from inquiry to booked conversation, including what happens on day one, day three and day ten if nobody replies.",
       },
       {
         title: "Build it",
@@ -140,10 +140,10 @@ export const services: readonly Service[] = [
     ],
     headline: ["You got the lead.", "What happened next?"],
     proposition:
-      "Good enquiries should not depend on somebody remembering what happens next.",
+      "Good inquiries should not depend on somebody remembering what happens next.",
     cta: "Map my follow-up",
     boundary:
-      "Automation does not repair a weak offer or replace judgement. Where a human should decide, the system escalates rather than guesses.",
+      "Automation does not repair a weak offer or replace judgment. Where a human should decide, the system escalates rather than guesses.",
   },
   {
     slug: "website-engine-optimization",

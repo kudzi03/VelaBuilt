@@ -55,7 +55,7 @@ export function renderFallbackPage({
   const mailto = enquiryMailtoHref(draft);
 
   const html = `<!doctype html>
-<html lang="en-GB">
+<html lang="en-US">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -85,7 +85,7 @@ export function renderFallbackPage({
   <a class="btn" href="${escapeHtml(mailto)}">Email it to ${escapeHtml(site.email)}</a>
   ${
     text
-      ? `<hr><p class="label">Your enquiry</p><pre>${escapeHtml(text)}</pre>`
+      ? `<hr><p class="label">Your inquiry</p><pre>${escapeHtml(text)}</pre>`
       : ""
   }
   <hr>

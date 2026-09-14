@@ -47,7 +47,7 @@ const RATE_WINDOW_MS = 10 * 60 * 1000;
 const GENERIC_ERROR =
   "We could not process that. Please try again, or email hello@velabuilt.com.";
 const TOO_LONG = "That message is too long to send.";
-const TOO_MANY = "That is a few too many enquiries. Please try again shortly.";
+const TOO_MANY = "That is a few too many inquiries. Please try again shortly.";
 const NOT_FILED =
   "We received that but could not file it automatically. Please email hello@velabuilt.com so nothing is lost.";
 

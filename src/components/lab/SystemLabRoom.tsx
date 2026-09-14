@@ -76,7 +76,7 @@ export function SystemLabRoom({
           <source type="image/webp" srcSet={room.webpSrcSet} sizes="(min-width: 1024px) 80vw, 100vw" />
           <img
             src={room.webp}
-            alt="The VelaBuilt System Lab: a circular chamber with a suspended core at its centre and glass stations around the perimeter."
+            alt="The VelaBuilt System Lab: a circular chamber with a suspended core at its center and glass stations around the perimeter."
             loading="lazy"
             decoding="async"
             className="absolute inset-0 h-full w-full object-cover"

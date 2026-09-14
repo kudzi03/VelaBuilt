@@ -27,7 +27,7 @@ const MAX_ELAPSED_MS = 1000 * 60 * 60 * 6;
 const answerValue = z
   .string()
   .max(64)
-  .regex(/^[a-z0-9-]+$/, "Unrecognised option");
+  .regex(/^[a-z0-9-]+$/, "Unrecognized option");
 
 export const enquirySchema = z
   .object({
@@ -68,7 +68,7 @@ export const enquirySchema = z
         ctx.addIssue({
           code: "custom",
           path: ["answers", stepId],
-          message: "Unexpected question for this enquiry",
+          message: "Unexpected question for this inquiry",
         });
         continue;
       }

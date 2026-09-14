@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/Primitives";
 export const metadata: Metadata = pageMetadata({
   title: "Privacy",
   description:
-    "What VelaBuilt collects when you send an enquiry, why, how long it is kept, and how to have it removed.",
+    "What VelaBuilt collects when you send an inquiry, why, how long it is kept, and how to have it removed.",
   path: "/privacy",
 });
 
@@ -28,34 +28,34 @@ const SECTIONS = [
   {
     title: "What this site collects",
     body: [
-      "Nothing at all until you send an enquiry. There are no analytics scripts, no advertising pixels, no third-party embeds and no cookies set by this site.",
+      "Nothing at all until you send an inquiry. There are no analytics scripts, no advertising pixels, no third-party embeds and no cookies set by this site.",
       "When you complete the Start a Project form we receive what you typed: your name, your email address, optionally your company and website, your answers to the three questions, and anything you wrote in the message field.",
     ],
   },
   {
     title: "Why we hold it",
     body: [
-      "To reply to your enquiry and to continue that conversation. It is not used for anything else, and you are not added to a mailing list.",
-      "We do not sell, rent or share enquiry details with third parties for their own marketing.",
+      "To reply to your inquiry and to continue that conversation. It is not used for anything else, and you are not added to a mailing list.",
+      "We do not sell, rent or share inquiry details with third parties for their own marketing.",
     ],
   },
   {
     title: "How long we keep it",
     body: [
-      "Enquiries that do not become projects are removed within twelve months. Where a project goes ahead, the correspondence is kept for as long as we work together and for the period afterwards that our records require.",
+      "Inquiries that do not become projects are removed within twelve months. Where a project goes ahead, the correspondence is kept for as long as we work together and for the period afterwards that our records require.",
     ],
   },
   {
     title: "Technical details we do not keep",
     body: [
-      "The enquiry endpoint applies a rate limit using a short-lived, in-memory record of the requesting network address. It is not written to a database, not linked to your enquiry, and does not survive a restart.",
-      "Enquiry contents are never written to server logs.",
+      "The inquiry endpoint applies a rate limit using a short-lived, in-memory record of the requesting network address. It is not written to a database, not linked to your inquiry, and does not survive a restart.",
+      "Inquiry contents are never written to server logs.",
     ],
   },
   {
     title: "Where it goes",
     body: [
-      "Enquiries are delivered to VelaBuilt and, where configured, to the systems we use to manage our own pipeline. Those systems are the ones described on this site — a record of the enquiry, and a reminder to follow it up.",
+      "Inquiries are delivered to VelaBuilt and, where configured, to the systems we use to manage our own pipeline. Those systems are the ones described on this site — a record of the inquiry, and a reminder to follow it up.",
     ],
   },
   {

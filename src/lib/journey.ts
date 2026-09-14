@@ -32,7 +32,7 @@ export interface Chapter {
 export const CHAPTERS: readonly Chapter[] = [
   { id: "friction", index: 0, scene: "01", label: "Friction", z: 0 },
   { id: "website", index: 1, scene: "02", label: "The Website", z: -62 },
-  { id: "enquiry", index: 2, scene: "03", label: "The Lost Enquiry", z: -124 },
+  { id: "enquiry", index: 2, scene: "03", label: "The Lost Inquiry", z: -124 },
   { id: "lab", index: 3, scene: "04", label: "System Lab", z: -186 },
   { id: "discoverability", index: 4, scene: "05", label: "Discoverability", z: -248 },
   { id: "destination", index: 5, scene: "06", label: "Destination", z: -310 },

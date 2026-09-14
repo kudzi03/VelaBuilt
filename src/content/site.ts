@@ -35,14 +35,14 @@ export const site = {
   phone: null as { readonly display: string; readonly e164: string } | null,
   bookingUrl: null as string | null,
 
-  locale: "en_GB",
+  locale: "en_US",
 
   /** One sentence. Used verbatim in schema, meta description and the About page. */
   tagline: "Systems for what’s next.",
   shortDescription:
     "VelaBuilt is a creative technology studio building premium websites, follow-up systems and intelligent digital infrastructure for modern businesses.",
   longDescription:
-    "VelaBuilt is a creative technology studio. We build three things: websites that make a business easier to trust and contact, follow-up systems that stop good enquiries going cold, and the technical foundations that make a business easier for people, search engines and AI systems to find and understand. We design the experience and we build the infrastructure underneath it.",
+    "VelaBuilt is a creative technology studio. We build three things: websites that make a business easier to trust and contact, follow-up systems that stop good inquiries going cold, and the technical foundations that make a business easier for people, search engines and AI systems to find and understand. We design the experience and we build the infrastructure underneath it.",
 
   capabilities: ["Websites", "Automation", "AI Systems"] as const,
 

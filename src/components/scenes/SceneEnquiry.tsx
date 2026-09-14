@@ -11,7 +11,7 @@ const service = getService("lead-follow-up-systems");
 
 /** What should happen, in order, once an enquiry exists. */
 const CHAIN = [
-  "Enquiry",
+  "Inquiry",
   "CRM",
   "Qualification",
   "Follow-up",
@@ -55,7 +55,7 @@ export function SceneEnquiry() {
           <div className="bg-[color:var(--color-obsidian)] p-8">
             <Label tone="champagne">With one</Label>
             <p className="mt-5 text-[0.98rem] leading-relaxed text-[color:var(--color-ivory-dim)]">
-              The same enquiry is captured, recorded, qualified, answered and
+              The same inquiry is captured, recorded, qualified, answered and
               followed up on a schedule — and stops the moment a person replies.
             </p>
             <FlowChain steps={CHAIN} className="mt-7" />

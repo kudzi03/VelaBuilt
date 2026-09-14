@@ -40,12 +40,12 @@ export const focusStep: FlowStep = {
     {
       value: "website",
       label: "Website",
-      hint: "It undersells the business, or nobody enquires.",
+      hint: "It undersells the business, or nobody inquires.",
     },
     {
       value: "follow-up",
       label: "Follow-up / sales process",
-      hint: "Enquiries arrive and then go quiet.",
+      hint: "Inquiries arrive and then go quiet.",
     },
     {
       value: "automation",
@@ -79,7 +79,7 @@ export const branchSteps: Record<Focus, FlowStep> = {
     options: [
       { value: "looks-dated", label: "It looks smaller than the business is" },
       { value: "unclear", label: "Visitors cannot tell what we do" },
-      { value: "no-enquiries", label: "Traffic arrives, enquiries do not" },
+      { value: "no-enquiries", label: "Traffic arrives, inquiries do not" },
       { value: "mobile", label: "It is poor on a phone" },
       { value: "slow", label: "It is slow or unreliable" },
       { value: "outgrown", label: "We have outgrown it" },
@@ -90,7 +90,7 @@ export const branchSteps: Record<Focus, FlowStep> = {
     question: "Where does it break down?",
     multi: true,
     options: [
-      { value: "capture", label: "Enquiries arrive in too many places" },
+      { value: "capture", label: "Inquiries arrive in too many places" },
       { value: "speed", label: "We reply too slowly" },
       { value: "chasing", label: "Quotes go out and are never chased" },
       { value: "visibility", label: "Nobody can see what is open" },
@@ -113,13 +113,13 @@ export const branchSteps: Record<Focus, FlowStep> = {
   },
   ai: {
     id: "ai-problem",
-    question: "Where would judgement-free reading or drafting help?",
+    question: "Where would judgment-free reading or drafting help?",
     multi: true,
     options: [
-      { value: "enquiries", label: "Reading and sorting incoming enquiries" },
+      { value: "enquiries", label: "Reading and sorting incoming inquiries" },
       { value: "drafting", label: "Drafting replies and documents" },
       { value: "reception", label: "Answering common questions first" },
-      { value: "summarising", label: "Summarising calls, notes or documents" },
+      { value: "summarising", label: "Summarizing calls, notes or documents" },
       { value: "classifying", label: "Classifying and routing work" },
       { value: "unsure", label: "Not sure — that is part of the question" },
     ],

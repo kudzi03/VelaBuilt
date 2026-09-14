@@ -750,7 +750,7 @@ function DetailsStep({
             className="mt-1 h-4 w-4 shrink-0 accent-[color:var(--color-champagne)]"
           />
           <span>
-            You can reply to me about this enquiry. We will not add you to a mailing
+            You can reply to me about this inquiry. We will not add you to a mailing
             list.
           </span>
         </label>
@@ -772,14 +772,14 @@ function DetailsStep({
               href={mailtoHref}
               className="mt-2 inline-block text-[color:var(--color-champagne)] underline decoration-[rgb(224_195_152/0.4)] underline-offset-4 transition-colors hover:decoration-[color:var(--color-champagne)]"
             >
-              Email this enquiry to {site.email}
+              Email this inquiry to {site.email}
             </a>
           ) : null}
         </div>
       ) : null}
 
       <button type="submit" disabled={submitting} className="btn btn-primary mt-8 w-full justify-between sm:w-auto">
-        <span>{submitting ? "Sending…" : "Send enquiry"}</span>
+        <span>{submitting ? "Sending…" : "Send inquiry"}</span>
         <ArrowRight />
       </button>
     </div>

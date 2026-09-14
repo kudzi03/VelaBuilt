@@ -71,7 +71,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en-GB" className={`${cormorant.variable} ${inter.variable}`}>
+    <html lang="en-US" className={`${cormorant.variable} ${inter.variable}`}>
       <head>
         {/*
          * Marks the document as scripted before first paint. Section entrance
