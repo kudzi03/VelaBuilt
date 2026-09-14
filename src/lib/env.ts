@@ -12,25 +12,56 @@
 
 import { z } from "zod";
 
+/**
+ * Hosting dashboards commonly store a cleared variable as an empty string.
+ * Treat that as unset, or an emptied field fails validation as "invalid".
+ */
+const unsetIfEmpty = <T extends z.ZodType>(schema: T) =>
+  z.preprocess((value) => (value === "" ? undefined : value), schema.optional());
+
 const serverEnvSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
 
-  /** Selects the outbound integration. See src/lib/enquiry/adapter.ts. */
-  ENQUIRY_ADAPTER: z.enum(["log", "webhook"]).default("log"),
+  /** Set by Vercel. Used only to refuse a non-delivering adapter in production. */
+  VERCEL_ENV: unsetIfEmpty(z.enum(["production", "preview", "development"])),
+
+  /**
+   * Selects the outbound integration. See src/lib/enquiry/adapter.ts.
+   * Unset: "email" when SMTP_HOST is configured, otherwise "log".
+   */
+  ENQUIRY_ADAPTER: unsetIfEmpty(z.enum(["log", "webhook", "email"])),
 
   /**
    * Server-to-server endpoint for inbound enquiries. This is the *only*
    * outbound target the marketing site is permitted to know about, and it is
    * intentionally separate from any existing production workflow.
    */
-  ENQUIRY_WEBHOOK_URL: z.url().optional(),
-  ENQUIRY_WEBHOOK_SECRET: z.string().min(24).optional(),
+  ENQUIRY_WEBHOOK_URL: unsetIfEmpty(z.url()),
+  ENQUIRY_WEBHOOK_SECRET: unsetIfEmpty(z.string().min(24)),
 
-  /** Optional: destination inbox for enquiry notifications. */
-  ENQUIRY_NOTIFY_EMAIL: z.email().optional(),
+  /** Destination inbox for enquiries. Defaults to the site's public address. */
+  ENQUIRY_NOTIFY_EMAIL: unsetIfEmpty(z.email()),
+
+  /**
+   * SMTP submission for the email adapter — the studio's own mailbox provider
+   * (Google Workspace: smtp.gmail.com, 465, the mailbox address, an app
+   * password). No form service sits in between.
+   */
+  SMTP_HOST: unsetIfEmpty(z.string().min(1)),
+  SMTP_PORT: unsetIfEmpty(z.coerce.number().int().min(1).max(65535)),
+  SMTP_USER: unsetIfEmpty(z.string().min(1)),
+  SMTP_PASS: unsetIfEmpty(z.string().min(1)),
+  /** Envelope sender. Defaults to SMTP_USER, which most providers require. */
+  ENQUIRY_FROM_EMAIL: unsetIfEmpty(z.email()),
 });
 
-export type ServerEnv = z.infer<typeof serverEnvSchema>;
+type ParsedEnv = z.infer<typeof serverEnvSchema>;
+
+export type EnquiryAdapterName = "log" | "webhook" | "email";
+
+export type ServerEnv = Omit<ParsedEnv, "ENQUIRY_ADAPTER"> & {
+  readonly ENQUIRY_ADAPTER: EnquiryAdapterName;
+};
 
 let cached: ServerEnv | null = null;
 
@@ -47,11 +78,24 @@ export function serverEnv(): ServerEnv {
     throw new Error(`Invalid server environment — ${issues}`);
   }
 
-  const env = parsed.data;
+  const env: ServerEnv = {
+    ...parsed.data,
+    ENQUIRY_ADAPTER:
+      parsed.data.ENQUIRY_ADAPTER ?? (parsed.data.SMTP_HOST ? "email" : "log"),
+  };
 
   if (env.ENQUIRY_ADAPTER === "webhook" && !env.ENQUIRY_WEBHOOK_URL) {
     throw new Error(
       "ENQUIRY_ADAPTER=webhook requires ENQUIRY_WEBHOOK_URL to be set.",
+    );
+  }
+
+  if (
+    env.ENQUIRY_ADAPTER === "email" &&
+    !(env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS)
+  ) {
+    throw new Error(
+      "ENQUIRY_ADAPTER=email requires SMTP_HOST, SMTP_USER and SMTP_PASS to be set.",
     );
   }
 

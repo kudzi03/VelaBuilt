@@ -43,7 +43,7 @@ export function SiteFooter() {
                 <ul className="flex flex-col gap-3.5">
                   {column.links.map((link) => {
                     const external = link.href.startsWith("http");
-                    const mail = link.href.startsWith("mailto:");
+                    const mail = /^(mailto|tel):/.test(link.href);
                     const className =
                       "text-sm text-[color:var(--color-ivory-dim)] transition-colors duration-400 hover:text-[color:var(--color-champagne)]";
                     return (

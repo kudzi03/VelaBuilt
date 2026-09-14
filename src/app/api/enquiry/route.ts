@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
+import { FOCUS_OPTIONS, type Focus } from "@/content/enquiry-flow";
 import { enquirySchema, screenSubmission } from "@/lib/enquiry/schema";
 import {
   createReference,
   getEnquiryAdapter,
   type EnquiryRecord,
 } from "@/lib/enquiry/adapter";
+import { formToEnquiry } from "@/lib/enquiry/form";
+import { fieldHints, renderFallbackPage } from "@/lib/enquiry/fallback-page";
+import type { EnquiryDraft } from "@/lib/enquiry/format";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
 
 /**
@@ -15,13 +19,21 @@ import { clientKey, rateLimit } from "@/lib/rate-limit";
  * screens, references and hands off to an adapter, and it knows nothing about
  * any production system beyond the one URL an adapter is configured with.
  *
+ * Two callers, one contract:
+ *   json   the enhanced form's fetch(). Answers with JSON status codes.
+ *   form   a native <form method="post"> — the no-JavaScript path. Success is
+ *          a 303 to /start?sent=<reference> (post/redirect/get, so a refresh
+ *          cannot resend); failure is a self-contained page that offers the
+ *          enquiry as a pre-filled email so nothing is lost.
+ *
  * Ordering matters and is intentional:
  *   1. method + content type      cheapest rejections first
  *   2. body size cap              before parsing
- *   3. rate limit                 before schema work
- *   4. schema validation          before any business logic
- *   5. bot screening              silent, uninformative
- *   6. delivery                   time-boxed, never leaks internals
+ *   3. same-origin (form only)    a native form post is a CSRF-able request
+ *   4. rate limit                 before schema work
+ *   5. schema validation          before any business logic
+ *   6. bot screening              silent, uninformative
+ *   7. delivery                   time-boxed, never leaks internals
  */
 
 export const runtime = "nodejs";
@@ -34,6 +46,12 @@ const RATE_WINDOW_MS = 10 * 60 * 1000;
 /** Deliberately uninformative to a prober; specific enough for a person. */
 const GENERIC_ERROR =
   "We could not process that. Please try again, or email hello@velabuilt.com.";
+const TOO_LONG = "That message is too long to send.";
+const TOO_MANY = "That is a few too many enquiries. Please try again shortly.";
+const NOT_FILED =
+  "We received that but could not file it automatically. Please email hello@velabuilt.com so nothing is lost.";
+
+type Mode = "json" | "form";
 
 function json(body: unknown, status: number, headers?: HeadersInit) {
   return NextResponse.json(body, {
@@ -42,36 +60,125 @@ function json(body: unknown, status: number, headers?: HeadersInit) {
   });
 }
 
+/** Rebuilds what the visitor sent, loosely, for the fallback page. */
+function draftFrom(raw: unknown): EnquiryDraft {
+  if (!raw || typeof raw !== "object") return {};
+  const value = raw as Record<string, unknown>;
+  const text = (key: string) =>
+    typeof value[key] === "string" ? (value[key] as string).slice(0, 2000) : undefined;
+  const focus = FOCUS_OPTIONS.includes(value.focus as Focus) ? (value.focus as Focus) : null;
+  const answers =
+    value.answers && typeof value.answers === "object"
+      ? (value.answers as Record<string, string[]>)
+      : {};
+  return {
+    focus,
+    answers,
+    name: text("name"),
+    email: text("email"),
+    company: text("company"),
+    website: text("website"),
+    message: text("message"),
+  };
+}
+
+function failure(
+  mode: Mode,
+  status: number,
+  message: string,
+  options: { raw?: unknown; fieldErrors?: Record<string, string>; headers?: HeadersInit } = {},
+): Response {
+  if (mode === "json") {
+    return json(
+      options.fieldErrors ? { message, fieldErrors: options.fieldErrors } : { message },
+      status,
+      options.headers,
+    );
+  }
+  const response = renderFallbackPage({
+    status,
+    message,
+    hints: fieldHints(Object.keys(options.fieldErrors ?? {})),
+    draft: draftFrom(options.raw),
+  });
+  for (const [key, value] of new Headers(options.headers)) {
+    response.headers.set(key, value);
+  }
+  return response;
+}
+
+function sent(mode: Mode, reference: string, status: number, extra: object = {}): Response {
+  if (mode === "json") return json({ received: true, reference, ...extra }, status);
+  // Relative Location is valid (RFC 9110) and survives any proxy's host.
+  return new Response(null, {
+    status: 303,
+    headers: {
+      location: `/start?sent=${encodeURIComponent(reference)}`,
+      "cache-control": "no-store",
+    },
+  });
+}
+
+/**
+ * A native form post is a "simple" request any site can make. Refuse one the
+ * browser marks as cross-site. JSON is safe already: a cross-origin
+ * application/json POST needs a CORS preflight this route never grants.
+ */
+function isCrossSite(request: Request): boolean {
+  if (request.headers.get("sec-fetch-site") === "cross-site") return true;
+  const origin = request.headers.get("origin");
+  if (!origin || origin === "null") return false;
+  // Behind a proxy the public host arrives as x-forwarded-host.
+  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+  try {
+    return new URL(origin).host !== host;
+  } catch {
+    return true;
+  }
+}
+
 export async function POST(request: Request): Promise<Response> {
-  if (!request.headers.get("content-type")?.includes("application/json")) {
+  const contentType = request.headers.get("content-type") ?? "";
+  const mode: Mode | null = contentType.includes("application/json")
+    ? "json"
+    : contentType.includes("application/x-www-form-urlencoded")
+      ? "form"
+      : null;
+
+  if (!mode) {
     return json({ message: GENERIC_ERROR }, 415);
   }
 
   const declaredLength = Number(request.headers.get("content-length") ?? 0);
   if (declaredLength > MAX_BODY_BYTES) {
-    return json({ message: "That message is too long to send." }, 413);
+    return failure(mode, 413, TOO_LONG);
+  }
+
+  if (mode === "form" && isCrossSite(request)) {
+    return failure(mode, 403, GENERIC_ERROR);
   }
 
   const key = clientKey(request.headers);
   const limit = rateLimit(`enquiry:${key}`, RATE_LIMIT, RATE_WINDOW_MS);
-  if (!limit.ok) {
-    return json(
-      { message: "That is a few too many enquiries. Please try again shortly." },
-      429,
-      { "retry-after": String(limit.retryAfter) },
-    );
-  }
 
   let raw: unknown;
   try {
     const text = await request.text();
     // Guard against a body larger than its declared content-length.
     if (text.length > MAX_BODY_BYTES) {
-      return json({ message: "That message is too long to send." }, 413);
+      return failure(mode, 413, TOO_LONG);
     }
-    raw = JSON.parse(text);
+    raw = mode === "json" ? JSON.parse(text) : formToEnquiry(new URLSearchParams(text));
   } catch {
-    return json({ message: GENERIC_ERROR }, 400);
+    return failure(mode, 400, GENERIC_ERROR);
+  }
+
+  // Read before limiting so a throttled no-JS visitor still gets their text back.
+  if (!limit.ok) {
+    return failure(mode, 429, TOO_MANY, {
+      raw,
+      headers: { "retry-after": String(limit.retryAfter) },
+    });
   }
 
   const parsed = enquirySchema.safeParse(raw);
@@ -83,7 +190,7 @@ export async function POST(request: Request): Promise<Response> {
       const path = issue.path.join(".") || "form";
       if (!fieldErrors[path]) fieldErrors[path] = issue.message;
     }
-    return json({ message: "Please check the highlighted fields.", fieldErrors }, 422);
+    return failure(mode, 422, "Please check the highlighted fields.", { raw, fieldErrors });
   }
 
   const input = parsed.data;
@@ -91,7 +198,7 @@ export async function POST(request: Request): Promise<Response> {
   // Bot screening: accepted-looking response, nothing delivered, nothing learnt.
   const verdict = screenSubmission(input);
   if (!verdict.accepted) {
-    return json({ reference: createReference(), received: true }, 202);
+    return sent(mode, createReference(), 202);
   }
 
   const record: EnquiryRecord = {
@@ -104,13 +211,11 @@ export async function POST(request: Request): Promise<Response> {
     const adapter = getEnquiryAdapter();
     const result = await adapter.deliver(record);
 
-    return json(
-      {
-        received: true,
-        reference: record.reference,
-        ...(result.bookingUrl ? { bookingUrl: result.bookingUrl } : {}),
-      },
+    return sent(
+      mode,
+      record.reference,
       201,
+      result.bookingUrl ? { bookingUrl: result.bookingUrl } : {},
     );
   } catch (error) {
     // Log the failure, never the enquiry contents.
@@ -118,13 +223,7 @@ export async function POST(request: Request): Promise<Response> {
       reference: record.reference,
       reason: error instanceof Error ? error.message : "unknown",
     });
-    return json(
-      {
-        message:
-          "We received that but could not file it automatically. Please email hello@velabuilt.com so nothing is lost.",
-      },
-      502,
-    );
+    return failure(mode, 502, NOT_FILED, { raw: input });
   }
 }
 

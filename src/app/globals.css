@@ -897,6 +897,46 @@
   .no-scroll {
     overflow: hidden;
   }
+
+  /* ---- Enquiry: static form -------------------------------------------
+   *
+   * The server renders the enquiry as one complete native form (EnquiryFlow,
+   * "static"). Same `js` class as .reveal above:
+   *
+   *   Without JavaScript  every question shows in sequence and submits
+   *                       natively. Step chrome that needs script is hidden.
+   *   With JavaScript     only the section the stepped flow opens on
+   *                       (`data-enq-preview`) shows until hydration replaces
+   *                       the static form — so nothing visibly changes.
+   */
+  .js [data-enq-section]:not([data-enq-preview]) {
+    display: none;
+  }
+
+  html:not(.js) [data-enq-js-only] {
+    display: none;
+  }
+
+  html:not(.js) [data-enq-section] + [data-enq-section] {
+    margin-top: 3.5rem;
+  }
+
+  /* Without script, show only the follow-up question for the focus chosen.
+     Values mirror FOCUS_OPTIONS in src/content/enquiry-flow.ts. A browser
+     without :has() shows every follow-up question instead — all optional. */
+  @supports selector(:has(*)) {
+    html:not(.js) [data-enq-branch] {
+      display: none;
+    }
+    html:not(.js) form:has([name="focus"][value="website"]:checked) [data-enq-branch="website"],
+    html:not(.js) form:has([name="focus"][value="follow-up"]:checked) [data-enq-branch="follow-up"],
+    html:not(.js) form:has([name="focus"][value="automation"]:checked) [data-enq-branch="automation"],
+    html:not(.js) form:has([name="focus"][value="ai"]:checked) [data-enq-branch="ai"],
+    html:not(.js) form:has([name="focus"][value="discoverability"]:checked) [data-enq-branch="discoverability"],
+    html:not(.js) form:has([name="focus"][value="not-sure"]:checked) [data-enq-branch="not-sure"] {
+      display: block;
+    }
+  }
 }
 
 /* ==========================================================================

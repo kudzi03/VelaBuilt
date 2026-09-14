@@ -29,6 +29,7 @@ export function organizationSchema(): Json {
     description: site.shortDescription,
     slogan: site.tagline,
     email: site.email,
+    ...(site.phone ? { telephone: site.phone.e164 } : {}),
     sameAs: [site.social.instagram],
     knowsAbout: [
       "Web design",

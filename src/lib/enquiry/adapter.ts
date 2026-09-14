@@ -13,7 +13,7 @@
  *             using a PAT scoped to that base only, held server-side
  *  n8n        implement `deliver()` → POST to a NEW inbound webhook workflow
  *             (W-IN-01), never an existing outbound workflow
- *  Email      implement `deliver()` → transactional send to ENQUIRY_NOTIFY_EMAIL
+ *  Email      `emailAdapter` below → SMTP send to ENQUIRY_NOTIFY_EMAIL
  *  Calendar   post-delivery step → return a booking URL in `bookingUrl`
  *
  * RULES FOR ANY ADAPTER ADDED HERE
@@ -24,8 +24,10 @@
  *   4. Outbound requests are time-boxed. A hanging integration is an outage.
  */
 
+import nodemailer from "nodemailer";
 import { site } from "@/content/site";
 import { serverEnv } from "@/lib/env";
+import { enquirySubject, enquiryText } from "./format";
 import type { EnquiryInput } from "./schema";
 
 export interface EnquiryRecord extends EnquiryInput {
@@ -49,12 +51,22 @@ export interface EnquiryAdapter {
 const OUTBOUND_TIMEOUT_MS = 8_000;
 
 /**
- * Default adapter. Records that an enquiry arrived, with nothing personal in
- * the log line — reference, focus and shape only.
+ * Default adapter for development. Records that an enquiry arrived, with
+ * nothing personal in the log line — reference, focus and shape only.
+ *
+ * Because it keeps nothing a person could reply to, it refuses to run in a
+ * Vercel production deployment: reporting "received" there would tell a
+ * visitor their enquiry is in the system when it has reached nobody. The
+ * route turns the refusal into the mailto fallback instead.
  */
 const logAdapter: EnquiryAdapter = {
   name: "log",
   async deliver(record) {
+    if (serverEnv().VERCEL_ENV === "production") {
+      throw new Error(
+        "No delivering enquiry adapter is configured for production (set SMTP_* or ENQUIRY_ADAPTER=webhook)",
+      );
+    }
     console.info("[enquiry] received", {
       reference: record.reference,
       focus: record.focus,
@@ -127,6 +139,50 @@ const webhookAdapter: EnquiryAdapter = {
   },
 };
 
+/**
+ * SMTP delivery to the studio's own inbox. Plain text only: nothing the
+ * visitor typed is ever interpreted as markup. Reply-To is the visitor, so
+ * answering the notification answers them.
+ */
+const emailAdapter: EnquiryAdapter = {
+  name: "email",
+  async deliver(record) {
+    const env = serverEnv();
+    if (!env.SMTP_HOST || !env.SMTP_USER || !env.SMTP_PASS) {
+      throw new Error("Email adapter selected without SMTP credentials");
+    }
+
+    const port = env.SMTP_PORT ?? 465;
+    const transport = nodemailer.createTransport({
+      host: env.SMTP_HOST,
+      port,
+      // 465 is TLS from the first byte; 587 must upgrade or fail.
+      secure: port === 465,
+      requireTLS: port === 587,
+      auth: { user: env.SMTP_USER, pass: env.SMTP_PASS },
+      connectionTimeout: OUTBOUND_TIMEOUT_MS,
+      greetingTimeout: OUTBOUND_TIMEOUT_MS,
+      socketTimeout: OUTBOUND_TIMEOUT_MS,
+    });
+
+    const info = await transport.sendMail({
+      from: { name: `${site.name} enquiries`, address: env.ENQUIRY_FROM_EMAIL ?? env.SMTP_USER },
+      to: env.ENQUIRY_NOTIFY_EMAIL ?? site.email,
+      replyTo: { name: record.name, address: record.email },
+      subject: enquirySubject(record.focus, record.reference),
+      text: enquiryText({
+        ...record,
+        source: `${new URL(site.url).host}/start`,
+      }),
+    });
+
+    if (info.rejected.length > 0) {
+      throw new Error("Enquiry email was rejected by the SMTP server");
+    }
+    return { via: "email" };
+  },
+};
+
 /** HMAC-SHA256 over the exact bytes sent, using Web Crypto. */
 async function sign(body: string, secret: string): Promise<string> {
   const encoder = new TextEncoder();
@@ -144,7 +200,14 @@ async function sign(body: string, secret: string): Promise<string> {
 }
 
 export function getEnquiryAdapter(): EnquiryAdapter {
-  return serverEnv().ENQUIRY_ADAPTER === "webhook" ? webhookAdapter : logAdapter;
+  switch (serverEnv().ENQUIRY_ADAPTER) {
+    case "email":
+      return emailAdapter;
+    case "webhook":
+      return webhookAdapter;
+    default:
+      return logAdapter;
+  }
 }
 
 /** Human-quotable, non-guessable, and free of personal data. */

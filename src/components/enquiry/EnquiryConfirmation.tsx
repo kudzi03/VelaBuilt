@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { Label } from "@/components/ui/Primitives";
 import { site } from "@/content/site";
+import { BookingLink } from "@/components/chrome/ContactLinks";
 
 /**
  * The confirmation is the demonstration: the enquiry visibly enters a process
@@ -119,6 +120,8 @@ export function EnquiryConfirmation({
             </a>
             .
           </p>
+
+          <BookingLink className="btn btn-secondary mt-6" />
 
           <div className="mt-12 border-t border-[color:var(--color-hairline)] pt-8">
             <Label tone="champagne">You&rsquo;re using a VelaBuilt system right now</Label>

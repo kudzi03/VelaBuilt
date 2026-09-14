@@ -12,19 +12,25 @@ client code is `NEXT_PUBLIC_SITE_URL`, which is public by definition.
 importing it from a client component is a build error. It fails loudly at the
 boundary rather than running half-configured.
 
-The site runs correctly with no credentials set at all: the enquiry endpoint
-falls back to the logging adapter. Adding a credential activates its
-integration and nothing else.
+Locally and on preview deployments the site runs with no credentials set: the
+enquiry endpoint falls back to the logging adapter. **In a Vercel production
+deployment the logging adapter refuses to run**, because it keeps nothing a
+person could reply to; with no delivery configured, a visitor gets the `502`
+email fallback rather than a confirmation for an enquiry that reached nobody.
+Adding a credential activates its integration and nothing else.
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | At domain cutover | Canonical origin. Public. See DOMAIN-SETUP.md |
 | `CANONICAL_HOST_REDIRECT` | No | `1` to 301 the old Vercel host to the canonical origin |
 | `CANONICAL_REDIRECT_FROM` | No | Comma-separated hosts to redirect (default `vela-built.vercel.app`) |
-| `ENQUIRY_ADAPTER` | No | `log` (default) or `webhook` |
+| `ENQUIRY_ADAPTER` | No | `email`, `webhook` or `log`. Unset: `email` if `SMTP_HOST` is set, else `log` |
+| `SMTP_HOST` / `SMTP_PORT` | For email | SMTP submission server; port defaults to 465 (TLS), 587 requires STARTTLS |
+| `SMTP_USER` / `SMTP_PASS` | For email | Mailbox login. For Google Workspace, an app password — never the account password |
+| `ENQUIRY_FROM_EMAIL` | No | Envelope sender; defaults to `SMTP_USER` |
+| `ENQUIRY_NOTIFY_EMAIL` | No | Where enquiries are sent; defaults to `hello@velabuilt.com` |
 | `ENQUIRY_WEBHOOK_URL` | With `webhook` | Server-to-server inbound endpoint |
 | `ENQUIRY_WEBHOOK_SECRET` | No | HMAC-SHA256 signing key, min 24 chars |
-| `ENQUIRY_NOTIFY_EMAIL` | No | Notification destination |
 
 Never place a CRM key, Airtable PAT, n8n credential, model-provider key, email
 or calendar credential, or a Supabase service-role key anywhere a
@@ -32,22 +38,33 @@ or calendar credential, or a Supabase service-role key anywhere a
 
 ## The enquiry endpoint
 
-`POST /api/enquiry` is the only route that accepts input. Checks run cheapest
-first:
+`POST /api/enquiry` is the only route that accepts input. It takes two content
+types against one schema: JSON from the enhanced form, and
+`application/x-www-form-urlencoded` from the same form posted natively when
+JavaScript is unavailable. A native post that succeeds is answered with a `303`
+to `/start?sent=<reference>`; one that fails gets a self-contained page offering
+the enquiry as a pre-filled email, so nothing typed is lost. Checks run
+cheapest first:
 
-1. **Method and content type** — anything but `POST` with JSON is rejected
-   (`405` / `415`) before parsing.
+1. **Method and content type** — anything but `POST` with JSON or a form
+   encoding is rejected (`405` / `415`) before parsing.
 2. **Body size** — capped at 16 KB, checked against both the declared
    `Content-Length` and the actual body.
-3. **Rate limit** — 5 submissions per 10 minutes per client key.
-4. **Schema validation** — Zod, `.strict()`. Unknown keys are rejected, not
+3. **Same origin (native form posts only)** — a form post is a simple request
+   any site can make, so one marked `Sec-Fetch-Site: cross-site` or carrying a
+   foreign `Origin` is refused (`403`). JSON needs a CORS preflight this route
+   never grants.
+4. **Rate limit** — 5 submissions per 10 minutes per client key.
+5. **Schema validation** — Zod, `.strict()`. Unknown keys are rejected, not
    stripped. Strings have control characters removed and lengths clamped.
    Answers are validated *against the flow the chosen focus actually produces*,
    so an answer belonging to a different branch is refused.
-5. **Bot screening** — a honeypot field and a minimum completion time. Both
+6. **Bot screening** — a honeypot field and a minimum completion time. Both
    return a normal-looking `202` and deliver nothing, so a bot learns nothing
-   from the response.
-6. **Delivery** — through an adapter, time-boxed at 8 seconds. A hanging
+   from the response. Without JavaScript the completion time is measured from
+   the server render (`t`); a missing or malformed `t` is treated as unknown,
+   never as a bot, so a real enquiry is not silently dropped.
+7. **Delivery** — through an adapter, time-boxed at 8 seconds. A hanging
    integration is an outage.
 
 Verified behaviour (re-runnable with curl against a local build):
@@ -93,7 +110,8 @@ documented in that file's header:
   base only, held server-side.
 - **n8n** — POST to a **new** inbound webhook workflow (`W-IN-01`), never an
   existing outbound one.
-- **Email** — transactional send to `ENQUIRY_NOTIFY_EMAIL`.
+- **Email** — implemented: plain-text SMTP send to `ENQUIRY_NOTIFY_EMAIL`
+  through the studio's own mailbox provider, Reply-To set to the visitor.
 - **Calendar** — return a `bookingUrl` from the delivery result.
 
 Rules for any adapter added: server-side only; never log personal fields; throw

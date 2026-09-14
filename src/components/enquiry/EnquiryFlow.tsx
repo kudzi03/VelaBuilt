@@ -1,13 +1,25 @@
 "use client";
 
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
+import {
+  FOCUS_OPTIONS,
   branchSteps,
   focusStep,
   timelineStep,
   type Focus,
   type FlowStep,
 } from "@/content/enquiry-flow";
+import { site } from "@/content/site";
+import { answersForFocus, enquiryMailtoHref } from "@/lib/enquiry/format";
+import { FORM_FIELDS } from "@/lib/enquiry/form";
 import { ArrowRight, Label } from "@/components/ui/Primitives";
 import { EnquiryConfirmation } from "./EnquiryConfirmation";
 
@@ -18,6 +30,21 @@ import { EnquiryConfirmation } from "./EnquiryConfirmation";
  * Every step is a real fieldset with real inputs: the flow is navigable by
  * keyboard alone, announces its own progress, and validates inline before it
  * ever reaches the network.
+ *
+ * PROGRESSIVE ENHANCEMENT
+ * The whole flow is one real <form method="post" action="/api/enquiry">.
+ *
+ *   Enhanced   Once hydrated, the form shows one question at a time exactly as
+ *              designed and submits with fetch().
+ *   Static     The server render — and what a visitor without JavaScript
+ *              keeps — is the same form with every question in sequence,
+ *              native `required` validation and a real submit button. It posts
+ *              natively; the route answers with a redirect or a fallback page.
+ *
+ * With JavaScript available, `html.js` (set in <head> before first paint)
+ * hides everything in the static render except the step the enhanced flow
+ * opens on, so the switch at hydration is invisible. See globals.css,
+ * "Enquiry: static form".
  */
 
 type Phase = "questions" | "details" | "sent";
@@ -27,6 +54,8 @@ interface EnquiryFlowProps {
   readonly onClose?: () => void;
   readonly headingId?: string;
   readonly variant?: "dialog" | "page";
+  /** Server render time, for the no-JS path's bot timing check. */
+  readonly renderedAt?: number;
 }
 
 interface Details {
@@ -47,12 +76,29 @@ const EMPTY_DETAILS: Details = {
   consent: false,
 };
 
+/** Mirrors the server's email check closely enough to catch typos natively. */
+const EMAIL_PATTERN = "[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}";
+
+const noSubscription = () => () => {};
+
+/**
+ * False while the server-rendered form is being hydrated, true afterwards —
+ * and true immediately when mounted client-side only (the dialog), so the
+ * dialog never flashes the static form.
+ */
+function useEnhanced(): boolean {
+  return useSyncExternalStore(noSubscription, () => true, () => false);
+}
+
 export function EnquiryFlow({
   initialFocus,
   onClose,
   headingId,
   variant = "page",
+  renderedAt,
 }: EnquiryFlowProps) {
+  const enhanced = useEnhanced();
+
   // Set on mount rather than during render: reading the clock while
   // rendering is impure and can drift between renders.
   const startedAt = useRef<number>(0);
@@ -148,7 +194,7 @@ export function EnquiryFlow({
   const validate = useCallback((value: Details) => {
     const next: Partial<Record<keyof Details, string>> = {};
     if (value.name.trim().length < 2) next.name = "Please tell us who you are.";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value.email.trim())) {
+    if (!new RegExp(`^${EMAIL_PATTERN}$`).test(value.email.trim())) {
       next.email = "Please give us an email we can reply to.";
     }
     if (!value.consent) next.consent = "Please confirm we can reply to you.";
@@ -158,6 +204,8 @@ export function EnquiryFlow({
   const submit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
+      // Only the final step sends. Nothing earlier can submit the form.
+      if (phase !== "details") return;
       setSubmitError(null);
 
       const found = validate(details);
@@ -180,7 +228,9 @@ export function EnquiryFlow({
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
             focus,
-            answers,
+            // Only this focus's questions: answers left behind by going back
+            // and changing the first answer would fail validation.
+            answers: answersForFocus(focus, answers),
             name: details.name,
             email: details.email,
             company: details.company || undefined,
@@ -218,7 +268,23 @@ export function EnquiryFlow({
         setSubmitting(false);
       }
     },
-    [answers, details, focus, honeypot, validate],
+    [answers, details, focus, honeypot, phase, validate],
+  );
+
+  const mailtoHref = useMemo(
+    () =>
+      submitError
+        ? enquiryMailtoHref({
+            focus,
+            answers,
+            name: details.name,
+            email: details.email,
+            company: details.company,
+            website: details.website,
+            message: details.message,
+          })
+        : null,
+    [answers, details, focus, submitError],
   );
 
   if (phase === "sent") {
@@ -233,7 +299,14 @@ export function EnquiryFlow({
   }
 
   return (
-    <div className="flex h-full flex-col">
+    <form
+      method="post"
+      action="/api/enquiry"
+      onSubmit={enhanced ? submit : undefined}
+      noValidate={enhanced}
+      data-enquiry-form={enhanced ? "enhanced" : "static"}
+      className="flex h-full flex-col"
+    >
       <FlowChrome
         current={currentNumber}
         total={totalSteps}
@@ -241,13 +314,19 @@ export function EnquiryFlow({
         variant={variant}
       />
 
-      <p ref={liveRef} className="sr-only" role="status" aria-live="polite">
+      <p ref={liveRef} className="sr-only" role="status" aria-live="polite" data-enq-js-only="">
         Step {currentNumber} of {totalSteps}
       </p>
 
       <div className="flex-1 px-[var(--spacing-gutter)] pb-10 pt-8 sm:pt-12">
         <div className="mx-auto w-full max-w-2xl">
-          {phase === "questions" ? (
+          {!enhanced ? (
+            <StaticSteps
+              initialFocus={initialFocus}
+              headingId={headingId}
+              renderedAt={renderedAt}
+            />
+          ) : phase === "questions" ? (
             <QuestionStep
               key={step.id}
               step={step}
@@ -255,15 +334,16 @@ export function EnquiryFlow({
               onSelect={select}
               headingId={headingId}
               headingRef={headingRef}
+              required={step.id === focusStep.id || step.id === timelineStep.id}
             />
           ) : (
             <DetailsStep
               details={details}
               setDetails={setDetails}
               errors={errors}
-              onSubmit={submit}
               submitting={submitting}
               submitError={submitError}
+              mailtoHref={mailtoHref}
               headingId={headingId}
               headingRef={headingRef}
               honeypot={honeypot}
@@ -273,7 +353,10 @@ export function EnquiryFlow({
         </div>
       </div>
 
-      <div className="border-t border-[color:var(--color-hairline)] px-[var(--spacing-gutter)] py-5">
+      <div
+        className="border-t border-[color:var(--color-hairline)] px-[var(--spacing-gutter)] py-5"
+        data-enq-js-only=""
+      >
         <div className="mx-auto flex w-full max-w-2xl items-center justify-between gap-4">
           <button
             type="button"
@@ -303,11 +386,64 @@ export function EnquiryFlow({
           )}
         </div>
       </div>
-    </div>
+    </form>
   );
 }
 
 /* -------------------------------------------------------------------------- */
+
+/**
+ * Every question in one form, for the static render. Each section is marked
+ * so CSS can show the right parts: without JavaScript, all of them (the
+ * branch question only for the focus chosen); with it, only the section the
+ * enhanced flow opens on (`data-enq-preview`) until hydration takes over.
+ */
+function StaticSteps({
+  initialFocus,
+  headingId,
+  renderedAt,
+}: {
+  readonly initialFocus?: Focus;
+  readonly headingId?: string;
+  readonly renderedAt?: number;
+}) {
+  const preview = (isPreview: boolean) => (isPreview ? { "data-enq-preview": "" } : {});
+
+  return (
+    <>
+      <div data-enq-section="" {...preview(!initialFocus)}>
+        <QuestionStep
+          step={focusStep}
+          defaultSelected={initialFocus ? [initialFocus] : []}
+          headingId={initialFocus ? undefined : headingId}
+          required
+        />
+      </div>
+
+      {FOCUS_OPTIONS.map((option) => (
+        <div
+          key={option}
+          data-enq-section=""
+          data-enq-branch={option}
+          {...preview(initialFocus === option)}
+        >
+          <QuestionStep
+            step={branchSteps[option]}
+            headingId={initialFocus === option ? headingId : undefined}
+          />
+        </div>
+      ))}
+
+      <div data-enq-section="">
+        <QuestionStep step={timelineStep} required />
+      </div>
+
+      <div data-enq-section="">
+        <DetailsStep renderedAt={renderedAt} />
+      </div>
+    </>
+  );
+}
 
 function FlowChrome({
   current,
@@ -330,6 +466,7 @@ function FlowChrome({
             <span
               key={index}
               className="h-px flex-1 transition-colors duration-700"
+              data-enq-js-only=""
               style={{
                 background:
                   index < current
@@ -349,7 +486,7 @@ function FlowChrome({
             Close
           </button>
         ) : (
-          <span className="label">
+          <span className="label" data-enq-js-only="">
             {String(current).padStart(2, "0")} / {String(total).padStart(2, "0")}
           </span>
         )}
@@ -361,18 +498,24 @@ function FlowChrome({
 function QuestionStep({
   step,
   selected,
+  defaultSelected,
   onSelect,
   headingId,
   headingRef,
+  required = false,
 }: {
   readonly step: FlowStep;
-  readonly selected: readonly string[];
-  readonly onSelect: (stepId: string, value: string, multi: boolean) => void;
+  /** Controlled selection (enhanced). Omit for a native, uncontrolled group. */
+  readonly selected?: readonly string[];
+  readonly defaultSelected?: readonly string[];
+  readonly onSelect?: (stepId: string, value: string, multi: boolean) => void;
   readonly headingId?: string;
-  readonly headingRef: React.RefObject<HTMLHeadingElement | null>;
+  readonly headingRef?: React.RefObject<HTMLHeadingElement | null>;
+  /** Single-choice only: a checkbox group cannot natively require "one of". */
+  readonly required?: boolean;
 }) {
   const multi = Boolean(step.multi);
-  const groupName = `enq-${step.id}`;
+  const controlled = selected !== undefined;
 
   return (
     <fieldset className="border-0 p-0">
@@ -398,28 +541,35 @@ function QuestionStep({
 
       <div className="mt-9 grid gap-2.5">
         {step.options.map((option) => {
-          const isSelected = selected.includes(option.value);
-          const id = `${groupName}-${option.value}`;
+          const isSelected = controlled
+            ? selected.includes(option.value)
+            : Boolean(defaultSelected?.includes(option.value));
+          const id = `enq-${step.id}-${option.value}`;
           return (
             <label
               key={option.value}
               htmlFor={id}
               data-selected={isSelected}
-              className="panel panel-interactive group flex cursor-pointer items-start gap-4 px-5 py-4 data-[selected=true]:border-[rgb(224_195_152/0.45)]"
+              className="panel panel-interactive group flex cursor-pointer items-start gap-4 px-5 py-4 data-[selected=true]:border-[rgb(224_195_152/0.45)] has-checked:border-[rgb(224_195_152/0.45)]"
             >
               <input
                 id={id}
                 type={multi ? "checkbox" : "radio"}
-                name={groupName}
+                name={step.id}
                 value={option.value}
-                checked={isSelected}
-                onChange={() => onSelect(step.id, option.value, multi)}
+                required={!multi && required}
+                {...(controlled
+                  ? {
+                      checked: isSelected,
+                      onChange: () => onSelect?.(step.id, option.value, multi),
+                    }
+                  : { defaultChecked: isSelected })}
                 className="sr-only"
               />
               <span
                 aria-hidden="true"
                 data-selected={isSelected}
-                className="mt-1.5 h-2 w-2 shrink-0 border border-[color:var(--color-hairline-strong)] transition-colors duration-400 data-[selected=true]:border-[color:var(--color-champagne)] data-[selected=true]:bg-[color:var(--color-champagne)]"
+                className="mt-1.5 h-2 w-2 shrink-0 border border-[color:var(--color-hairline-strong)] transition-colors duration-400 data-[selected=true]:border-[color:var(--color-champagne)] data-[selected=true]:bg-[color:var(--color-champagne)] group-has-checked:border-[color:var(--color-champagne)] group-has-checked:bg-[color:var(--color-champagne)]"
                 style={{ borderRadius: multi ? 0 : "9999px" }}
               />
               <span className="min-w-0">
@@ -440,36 +590,47 @@ function QuestionStep({
   );
 }
 
+interface DetailsStepProps {
+  /** Omit the enhanced props for the static (native) render. */
+  readonly details?: Details;
+  readonly setDetails?: React.Dispatch<React.SetStateAction<Details>>;
+  readonly errors?: Partial<Record<keyof Details, string>>;
+  readonly submitting?: boolean;
+  readonly submitError?: string | null;
+  readonly mailtoHref?: string | null;
+  readonly headingId?: string;
+  readonly headingRef?: React.RefObject<HTMLHeadingElement | null>;
+  readonly honeypot?: string;
+  readonly setHoneypot?: (value: string) => void;
+  readonly renderedAt?: number;
+}
+
 function DetailsStep({
   details,
   setDetails,
-  errors,
-  onSubmit,
-  submitting,
+  errors = {},
+  submitting = false,
   submitError,
+  mailtoHref,
   headingId,
   headingRef,
   honeypot,
   setHoneypot,
-}: {
-  readonly details: Details;
-  readonly setDetails: React.Dispatch<React.SetStateAction<Details>>;
-  readonly errors: Partial<Record<keyof Details, string>>;
-  readonly onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-  readonly submitting: boolean;
-  readonly submitError: string | null;
-  readonly headingId?: string;
-  readonly headingRef: React.RefObject<HTMLHeadingElement | null>;
-  readonly honeypot: string;
-  readonly setHoneypot: (value: string) => void;
-}) {
+  renderedAt,
+}: DetailsStepProps) {
   const errorId = useId();
+  const controlled = details !== undefined && setDetails !== undefined;
 
   const set = <K extends keyof Details>(key: K, value: Details[K]) =>
-    setDetails((current) => ({ ...current, [key]: value }));
+    setDetails?.((current) => ({ ...current, [key]: value }));
+
+  const bind = (key: Exclude<keyof Details, "consent">) =>
+    controlled
+      ? { value: details[key], onChange: (value: string) => set(key, value) }
+      : {};
 
   return (
-    <form onSubmit={onSubmit} noValidate>
+    <div>
       <h2 id={headingId} ref={headingRef} tabIndex={-1} className="display-md outline-none">
         Where should we reply?
       </h2>
@@ -480,37 +641,43 @@ function DetailsStep({
       <div className="mt-9 grid gap-5 sm:grid-cols-2">
         <Field
           id="enq-name"
+          name="name"
           label="Name"
           required
-          value={details.name}
-          onChange={(value) => set("name", value)}
+          minLength={2}
+          maxLength={80}
+          {...bind("name")}
           error={errors.name}
           autoComplete="name"
         />
         <Field
           id="enq-email"
+          name="email"
           label="Email"
           type="email"
           required
-          value={details.email}
-          onChange={(value) => set("email", value)}
+          maxLength={160}
+          pattern={EMAIL_PATTERN}
+          {...bind("email")}
           error={errors.email}
           autoComplete="email"
         />
         <Field
           id="enq-company"
+          name="company"
           label="Company"
           optional
-          value={details.company}
-          onChange={(value) => set("company", value)}
+          maxLength={120}
+          {...bind("company")}
           autoComplete="organization"
         />
         <Field
           id="enq-website"
+          name="website"
           label="Website"
           optional
-          value={details.website}
-          onChange={(value) => set("website", value)}
+          maxLength={200}
+          {...bind("website")}
           placeholder="example.com"
           autoComplete="url"
         />
@@ -522,11 +689,17 @@ function DetailsStep({
         </label>
         <textarea
           id="enq-message"
+          name="message"
           rows={4}
           maxLength={2000}
           className="field resize-y"
-          value={details.message}
-          onChange={(event) => set("message", event.target.value)}
+          {...(controlled
+            ? {
+                value: details.message,
+                onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  set("message", event.target.value),
+              }
+            : {})}
           placeholder="What is happening now, in your own words."
         />
       </div>
@@ -536,14 +709,23 @@ function DetailsStep({
         <label htmlFor="enq-role">Role</label>
         <input
           id="enq-role"
-          name="role"
+          name={FORM_FIELDS.honeypot}
           type="text"
           tabIndex={-1}
           autoComplete="off"
-          value={honeypot}
-          onChange={(event) => setHoneypot(event.target.value)}
+          {...(controlled
+            ? {
+                value: honeypot ?? "",
+                onChange: (event: React.ChangeEvent<HTMLInputElement>) =>
+                  setHoneypot?.(event.target.value),
+              }
+            : {})}
         />
       </div>
+
+      {!controlled && renderedAt ? (
+        <input type="hidden" name={FORM_FIELDS.renderedAt} value={renderedAt} />
+      ) : null}
 
       <div className="mt-7">
         <label
@@ -552,9 +734,17 @@ function DetailsStep({
         >
           <input
             id="enq-consent"
+            name={FORM_FIELDS.consent}
+            value="yes"
             type="checkbox"
-            checked={details.consent}
-            onChange={(event) => set("consent", event.target.checked)}
+            required
+            {...(controlled
+              ? {
+                  checked: details.consent,
+                  onChange: (event: React.ChangeEvent<HTMLInputElement>) =>
+                    set("consent", event.target.checked),
+                }
+              : {})}
             aria-invalid={errors.consent ? "true" : undefined}
             aria-describedby={errors.consent ? `${errorId}-consent` : undefined}
             className="mt-1 h-4 w-4 shrink-0 accent-[color:var(--color-champagne)]"
@@ -572,24 +762,33 @@ function DetailsStep({
       </div>
 
       {submitError ? (
-        <p
+        <div
           role="alert"
           className="mt-6 border border-[#7a3d2b] bg-[rgb(122_61_43/0.12)] px-4 py-3 text-sm text-[#e0a58c]"
         >
-          {submitError}
-        </p>
+          <p>{submitError}</p>
+          {mailtoHref ? (
+            <a
+              href={mailtoHref}
+              className="mt-2 inline-block text-[color:var(--color-champagne)] underline decoration-[rgb(224_195_152/0.4)] underline-offset-4 transition-colors hover:decoration-[color:var(--color-champagne)]"
+            >
+              Email this enquiry to {site.email}
+            </a>
+          ) : null}
+        </div>
       ) : null}
 
       <button type="submit" disabled={submitting} className="btn btn-primary mt-8 w-full justify-between sm:w-auto">
         <span>{submitting ? "Sending…" : "Send enquiry"}</span>
         <ArrowRight />
       </button>
-    </form>
+    </div>
   );
 }
 
 function Field({
   id,
+  name,
   label,
   value,
   onChange,
@@ -597,17 +796,25 @@ function Field({
   type = "text",
   required = false,
   optional = false,
+  minLength,
+  maxLength,
+  pattern,
   placeholder,
   autoComplete,
 }: {
   readonly id: string;
+  readonly name: string;
   readonly label: string;
-  readonly value: string;
-  readonly onChange: (value: string) => void;
+  /** Omit value and onChange for a native, uncontrolled field. */
+  readonly value?: string;
+  readonly onChange?: (value: string) => void;
   readonly error?: string;
   readonly type?: string;
   readonly required?: boolean;
   readonly optional?: boolean;
+  readonly minLength?: number;
+  readonly maxLength?: number;
+  readonly pattern?: string;
   readonly placeholder?: string;
   readonly autoComplete?: string;
 }) {
@@ -619,14 +826,19 @@ function Field({
       </label>
       <input
         id={id}
+        name={name}
         type={type}
-        value={value}
+        {...(onChange
+          ? { value, onChange: (event: React.ChangeEvent<HTMLInputElement>) => onChange(event.target.value) }
+          : {})}
         required={required}
+        minLength={minLength}
+        maxLength={maxLength}
+        pattern={pattern}
         placeholder={placeholder}
         autoComplete={autoComplete}
         aria-invalid={error ? "true" : undefined}
         aria-describedby={error ? `${id}-error` : undefined}
-        onChange={(event) => onChange(event.target.value)}
         className="field"
       />
       {error ? (

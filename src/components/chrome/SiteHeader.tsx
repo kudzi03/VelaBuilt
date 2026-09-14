@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { primaryNav } from "@/content/site";
 import { Wordmark } from "./Monogram";
+import { PhoneLink } from "./ContactLinks";
 import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
 
 /**
@@ -95,6 +96,7 @@ export function SiteHeader() {
         </ul>
 
         <div className="hidden lg:block">
+          <PhoneLink className="label mr-8 transition-colors duration-500 hover:text-[color:var(--color-ivory)]" />
           <StartProjectLink variant="secondary" className="!py-3.5">
             Start a project
           </StartProjectLink>
@@ -166,6 +168,7 @@ export function SiteHeader() {
             <StartProjectLink variant="primary" className="w-full justify-between">
               Start a project
             </StartProjectLink>
+            <PhoneLink className="display-sm text-[color:var(--color-ivory)]" />
             <p className="label">Websites · Automation · AI Systems</p>
           </div>
         </div>

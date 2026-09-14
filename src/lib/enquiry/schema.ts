@@ -22,6 +22,8 @@ const cleanString = (max: number) =>
     )
     .pipe(z.string().max(max));
 
+const MAX_ELAPSED_MS = 1000 * 60 * 60 * 6;
+
 const answerValue = z
   .string()
   .max(64)
@@ -44,7 +46,13 @@ export const enquirySchema = z
 
     /** Bot mitigation. Both are silently enforced, never explained in the UI. */
     hp: z.string().max(200).optional(),
-    elapsedMs: z.number().int().min(0).max(1000 * 60 * 60 * 6),
+    // Clamped, not capped: a visitor who left the tab open all afternoon is
+    // slow, not invalid, and must not be refused for it.
+    elapsedMs: z
+      .number()
+      .int()
+      .min(0)
+      .transform((value) => Math.min(value, MAX_ELAPSED_MS)),
   })
   .strict()
   .superRefine((value, ctx) => {

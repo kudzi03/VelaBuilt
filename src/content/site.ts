@@ -21,6 +21,20 @@ export const site = {
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
   }).origin,
   email: "hello@velabuilt.com",
+
+  /**
+   * Direct lines — OFF until real values are supplied. `null` renders nothing
+   * anywhere: no tel: link in the header or footer, no booking link on /start
+   * or in the confirmation, no telephone in structured data. Never fill these
+   * with a placeholder; a wrong number is worse than no number. Malformed
+   * values fail the build (see assertContact below).
+   *
+   *   phone       { display: "+44 20 0000 0000", e164: "+442000000000" }
+   *   bookingUrl  "https://…" — an external scheduling page, opened in a new tab
+   */
+  phone: null as { readonly display: string; readonly e164: string } | null,
+  bookingUrl: null as string | null,
+
   locale: "en_GB",
 
   /** One sentence. Used verbatim in schema, meta description and the About page. */
@@ -36,6 +50,16 @@ export const site = {
     instagram: "https://www.instagram.com/velabuilt",
   },
 } as const;
+
+function assertContact(): void {
+  if (site.phone && !/^\+[1-9]\d{6,14}$/.test(site.phone.e164)) {
+    throw new Error(`site.phone.e164 must be E.164 (e.g. +442000000000), got "${site.phone.e164}"`);
+  }
+  if (site.bookingUrl && !/^https:\/\/[^\s]+$/.test(site.bookingUrl)) {
+    throw new Error(`site.bookingUrl must be an https:// URL, got "${site.bookingUrl}"`);
+  }
+}
+assertContact();
 
 /** Primary navigation. Order is deliberate: understand → see → trust → act. */
 export const primaryNav = [
@@ -69,6 +93,7 @@ export const footerNav = [
     links: [
       { label: "Start a project", href: "/start" },
       { label: site.email, href: `mailto:${site.email}` },
+      ...(site.phone ? [{ label: site.phone.display, href: `tel:${site.phone.e164}` }] : []),
       { label: "Instagram", href: site.social.instagram },
       { label: "Privacy", href: "/privacy" },
     ],
