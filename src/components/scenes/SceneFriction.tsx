@@ -171,7 +171,7 @@ export function SceneFriction() {
         <div className="shell on-world">
           <div className="grid gap-12 lg:grid-cols-[auto_1fr_auto] lg:items-end">
             <Reveal>
-              <StackedLabel lines={["Built", "for", "what's", "next"]} />
+              <StackedLabel lines={["Built", "for", "what’s", "next"]} />
             </Reveal>
 
             <Reveal delay={100}>

@@ -129,8 +129,9 @@ const nextConfig: NextConfig = {
 
   env: { NEXT_PUBLIC_SITE_URL: canonical.origin },
 
-  // Type errors must fail the build, never be silently ignored. Linting runs
-  // as its own step (`npm run lint`) — Next 16 no longer runs it during build.
+  // Type errors must fail the build, never be silently ignored. Next 16 no
+  // longer lints during build, so `npm run build` runs `npm run lint` first
+  // (package.json) — which is what fails a deploy on a typography regression.
   typescript: { ignoreBuildErrors: false },
 
   images: {

@@ -90,7 +90,7 @@ export const services: readonly Service[] = [
     headline: ["Your business already has value.", "The website should look like it."],
     proposition:
       "We design premium digital experiences that make a business easier to trust, understand and contact.",
-    cta: "Show me what you'd change",
+    cta: "Show me what you’d change",
     boundary:
       "This is a build, not a monthly retainer. If the site is fundamentally sound and only needs discoverability work, we will say so.",
   },
@@ -189,7 +189,7 @@ export const services: readonly Service[] = [
         body: "Reporting on what actually changed. No vanity ranking screenshots for terms nobody searches.",
       },
     ],
-    headline: ["Being good isn't enough", "if nobody can find — or understand — you."],
+    headline: ["Being good isn’t enough","if nobody can find — or understand — you."],
     proposition:
       "Technical foundations and information architecture that help people, search engines and AI systems understand what the business does.",
     cta: "Check my discoverability",

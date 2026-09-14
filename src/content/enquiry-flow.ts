@@ -95,7 +95,7 @@ export const branchSteps: Record<Focus, FlowStep> = {
       { value: "chasing", label: "Quotes go out and are never chased" },
       { value: "visibility", label: "Nobody can see what is open" },
       { value: "booking", label: "Booking a call takes too many messages" },
-      { value: "records", label: "The details live in someone's head" },
+      { value: "records", label: "The details live in someone’s head" },
     ],
   },
   automation: {

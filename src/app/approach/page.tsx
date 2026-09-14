@@ -29,7 +29,7 @@ const STAGES = [
     body: "What the site does today, where enquiries go, what is measured and what is guessed. We would rather find out that a rebuild is unnecessary than sell one.",
   },
   {
-    title: "Demonstrate, don't describe",
+    title: "Demonstrate, don’t describe",
     body: "We show the thing working before it is finished. A demonstration you can click settles arguments that a document cannot.",
   },
   {

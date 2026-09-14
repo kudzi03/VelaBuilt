@@ -16,7 +16,7 @@ const STAGES = [
   {
     key: "enquiry",
     title: "Enquiry",
-    body: "Received, recorded and referenced. It is no longer in anyone's memory.",
+    body: "Received, recorded and referenced. It is no longer in anyone’s memory.",
   },
   {
     key: "review",

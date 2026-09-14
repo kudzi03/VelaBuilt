@@ -38,7 +38,7 @@ export const site = {
   locale: "en_GB",
 
   /** One sentence. Used verbatim in schema, meta description and the About page. */
-  tagline: "Systems for what's next.",
+  tagline: "Systems for what’s next.",
   shortDescription:
     "VelaBuilt is a creative technology studio building premium websites, follow-up systems and intelligent digital infrastructure for modern businesses.",
   longDescription:
