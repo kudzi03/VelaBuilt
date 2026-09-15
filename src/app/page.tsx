@@ -94,7 +94,7 @@ export default function HomePage() {
           </div>
 
           <Reveal delay={140} className="mt-10">
-            <Link href="/work" className="btn btn-secondary">
+            <Link href="/work" className="btn btn-ghost">
               <span>All work</span>
               <ArrowRight />
             </Link>

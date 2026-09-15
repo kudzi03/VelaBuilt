@@ -57,7 +57,7 @@ export function SceneFriction() {
               <Reveal delay={260}>
                 <div className="mt-11 flex flex-wrap items-center gap-4">
                   <StartProjectLink variant="primary">Start a project</StartProjectLink>
-                  <Link href="/work" className="btn btn-secondary">
+                  <Link href="/work" className="btn btn-ghost">
                     <span>See what we build</span>
                     <ArrowRight />
                   </Link>

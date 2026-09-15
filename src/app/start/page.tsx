@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { FOCUS_OPTIONS, type Focus } from "@/content/enquiry-flow";
+import { FOCUS_OPTIONS, focusIntro, type Focus } from "@/content/enquiry-flow";
 import { site } from "@/content/site";
 import { formIssuedAt } from "@/lib/enquiry/form";
 import { pageMetadata } from "@/lib/seo";
@@ -68,9 +68,13 @@ export default async function StartPage({
                 Tell us what is <span className="foil">not working.</span>
               </h1>
               <p className="lede mt-8 max-w-[40ch]">
-                Four short questions. A person reads every one of them, and replies
-                with an honest assessment — including when we are not the right
-                people for it.
+                {(focus && focusIntro[focus]) ?? (
+                  <>
+                    Four short questions. A person reads every one of them, and replies
+                    with an honest assessment — including when we are not the right
+                    people for it.
+                  </>
+                )}
               </p>
 
               <div className="mt-10 border-t border-[color:var(--color-hairline)] pt-8">
@@ -86,7 +90,7 @@ export default async function StartPage({
 
               {site.bookingUrl ? (
                 <div className="mt-8 border-t border-[color:var(--color-hairline)] pt-8">
-                  <BookingLink className="btn btn-secondary" />
+                  <BookingLink className="btn btn-ghost" />
                 </div>
               ) : null}
             </div>

@@ -77,7 +77,7 @@ export function ServicePage({
               <StartProjectLink variant="primary" focus={focus}>
                 {service.cta}
               </StartProjectLink>
-              <Link href="/work" className="btn btn-secondary">
+              <Link href="/work" className="btn btn-ghost">
                 <span>See what we build</span>
                 <ArrowRight />
               </Link>

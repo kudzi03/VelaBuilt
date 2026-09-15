@@ -42,7 +42,7 @@ export function OfferBody({
         </ul>
 
         <div className="mt-11 flex flex-wrap items-center gap-4">
-          <StartProjectLink variant="secondary" focus={focus}>
+          <StartProjectLink variant="primary" focus={focus}>
             {service.cta}
           </StartProjectLink>
           <Link href={`/${service.slug}`} className="btn btn-ghost">

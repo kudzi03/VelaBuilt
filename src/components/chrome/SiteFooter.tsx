@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { footerNav, site, disclosures } from "@/content/site";
 import { Label } from "@/components/ui/Primitives";
+import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
 import { Monogram } from "./Monogram";
 
 export function SiteFooter() {
@@ -52,7 +53,13 @@ export function SiteFooter() {
                       "text-sm text-[color:var(--color-ivory-dim)] transition-colors duration-400 hover:text-[color:var(--color-champagne)]";
                     return (
                       <li key={link.href}>
-                        {external || mail ? (
+                        {link.href === "/start" ? (
+                          // The inquiry opens in place here too, as it does
+                          // from every other "Start a project" on the site.
+                          <StartProjectLink variant="plain" className={className}>
+                            {link.label}
+                          </StartProjectLink>
+                        ) : external || mail ? (
                           <a
                             href={link.href}
                             className={className}

@@ -121,7 +121,7 @@ export function EnquiryConfirmation({
             .
           </p>
 
-          <BookingLink className="btn btn-secondary mt-6" />
+          <BookingLink className="btn btn-ghost mt-6" />
 
           <div className="mt-12 border-t border-[color:var(--color-hairline)] pt-8">
             <Label tone="champagne">You&rsquo;re using a VelaBuilt system right now</Label>

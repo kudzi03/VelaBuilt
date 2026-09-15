@@ -51,7 +51,7 @@ export default function NotFound() {
         </nav>
 
         <div className="mt-12">
-          <Link href="/" className="btn btn-secondary">
+          <Link href="/" className="btn btn-ghost">
             <span>Back to the beginning</span>
             <ArrowRight />
           </Link>

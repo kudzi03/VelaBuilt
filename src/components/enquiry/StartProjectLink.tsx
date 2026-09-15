@@ -9,16 +9,21 @@ import { useEnquiryDialog } from "./EnquiryDialogProvider";
 /**
  * A real link to /start that upgrades to the in-place dialog when it can.
  * Modified clicks (new tab, new window, middle click) are left alone.
+ *
+ * Opening the inquiry is the site's one primary action, so it is the only
+ * thing drawn as the solid `primary` button. `plain` carries no button
+ * styling at all, for places such as the footer where it sits in a list of
+ * ordinary links but should still open the dialog like every other copy.
  */
 export function StartProjectLink({
   children = "Start a project",
   variant = "primary",
   focus,
   className,
-  withArrow = true,
+  withArrow = variant !== "plain",
 }: {
   readonly children?: ReactNode;
-  readonly variant?: "primary" | "secondary" | "ghost";
+  readonly variant?: "primary" | "secondary" | "ghost" | "plain";
   readonly focus?: Focus;
   readonly className?: string;
   readonly withArrow?: boolean;
@@ -29,7 +34,7 @@ export function StartProjectLink({
   return (
     <Link
       href={href}
-      className={`btn btn-${variant} ${className ?? ""}`}
+      className={variant === "plain" ? (className ?? "") : `btn btn-${variant} ${className ?? ""}`}
       onClick={(event) => {
         if (
           !dialog ||
@@ -45,7 +50,7 @@ export function StartProjectLink({
         dialog.open(focus);
       }}
     >
-      <span>{children}</span>
+      {variant === "plain" ? children : <span>{children}</span>}
       {withArrow ? <ArrowRight /> : null}
     </Link>
   );

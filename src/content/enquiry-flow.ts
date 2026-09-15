@@ -162,6 +162,22 @@ export const timelineStep: FlowStep = {
   ],
 };
 
+/**
+ * The /start intro line for a visitor who arrived from a specific promise.
+ * Three calls to action offer something particular — "Show me what you’d
+ * change", "Map my follow-up", "Check my discoverability" — and each
+ * pre-answers the first question, so the page restates that offer instead of
+ * the general one. Any other focus keeps the general intro.
+ */
+export const focusIntro: Partial<Record<Focus, string>> = {
+  website:
+    "Three short questions about your website. A person reads every one, and replies with what we would change, including when we are not the right people for it.",
+  "follow-up":
+    "Three short questions about how inquiries are followed up. A person reads every one, and replies with where it breaks down, including when we are not the right people for it.",
+  discoverability:
+    "Three short questions about how customers find you. A person reads every one, and replies with what is stopping them, including when we are not the right people for it.",
+};
+
 export const focusLabel: Record<Focus, string> = {
   website: "Website",
   "follow-up": "Follow-up / sales process",
