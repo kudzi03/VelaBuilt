@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { preload } from "react-dom";
+import { SCENES, plateSource } from "@/content/scenes";
 import { site } from "@/content/site";
 import { services } from "@/content/services";
 import { faqsFor } from "@/content/faq";
@@ -35,6 +37,19 @@ const homeFaqs = faqsFor("home");
  * scripts disabled or motion reduced.
  */
 export default function HomePage() {
+  // The opening plate is the page's largest contentful paint. It is already in
+  // the HTML, but inside a <picture> deep in <body>; a preload in <head>
+  // requests it with the fonts, ahead of the stylesheet, at the size the <img>
+  // will pick. `type` keeps browsers without AVIF from fetching a file they skip.
+  const opening = plateSource(SCENES[0]!.plate);
+  preload(opening.avif, {
+    as: "image",
+    imageSrcSet: opening.avifSrcSet,
+    imageSizes: "100vw",
+    fetchPriority: "high",
+    type: "image/avif",
+  });
+
   const structuredData = graph([
     ...services.map((service) => serviceSchema(service)),
     faqSchema(homeFaqs),

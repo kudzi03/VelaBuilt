@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import localFont from "next/font/local";
 import { SiteHeader } from "@/components/chrome/SiteHeader";
 import { SiteFooter } from "@/components/chrome/SiteFooter";
 import { EnquiryDialogProvider } from "@/components/enquiry/EnquiryDialogProvider";
@@ -10,24 +10,35 @@ import "./globals.css";
 
 /**
  * Refined serif against a precise modern sans — the identity's core type
- * contrast. Both are self-hosted at build time by next/font: no runtime
- * request to a font CDN, no layout shift from a late swap.
+ * contrast. Self-hosted from src/app/fonts: no runtime request to a font CDN,
+ * no layout shift from a late swap (next/font generates metric-matched
+ * fallbacks).
+ *
+ * Only the faces the design renders are registered. Measured across every
+ * route, both viewports, the dialog and the mobile menu, text uses Inter at
+ * 300–600 and Cormorant Garamond at 300, upright and italic. Registering every
+ * weight × every unicode subset had put 60 @font-face rules on each page; this
+ * is 3 faces, plus the 2 metric-matched fallbacks next/font adds. See
+ * src/app/fonts/README.md for how the files were produced.
  */
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["300", "400", "500"],
-  style: ["normal", "italic"],
+const cormorant = localFont({
+  src: [
+    { path: "./fonts/cormorant-garamond-300-latin.woff2", weight: "300", style: "normal" },
+    { path: "./fonts/cormorant-garamond-300-italic-latin.woff2", weight: "300", style: "italic" },
+  ],
   variable: "--font-cormorant",
   display: "swap",
   preload: true,
+  // The fallback next/font/google chose for a serif, so a swap moves nothing.
+  adjustFontFallback: "Times New Roman",
 });
 
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+const inter = localFont({
+  src: [{ path: "./fonts/inter-latin.woff2", weight: "300 600", style: "normal" }],
   variable: "--font-inter",
   display: "swap",
   preload: true,
+  adjustFontFallback: "Arial",
 });
 
 export const metadata: Metadata = {

@@ -103,7 +103,7 @@ while the reader is in the right one.
 CinematicStage        decides the tier, mounts the compositor at idle
 ├── CssPlate          the plate as a plain image — first paint, and all of Tier C
 ├── PlateSequence     Tier C's journey: the same rooms, crossfading
-├── PlateCanvas       the R3F canvas (dynamic import, ssr: false)
+├── PlateCanvas       the WebGL2 plate compositor (dynamic import, ssr: false)
 │   ├── Compositor    blends two scenes' camera and grade into the shader
 │   ├── plateShader   framing, parallax, bloom, haze, grade, dissolve, dimming
 │   └── plateTextures lazy load, two resident, disposed when walked away from

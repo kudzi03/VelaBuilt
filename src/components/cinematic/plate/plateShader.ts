@@ -261,6 +261,43 @@ export const PLATE_FRAGMENT = /* glsl */ `
     colour += g * uGrain * (1.0 - smoothstep(0.0, 0.55, luma(colour)) * 0.6);
 
     gl_FragColor = vec4(max(colour, 0.0), 1.0);
-    #include <colorspace_fragment>
+    // Grading happens in linear light (the plates are sampled from sRGB
+    // textures); the frame is encoded back to sRGB for display.
+    gl_FragColor = linearToOutputTexel(gl_FragColor);
   }
+`;
+
+/**
+ * GLSL ES 3.00 preamble for both stages. The shaders above are written in the
+ * GLSL ES 1.00 dialect; these defines map it onto a WebGL2 context, exactly as
+ * three.js did when it compiled them — including `highp` samplers, without
+ * which the linear values read back from an sRGB texture lose precision and
+ * the near-black fields band.
+ */
+export const PLATE_VERTEX_PREFIX = /* glsl */ `#version 300 es
+precision highp float;
+precision highp int;
+#define attribute in
+#define varying out
+in vec3 position;
+in vec2 uv;
+`;
+
+export const PLATE_FRAGMENT_PREFIX = /* glsl */ `#version 300 es
+precision highp float;
+precision highp int;
+precision highp sampler2D;
+#define varying in
+layout(location = 0) out highp vec4 pc_fragColor;
+#define gl_FragColor pc_fragColor
+#define texture2D texture
+
+// sRGB transfer, as three.js r186 ships it (colorspace_pars_fragment), with
+// linear-sRGB working space and sRGB output: the primaries matrix is identity.
+vec4 sRGBTransferOETF( in vec4 value ) {
+  return vec4( mix( pow( value.rgb, vec3( 0.41666 ) ) * 1.055 - vec3( 0.055 ), value.rgb * 12.92, vec3( lessThanEqual( value.rgb, vec3( 0.0031308 ) ) ) ), value.a );
+}
+vec4 linearToOutputTexel( vec4 value ) {
+  return sRGBTransferOETF( value );
+}
 `;

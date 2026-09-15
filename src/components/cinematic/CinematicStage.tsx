@@ -37,6 +37,13 @@ export function CinematicStage({ targetId }: { readonly targetId: string }) {
   );
 
   const [idleReached, setIdleReached] = useState(false);
+  // If the compositor cannot start (no WebGL2, shader rejected, context gone
+  // for good), the stills stay: the stage never goes dark waiting for it.
+  const [canvasFailed, setCanvasFailed] = useState(false);
+  // The canvas builds its shader and decodes its first plate off the main
+  // thread. Until it has drawn that plate, the still stays on screen and the
+  // canvas stays invisible — the handover is never a black frame.
+  const [canvasReady, setCanvasReady] = useState(false);
 
   useEffect(() => {
     journey.reducedMotion = capability.reducedMotion;
@@ -58,7 +65,8 @@ export function CinematicStage({ targetId }: { readonly targetId: string }) {
     return () => window.clearTimeout(timer);
   }, [capability.webgl]);
 
-  const showCanvas = idleReached && capability.webgl && capability.tier !== "C";
+  const showCanvas =
+    idleReached && !canvasFailed && capability.webgl && capability.tier !== "C";
 
   return (
     <div
@@ -74,15 +82,19 @@ export function CinematicStage({ targetId }: { readonly targetId: string }) {
           priority
           focal={OPENING.focal}
           portraitFocal={OPENING.portraitFocal}
-          dim={showCanvas ? 0 : 1}
+          dim={showCanvas && canvasReady ? 0 : 1}
         />
 
         {/* Tier C still travels the building — it just does it in stills. */}
-        {!showCanvas ? <PlateSequence /> : null}
+        {!(showCanvas && canvasReady) ? <PlateSequence /> : null}
 
         {showCanvas ? (
-          <div className="absolute inset-0">
-            <PlateCanvas tier={capability.tier === "A" ? "A" : "B"} />
+          <div className="absolute inset-0" style={{ opacity: canvasReady ? 1 : 0 }}>
+            <PlateCanvas
+              tier={capability.tier === "A" ? "A" : "B"}
+              onReady={() => setCanvasReady(true)}
+              onFailure={() => setCanvasFailed(true)}
+            />
           </div>
         ) : null}
       </div>

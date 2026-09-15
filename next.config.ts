@@ -65,7 +65,8 @@ function legacyHostRedirects() {
  *               enquiry confirmation — which echoes nothing the visitor typed.
  *   style-src   'unsafe-inline' is required by React inline styles and the
  *               critical CSS Next inlines.
- *   worker-src  blob: — three.js / drei asset loaders create worker blobs.
+ *   worker-src  'self' only. The plate compositor is plain WebGL2 and spawns
+ *               no workers; the blob: allowance existed for three.js loaders.
  *   font-src    'self' only: fonts are self-hosted by next/font at build time,
  *               so no third-party font origin is ever contacted at runtime.
  */
@@ -78,7 +79,7 @@ const contentSecurityPolicy = [
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
   `connect-src 'self'${isDev ? " ws: wss:" : ""}`,
-  "worker-src 'self' blob:",
+  "worker-src 'self'",
   "media-src 'self'",
   "object-src 'none'",
   "base-uri 'self'",
@@ -136,11 +137,6 @@ const nextConfig: NextConfig = {
 
   images: {
     formats: ["image/avif", "image/webp"],
-  },
-
-  experimental: {
-    // three.js and drei are large; import only what each page uses.
-    optimizePackageImports: ["@react-three/drei", "three", "motion"],
   },
 
   async redirects() {

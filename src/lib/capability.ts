@@ -31,22 +31,18 @@ export const TIER_C: Capability = {
   webgl: false,
 };
 
+/**
+ * Whether the browser offers WebGL2, which the compositor is written for.
+ *
+ * This checks for the API instead of creating a context to test. A probe
+ * context was the single most expensive thing the page did at startup: on a
+ * cold GPU process it took ~270 ms, inside the render that follows hydration.
+ * A device that exposes WebGL2 but cannot create a context (blocklisted
+ * driver, lost GPU) is caught when the compositor starts, and the stage keeps
+ * its stills — see PlateCanvas `onFailure`.
+ */
 function hasWebGL(): boolean {
-  if (typeof document === "undefined") return false;
-  try {
-    const canvas = document.createElement("canvas");
-    const gl =
-      canvas.getContext("webgl2") ??
-      canvas.getContext("webgl") ??
-      canvas.getContext("experimental-webgl");
-    if (!gl) return false;
-    // Release the probe context immediately — browsers cap live contexts.
-    const lose = (gl as WebGLRenderingContext).getExtension("WEBGL_lose_context");
-    lose?.loseContext();
-    return true;
-  } catch {
-    return false;
-  }
+  return typeof window !== "undefined" && typeof window.WebGL2RenderingContext === "function";
 }
 
 interface NavigatorWithHints extends Navigator {
