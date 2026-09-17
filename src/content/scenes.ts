@@ -72,12 +72,12 @@ export interface Scene {
 }
 
 const BASE_GRADE: PlateGrade = {
-  exposure: 0,
-  contrast: 1.06,
+  exposure: 0.28,
+  contrast: 1.1,
   saturation: 1.04,
   warmth: 0.16,
   bloom: 0.5,
-  haze: 0.3,
+  haze: 0.08,
 };
 
 export const SCENES: readonly Scene[] = [
@@ -92,7 +92,7 @@ export const SCENES: readonly Scene[] = [
     lateral: 0.9,
     zoom: [1.0, 1.14],
     pan: [-0.03, 0.03],
-    grade: { ...BASE_GRADE, exposure: 0.06, bloom: 0.56, haze: 0.34 },
+    grade: { ...BASE_GRADE, exposure: 0.34, bloom: 0.56, haze: 0.1 },
   },
   {
     chapter: "website",
@@ -105,7 +105,7 @@ export const SCENES: readonly Scene[] = [
     lateral: 1.0,
     zoom: [1.02, 1.16],
     pan: [0.035, -0.02],
-    grade: { ...BASE_GRADE, exposure: 0.02, contrast: 1.09, bloom: 0.62 },
+    grade: { ...BASE_GRADE, exposure: 0.3, contrast: 1.13, bloom: 0.62 },
   },
   {
     chapter: "enquiry",
@@ -118,7 +118,7 @@ export const SCENES: readonly Scene[] = [
     lateral: 0.78,
     zoom: [1.0, 1.15],
     pan: [-0.04, 0.035],
-    grade: { ...BASE_GRADE, exposure: -0.04, contrast: 1.1, warmth: 0.13, haze: 0.4 },
+    grade: { ...BASE_GRADE, exposure: 0.24, contrast: 1.14, warmth: 0.13, haze: 0.12 },
   },
   {
     chapter: "lab",
@@ -130,7 +130,7 @@ export const SCENES: readonly Scene[] = [
     lateral: 0.7,
     zoom: [1.05, 1.14],
     pan: [0.02, -0.018],
-    grade: { ...BASE_GRADE, exposure: 0.04, bloom: 0.68, haze: 0.26 },
+    grade: { ...BASE_GRADE, exposure: 0.32, bloom: 0.68, haze: 0.08 },
   },
   {
     chapter: "discoverability",
@@ -145,11 +145,11 @@ export const SCENES: readonly Scene[] = [
     pan: [-0.025, 0.01],
     grade: {
       ...BASE_GRADE,
-      exposure: -0.06,
+      exposure: 0.22,
       saturation: 0.9,
       warmth: 0.07,
       bloom: 0.44,
-      haze: 0.42,
+      haze: 0.12,
     },
   },
   {
@@ -165,11 +165,11 @@ export const SCENES: readonly Scene[] = [
     pan: [0.01, 0.028],
     grade: {
       ...BASE_GRADE,
-      exposure: 0.22,
+      exposure: 0.46,
       saturation: 1.1,
       warmth: 0.24,
       bloom: 0.95,
-      haze: 0.2,
+      haze: 0.06,
     },
   },
 ] as const;

@@ -42,7 +42,7 @@
   /* --- Motion: slow, weighted, motivated ------------------------------ */
   --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-architectural: cubic-bezier(0.65, 0, 0.35, 1);
-  --duration-reveal: 1100ms;
+  --duration-reveal: 560ms;
 
   /* --- Rhythm ---------------------------------------------------------- */
   --spacing-gutter: clamp(1.25rem, 4vw, 5rem);
@@ -160,22 +160,22 @@
   .display-xl {
     font-family: var(--font-display);
     font-size: clamp(2.9rem, 8.2vw, 7.5rem);
-    line-height: 0.98;
-    letter-spacing: -0.022em;
+    line-height: 0.96;
+    letter-spacing: -0.032em;
   }
 
   .display-lg {
     font-family: var(--font-display);
-    font-size: clamp(2.3rem, 5.6vw, 4.6rem);
-    line-height: 1.03;
-    letter-spacing: -0.018em;
+    font-size: clamp(2.6rem, 6.6vw, 5.5rem);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
   }
 
   .display-md {
     font-family: var(--font-display);
-    font-size: clamp(1.7rem, 3.4vw, 2.9rem);
-    line-height: 1.1;
-    letter-spacing: -0.012em;
+    font-size: clamp(1.8rem, 3.8vw, 3.2rem);
+    line-height: 1.08;
+    letter-spacing: -0.022em;
   }
 
   .display-sm {
@@ -685,6 +685,71 @@
    * so the shield sits behind the text and in front of the canvas, instead of
    * escaping to the page's stacking context and disappearing behind the world.
    */
+  /* READING GROUND.
+     Body copy does not sit on a photograph. Over a plate, a paragraph's
+     contrast is whatever the room happens to be doing behind it — which is
+     why lifting the plates by a third of a stop moved text that had been
+     marginal to text that plainly failed. Everything that is read rather
+     than glanced at sits on this instead: opaque, so its legibility is a
+     property of the design and not of the scene behind it. */
+  .reading-ground {
+    position: relative;
+    isolation: isolate;
+    background-color: var(--color-obsidian);
+    border: 1px solid var(--color-hairline);
+    padding: clamp(1.5rem, 3.2vw, 3rem);
+  }
+
+  /* TITLE GROUND — a title card, not a fog bank.
+     Display type stays over the plate, because that is the moment. It just
+     cannot depend on what is behind it. This pools darkness tightly around
+     the type itself and leaves the rest of the frame at full brightness,
+     which is exactly what a viewport-wide scrim can never do. */
+  .on-world :is(h1, h2).display-xl,
+  .on-world :is(h1, h2).display-lg {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .on-world :is(h1, h2).display-xl::before,
+  .on-world :is(h1, h2).display-lg::before {
+    content: "";
+    position: absolute;
+    inset: -1.5rem -2.5rem -1.25rem -2rem;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+      124% 142% at 42% 50%,
+      rgb(5 5 6 / 0.93) 0%,
+      rgb(5 5 6 / 0.84) 52%,
+      rgb(5 5 6 / 0.46) 80%,
+      transparent 100%
+    );
+  }
+
+  /* The same pool for the small type that has to sit on the plate — the scene
+     label above each chapter heading. Wide-tracked 12px ink over a lit floor
+     is the least forgiving thing on the page. */
+  .on-plate {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .on-plate::before {
+    content: "";
+    position: absolute;
+    inset: -0.9rem -1.8rem;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+      128% 168% at 32% 50%,
+      rgb(5 5 6 / 0.96) 0%,
+      rgb(5 5 6 / 0.9) 54%,
+      rgb(5 5 6 / 0.52) 82%,
+      transparent 100%
+    );
+  }
+
   .on-world {
     position: relative;
     isolation: isolate;
@@ -864,18 +929,20 @@
     pointer-events: none;
     background: radial-gradient(
       104% 82% at 50% 44%,
-      transparent 42%,
-      rgb(0 0 0 / 0.55) 82%,
-      rgb(0 0 0 / 0.86) 100%
+      transparent 62%,
+      rgb(0 0 0 / 0.18) 84%,
+      rgb(0 0 0 / 0.42) 100%
     );
   }
 
-  /* Film grain keeps large black fields from banding. */
+  /* Dither, not film grain. Enough to stop a near-black field banding and
+     no more: visible grain is the single cheapest-looking thing a dark site
+     can do, and it was reading as softness rather than as texture. */
   .grain {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    opacity: 0.05;
+    opacity: 0.018;
     mix-blend-mode: overlay;
     background-image: var(--grain-url);
     background-size: 180px 180px;
@@ -977,7 +1044,7 @@
 
   .js .reveal {
     opacity: 0;
-    transform: translateY(1.6rem);
+    transform: translateY(1.1rem);
     transition:
       opacity var(--duration-reveal) var(--ease-cinematic),
       transform var(--duration-reveal) var(--ease-cinematic);

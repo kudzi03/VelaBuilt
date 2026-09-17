@@ -32,7 +32,9 @@ export function FaqSection({
             </h2>
           </Reveal>
 
-          <Reveal delay={120} className="scrim">
+          {/* Answers are read, not glanced at, so they sit on solid ground
+              rather than on whatever the plate behind them is doing. */}
+          <Reveal delay={120} className="reading-ground">
             <ul className="border-t border-[color:var(--color-hairline)]">
               {entries.map((entry) => (
                 <li key={entry.question} className="border-b border-[color:var(--color-hairline)]">
