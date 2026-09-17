@@ -29,7 +29,7 @@ export function ChapterIndex() {
     <nav
       aria-label="Chapters"
       data-visible={visible}
-      className="pointer-events-none fixed right-[max(1.25rem,3vw)] top-1/2 z-30 hidden -translate-y-1/2 opacity-0 transition-opacity duration-700 data-[visible=true]:pointer-events-auto data-[visible=true]:opacity-100 xl:block"
+      className="on-plate pointer-events-none fixed right-[max(1.25rem,3vw)] top-1/2 z-30 hidden -translate-y-1/2 opacity-0 transition-opacity duration-700 data-[visible=true]:pointer-events-auto data-[visible=true]:opacity-100 xl:block"
     >
       <ol className="flex flex-col gap-4">
         {CHAPTERS.map((chapter) => {

@@ -70,7 +70,7 @@ export default function HomePage() {
 
       {/* ---- Proof, with its claims attached --------------------------- */}
       <section id="work" aria-labelledby="work-heading" className="relative py-24 lg:py-32">
-        <div className="shell">
+        <div className="shell on-world">
           <Reveal>
             <div className="flex flex-wrap items-end justify-between gap-8">
               <div>

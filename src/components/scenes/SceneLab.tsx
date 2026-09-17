@@ -27,7 +27,7 @@ export function SceneLab() {
 
       {/* A teaser, not a second copy of the room. The full lab is one click
           away and renders the same modules interactively. */}
-      <Reveal delay={140} className="mt-12">
+      <Reveal delay={140} className="on-plate mt-12">
         <ul className="flex flex-wrap gap-2">
           {[
             "Website",
