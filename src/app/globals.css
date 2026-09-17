@@ -42,7 +42,7 @@
   /* --- Motion: slow, weighted, motivated ------------------------------ */
   --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-architectural: cubic-bezier(0.65, 0, 0.35, 1);
-  --duration-reveal: 1100ms;
+  --duration-reveal: 560ms;
 
   /* --- Rhythm ---------------------------------------------------------- */
   --spacing-gutter: clamp(1.25rem, 4vw, 5rem);
@@ -160,22 +160,22 @@
   .display-xl {
     font-family: var(--font-display);
     font-size: clamp(2.9rem, 8.2vw, 7.5rem);
-    line-height: 0.98;
-    letter-spacing: -0.022em;
+    line-height: 0.96;
+    letter-spacing: -0.032em;
   }
 
   .display-lg {
     font-family: var(--font-display);
-    font-size: clamp(2.3rem, 5.6vw, 4.6rem);
-    line-height: 1.03;
-    letter-spacing: -0.018em;
+    font-size: clamp(2.6rem, 6.6vw, 5.5rem);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
   }
 
   .display-md {
     font-family: var(--font-display);
-    font-size: clamp(1.7rem, 3.4vw, 2.9rem);
-    line-height: 1.1;
-    letter-spacing: -0.012em;
+    font-size: clamp(1.8rem, 3.8vw, 3.2rem);
+    line-height: 1.08;
+    letter-spacing: -0.022em;
   }
 
   .display-sm {
@@ -864,18 +864,20 @@
     pointer-events: none;
     background: radial-gradient(
       104% 82% at 50% 44%,
-      transparent 42%,
-      rgb(0 0 0 / 0.55) 82%,
-      rgb(0 0 0 / 0.86) 100%
+      transparent 62%,
+      rgb(0 0 0 / 0.18) 84%,
+      rgb(0 0 0 / 0.42) 100%
     );
   }
 
-  /* Film grain keeps large black fields from banding. */
+  /* Dither, not film grain. Enough to stop a near-black field banding and
+     no more: visible grain is the single cheapest-looking thing a dark site
+     can do, and it was reading as softness rather than as texture. */
   .grain {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    opacity: 0.05;
+    opacity: 0.018;
     mix-blend-mode: overlay;
     background-image: var(--grain-url);
     background-size: 180px 180px;
@@ -977,7 +979,7 @@
 
   .js .reveal {
     opacity: 0;
-    transform: translateY(1.6rem);
+    transform: translateY(1.1rem);
     transition:
       opacity var(--duration-reveal) var(--ease-cinematic),
       transform var(--duration-reveal) var(--ease-cinematic);

@@ -68,7 +68,7 @@ export function CssPlate({
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(120% 90% at 50% 45%, transparent 34%, rgb(5 5 6 / 0.5) 82%, rgb(5 5 6 / 0.82) 100%)",
+            "radial-gradient(120% 90% at 50% 45%, transparent 58%, rgb(5 5 6 / 0.16) 86%, rgb(5 5 6 / 0.38) 100%)",
         }}
       />
       <span aria-hidden="true" className="grain absolute inset-0" />

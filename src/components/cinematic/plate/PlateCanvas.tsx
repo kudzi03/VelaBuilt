@@ -399,8 +399,10 @@ function startCompositor(
 
     // Depth separates hardest exactly while the camera is moving hardest.
     gl.uniform1f(u.uParallax, parallax * (1 + flash * 0.8));
-    gl.uniform1f(u.uVignette, 0.42);
-    gl.uniform1f(u.uGrain, 0.015);
+    // A vignette you can see is a vignette that is too strong, and grain is
+    // here only to stop near-black banding.
+    gl.uniform1f(u.uVignette, 0.12);
+    gl.uniform1f(u.uGrain, 0.005);
     gl.uniform1f(u.uTime, (now - startedAt) / 1000);
     gl.uniform1f(u.uQuality, quality);
     gl.uniform1f(u.uDim, dim);
