@@ -65,7 +65,9 @@ export function SceneFriction() {
               </Reveal>
             </div>
 
-            <Reveal delay={340} className="hidden shrink-0 text-right xl:block">
+            {/* Sits on the brightest quarter of the opening plate, so it
+                carries its own pool rather than relying on the scene. */}
+            <Reveal delay={340} className="on-plate hidden shrink-0 text-right xl:block">
               <p className="label leading-[2.1]">
                 A<br />
                 more

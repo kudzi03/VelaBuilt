@@ -56,7 +56,10 @@ for (const route of ROUTES) {
 
   for (const y of stops.slice(0, 16)) {
     await page.evaluate((top) => window.scrollTo({ top, behavior: "instant" }), y);
-    await page.waitForTimeout(1400); // let any committed cut finish
+    // Let a committed cut finish AND every reveal land. On a slow origin a
+    // panel can still be fading in, and a half-faded panel is a transparent
+    // one: its text is briefly over the plate, which measures as a failure.
+    await page.waitForTimeout(Number(process.env.SETTLE ?? 1400));
 
     const items = await page.evaluate((FOIL) => {
       const out = [];
