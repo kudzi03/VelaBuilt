@@ -30,7 +30,7 @@ export function ChapterFrame({
       className={`relative flex min-h-[100svh] flex-col justify-center py-28 lg:py-36 ${className ?? ""}`}
     >
       <div className="shell on-world w-full">
-        <div className="mb-10 flex items-center gap-5">
+        <div className="on-plate mb-10 flex items-center gap-5">
           <Label tone="champagne" as="span">
             Scene {chapter.scene}
           </Label>

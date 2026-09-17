@@ -685,6 +685,71 @@
    * so the shield sits behind the text and in front of the canvas, instead of
    * escaping to the page's stacking context and disappearing behind the world.
    */
+  /* READING GROUND.
+     Body copy does not sit on a photograph. Over a plate, a paragraph's
+     contrast is whatever the room happens to be doing behind it — which is
+     why lifting the plates by a third of a stop moved text that had been
+     marginal to text that plainly failed. Everything that is read rather
+     than glanced at sits on this instead: opaque, so its legibility is a
+     property of the design and not of the scene behind it. */
+  .reading-ground {
+    position: relative;
+    isolation: isolate;
+    background-color: var(--color-obsidian);
+    border: 1px solid var(--color-hairline);
+    padding: clamp(1.5rem, 3.2vw, 3rem);
+  }
+
+  /* TITLE GROUND — a title card, not a fog bank.
+     Display type stays over the plate, because that is the moment. It just
+     cannot depend on what is behind it. This pools darkness tightly around
+     the type itself and leaves the rest of the frame at full brightness,
+     which is exactly what a viewport-wide scrim can never do. */
+  .on-world :is(h1, h2).display-xl,
+  .on-world :is(h1, h2).display-lg {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .on-world :is(h1, h2).display-xl::before,
+  .on-world :is(h1, h2).display-lg::before {
+    content: "";
+    position: absolute;
+    inset: -1.5rem -2.5rem -1.25rem -2rem;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+      124% 142% at 42% 50%,
+      rgb(5 5 6 / 0.93) 0%,
+      rgb(5 5 6 / 0.84) 52%,
+      rgb(5 5 6 / 0.46) 80%,
+      transparent 100%
+    );
+  }
+
+  /* The same pool for the small type that has to sit on the plate — the scene
+     label above each chapter heading. Wide-tracked 12px ink over a lit floor
+     is the least forgiving thing on the page. */
+  .on-plate {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .on-plate::before {
+    content: "";
+    position: absolute;
+    inset: -0.9rem -1.8rem;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+      128% 168% at 32% 50%,
+      rgb(5 5 6 / 0.96) 0%,
+      rgb(5 5 6 / 0.9) 54%,
+      rgb(5 5 6 / 0.52) 82%,
+      transparent 100%
+    );
+  }
+
   .on-world {
     position: relative;
     isolation: isolate;

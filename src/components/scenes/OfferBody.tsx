@@ -19,7 +19,8 @@ export function OfferBody({
   readonly children?: React.ReactNode;
 }) {
   return (
-    <div className="mt-14 grid gap-14 lg:grid-cols-[1.05fr_1fr] lg:gap-20">
+    <div className="reading-ground mt-14">
+      <div className="grid gap-14 lg:grid-cols-[1.05fr_1fr] lg:gap-20">
       <Reveal delay={80}>
         <Label tone="champagne">
           {service.index} — {service.name}
@@ -71,11 +72,12 @@ export function OfferBody({
           </ul>
           {/* The boundary is read, not glanced at, and sits in the right-hand
               column where the plates are brightest: a fixed shield. */}
-          <p className="scrim mt-6 max-w-[46ch] text-sm leading-relaxed text-[color:var(--color-muted)]">
+          <p className="mt-6 max-w-[46ch] text-sm leading-relaxed text-[color:var(--color-muted)]">
             {service.boundary}
           </p>
         </div>
       </Reveal>
+      </div>
     </div>
   );
 }
