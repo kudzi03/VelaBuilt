@@ -153,7 +153,7 @@ function PlateSequence() {
             // screen is announced. Blanking the alt to "" said the image was
             // decorative, which it is not.
             aria-hidden={current ? undefined : true}
-            className="absolute inset-0 transition-opacity duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none"
+            className="absolute inset-0 transition-opacity duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none"
             style={{ opacity: current ? 1 : 0 }}
           >
             <CssPlate

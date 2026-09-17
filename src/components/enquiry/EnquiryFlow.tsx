@@ -262,7 +262,7 @@ export function EnquiryFlow({
         setPhase("sent");
       } catch {
         setSubmitError(
-          "That did not reach us — check your connection, or email hello@velabuilt.com.",
+          `That did not reach us — check your connection, or email ${site.email}.`,
         );
       } finally {
         setSubmitting(false);

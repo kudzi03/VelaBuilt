@@ -79,7 +79,8 @@ export function PlateCanvas({
 /* -------------------------------------------------------------------------- */
 
 const UNIFORM_NAMES = [
-  "uPlateA", "uPlateB", "uMix", "uSamePlate", "uResolution", "uPlateSize",
+  "uPlateA", "uPlateB", "uMix", "uSamePlate", "uBlurA", "uBlurB", "uCut",
+  "uResolution", "uPlateSize",
   "uFocalA", "uFocalB", "uZoomA", "uZoomB", "uPanA", "uPanB",
   "uHorizonA", "uHorizonB", "uLateralA", "uLateralB", "uParallax",
   "uExposureA", "uExposureB", "uContrastA", "uContrastB",
@@ -249,6 +250,22 @@ function startCompositor(
   const spot: [number, number, number] = [0.5, 0.5, 0.4];
   let sweepTick = 0;
 
+  /**
+   * A cut is committed. Scroll chooses *when* the room changes; time carries
+   * the change itself from beginning to end.
+   *
+   * Driving the dissolve from scroll position let a visitor park the page at a
+   * 50/50 blend of two photographs and sit there — the one thing that reads
+   * unmistakably as a double exposure rather than as a place. No film lets you
+   * scrub a cut, and neither does this.
+   */
+  const cutMs = () => (journey.reducedMotion ? 380 : 900);
+  let shownIndex = 0;
+  let cutting = false;
+  let cutFrom = 0;
+  let cutTo = 0;
+  let cutAt = 0;
+
   const init = () => {
     bindPlateContext(gl);
     gpu = null;
@@ -295,24 +312,53 @@ function startCompositor(
     const delta = Math.min(0.05, (now - lastFrameAt) / 1000);
     lastFrameAt = now;
 
-    // Where we are between two chapters.
+    // Which room the camera is in, and which one it is walking into.
     const station = clamp01(journey.smooth) * (CHAPTERS.length - 1);
-    const index = Math.min(CHAPTERS.length - 2, Math.floor(station));
-    const t = CHAPTERS.length > 1 ? station - index : 0;
+    const nearest = Math.max(0, Math.min(SCENES.length - 1, Math.round(station)));
 
-    const from = SCENES[index]!;
-    const to = SCENES[index + 1] ?? from;
+    // The room being walked toward stays resident whether or not a cut has
+    // begun. Leaving it out of the sweep's keep-list below deletes the texture
+    // that is about to be sampled, and a deleted texture samples black.
+    const approaching = SCENES[nearest]!.plate;
+    requestPlate(approaching);
 
-    // Ask for what is on screen now, plus the room we are walking into.
+    // Begin the cut only once the next room has actually decoded, otherwise a
+    // slow network cuts to flat black.
+    if (!cutting && nearest !== shownIndex) {
+      if (isPlateReady(approaching)) {
+        cutting = true;
+        cutFrom = shownIndex;
+        cutTo = nearest;
+        cutAt = now;
+      }
+    }
+
+    let cut = 0;
+    if (cutting) {
+      cut = clamp01((now - cutAt) / cutMs());
+      if (cut >= 1) {
+        shownIndex = cutTo;
+        cutting = false;
+        cut = 0;
+      }
+    }
+
+    const fromIndex = cutting ? cutFrom : shownIndex;
+    const toIndex = cutting ? cutTo : shownIndex;
+    const from = SCENES[fromIndex]!;
+    const to = SCENES[toIndex]!;
+
     const textureA = requestPlate(from.plate);
     const textureB = requestPlate(to.plate);
     boundA = textureA ?? boundA;
     boundB = textureB ?? textureA ?? boundB;
 
-    // Hold on the outgoing room until the next one has actually decoded,
-    // otherwise a slow network shows a dissolve into flat black.
-    const ready = isPlateReady(to.plate);
     const samePlate = from.plate === to.plate;
+    // Two chapters in one room: the camera simply keeps travelling through it,
+    // so there is nothing to light and nothing to blur.
+    const shot = cutting && !samePlate && !journey.reducedMotion;
+    const eased = cut * cut * (3 - 2 * cut);
+    const flash = shot ? Math.sin(Math.PI * cut) : 0;
 
     // The compositor is cropped to the portrait band on tall screens, so it
     // reframes to the same part of the room the CSS plate would. Measured on
@@ -335,16 +381,24 @@ function startCompositor(
     gl.bindTexture(gl.TEXTURE_2D, boundB);
     gl.uniform1i(u.uPlateB, 1);
 
-    gl.uniform1f(u.uMix, ready || samePlate ? t : 0);
+    gl.uniform1f(u.uMix, cutting ? eased : 0);
     gl.uniform1f(u.uSamePlate, samePlate ? 1 : 0);
     gl.uniform2f(u.uResolution, cssWidth, cssHeight);
     const [pw, ph] = plateSize(from.plate);
     gl.uniform2f(u.uPlateSize, pw, ph);
 
-    applyScene(gl, u, from, "A", t, false, portrait);
-    applyScene(gl, u, to, "B", t, true, portrait);
+    // The outgoing room accelerates away from camera while the incoming one
+    // arrives deep and settles. That, rather than the blend, is what makes a
+    // change of room read as a move.
+    applyScene(gl, u, from, "A", progressFor(station, fromIndex), shot ? 0.12 * cut * cut : 0, portrait);
+    applyScene(gl, u, to, "B", progressFor(station, toIndex), shot ? 0.16 * (1 - eased) : 0, portrait);
 
-    gl.uniform1f(u.uParallax, parallax);
+    gl.uniform1f(u.uBlurA, shot ? flash * 0.055 : 0);
+    gl.uniform1f(u.uBlurB, shot ? flash * 0.042 : 0);
+    gl.uniform1f(u.uCut, shot ? cut : 0);
+
+    // Depth separates hardest exactly while the camera is moving hardest.
+    gl.uniform1f(u.uParallax, parallax * (1 + flash * 0.8));
     gl.uniform1f(u.uVignette, 0.42);
     gl.uniform1f(u.uGrain, 0.015);
     gl.uniform1f(u.uTime, (now - startedAt) / 1000);
@@ -364,7 +418,7 @@ function startCompositor(
 
     // Release plates we have walked away from, a few times a second.
     sweepTick += 1;
-    if (sweepTick % 30 === 0) sweepPlates([from.plate, to.plate]);
+    if (sweepTick % 30 === 0) sweepPlates([from.plate, to.plate, approaching]);
   };
 
   // Draw every frame while the journey is on screen — the compositor is cheap
@@ -428,25 +482,31 @@ function startCompositor(
 /**
  * Writes one scene's camera and grade into the A or B uniform slot.
  *
- * `t` is progress between the two chapters. The outgoing scene keeps
- * travelling while the incoming one is still arriving, so the two cameras are
- * always moving together and the handover never looks like a cut.
+ * `progress` is how far the camera has travelled through this scene's own
+ * chapter, so every room keeps moving whether or not a cut is running.
+ * `zoomBoost` is the momentary push a cut adds on top of that.
  */
+/**
+ * How far the camera has travelled through one scene's chapter: 0 as the room
+ * comes into view, 1 as it leaves. Continuous across a boundary, so a room's
+ * camera never jumps at the moment the cut to the next room begins.
+ */
+function progressFor(station: number, index: number): number {
+  return clamp01(station - index + 0.5);
+}
+
 function applyScene(
   gl: WebGL2RenderingContext,
   u: Locations,
   scene: Scene,
   slot: "A" | "B",
-  t: number,
-  incoming: boolean,
+  progress: number,
+  zoomBoost: number,
   portrait: boolean,
 ): void {
-  // The outgoing room finishes its move; the incoming one is only just
-  // starting, so it plays the first part of its own push.
-  const local = incoming ? t * 0.55 : 0.45 + t * 0.55;
-  const eased = local * local * (3 - 2 * local);
+  const eased = progress * progress * (3 - 2 * progress);
 
-  const zoom = scene.zoom[0] + (scene.zoom[1] - scene.zoom[0]) * eased;
+  const zoom = scene.zoom[0] + (scene.zoom[1] - scene.zoom[0]) * eased + zoomBoost;
   const pan = scene.pan[0] + (scene.pan[1] - scene.pan[0]) * eased;
 
   const focal = portrait ? scene.portraitFocal : scene.focal;

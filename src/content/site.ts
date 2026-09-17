@@ -20,7 +20,7 @@ export const site = {
   url: resolveSiteOrigin({
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
   }).origin,
-  email: "hello@velabuilt.com",
+  email: "jace@velabuilt.com",
 
   /**
    * Direct lines — OFF until real values are supplied. `null` renders nothing

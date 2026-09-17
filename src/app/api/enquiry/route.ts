@@ -10,6 +10,7 @@ import { formToEnquiry } from "@/lib/enquiry/form";
 import { fieldHints, renderFallbackPage } from "@/lib/enquiry/fallback-page";
 import type { EnquiryDraft } from "@/lib/enquiry/format";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
+import { site } from "@/content/site";
 
 /**
  * Inbound enquiry endpoint.
@@ -45,11 +46,11 @@ const RATE_WINDOW_MS = 10 * 60 * 1000;
 
 /** Deliberately uninformative to a prober; specific enough for a person. */
 const GENERIC_ERROR =
-  "We could not process that. Please try again, or email hello@velabuilt.com.";
+  `We could not process that. Please try again, or email ${site.email}.`;
 const TOO_LONG = "That message is too long to send.";
 const TOO_MANY = "That is a few too many inquiries. Please try again shortly.";
 const NOT_FILED =
-  "We received that but could not file it automatically. Please email hello@velabuilt.com so nothing is lost.";
+  `We received that but could not file it automatically. Please email ${site.email} so nothing is lost.`;
 
 type Mode = "json" | "form";
 

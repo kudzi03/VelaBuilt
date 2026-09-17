@@ -28,7 +28,7 @@ Adding a credential activates its integration and nothing else.
 | `SMTP_HOST` / `SMTP_PORT` | For email | SMTP submission server; port defaults to 465 (TLS), 587 requires STARTTLS |
 | `SMTP_USER` / `SMTP_PASS` | For email | Mailbox login. For Google Workspace, an app password — never the account password |
 | `ENQUIRY_FROM_EMAIL` | No | Envelope sender; defaults to `SMTP_USER` |
-| `ENQUIRY_NOTIFY_EMAIL` | No | Where enquiries are sent; defaults to `hello@velabuilt.com` |
+| `ENQUIRY_NOTIFY_EMAIL` | No | Where enquiries are sent; defaults to `jace@velabuilt.com` |
 | `ENQUIRY_WEBHOOK_URL` | With `webhook` | Server-to-server inbound endpoint |
 | `ENQUIRY_WEBHOOK_SECRET` | No | HMAC-SHA256 signing key, min 24 chars |
 

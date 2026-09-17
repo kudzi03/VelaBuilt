@@ -56,7 +56,15 @@ export interface Scene {
   readonly portraitFocal: readonly [number, number];
   readonly horizon: number;
   readonly lateral: number;
-  /** Camera push across the chapter: [entering, leaving]. 1 is native scale. */
+  /**
+   * Camera push across the chapter: [entering, leaving]. 1 is native scale.
+   *
+   * Never below 1: the cover fit divides its window by the zoom, so a value
+   * under 1 samples past the edge of the plate and smears its edge pixels
+   * across the frame. And never barely above it either — the compositor
+   * scales parallax by (zoom - 1), so a camera that does not push is a camera
+   * with no depth.
+   */
   readonly zoom: readonly [number, number];
   /** Lateral drift across the chapter, in plate widths. */
   readonly pan: readonly [number, number];
@@ -82,8 +90,8 @@ export const SCENES: readonly Scene[] = [
     portraitFocal: [0.73, 0.54],
     horizon: 0.63,
     lateral: 0.9,
-    zoom: [0.995, 1.045],
-    pan: [-0.012, 0.014],
+    zoom: [1.0, 1.14],
+    pan: [-0.03, 0.03],
     grade: { ...BASE_GRADE, exposure: 0.06, bloom: 0.56, haze: 0.34 },
   },
   {
@@ -95,8 +103,8 @@ export const SCENES: readonly Scene[] = [
     portraitFocal: [0.5, 0.56],
     horizon: 0.66,
     lateral: 1.0,
-    zoom: [1.0, 1.06],
-    pan: [0.016, -0.01],
+    zoom: [1.02, 1.16],
+    pan: [0.035, -0.02],
     grade: { ...BASE_GRADE, exposure: 0.02, contrast: 1.09, bloom: 0.62 },
   },
   {
@@ -108,8 +116,8 @@ export const SCENES: readonly Scene[] = [
     portraitFocal: [0.36, 0.5],
     horizon: 0.68,
     lateral: 0.78,
-    zoom: [1.0, 1.05],
-    pan: [-0.02, 0.018],
+    zoom: [1.0, 1.15],
+    pan: [-0.04, 0.035],
     grade: { ...BASE_GRADE, exposure: -0.04, contrast: 1.1, warmth: 0.13, haze: 0.4 },
   },
   {
@@ -120,8 +128,8 @@ export const SCENES: readonly Scene[] = [
     portraitFocal: [0.5, 0.46],
     horizon: 0.62,
     lateral: 0.7,
-    zoom: [1.03, 0.995],
-    pan: [0.008, -0.008],
+    zoom: [1.05, 1.14],
+    pan: [0.02, -0.018],
     grade: { ...BASE_GRADE, exposure: 0.04, bloom: 0.68, haze: 0.26 },
   },
   {
@@ -133,8 +141,8 @@ export const SCENES: readonly Scene[] = [
     horizon: 0.64,
     lateral: 0.85,
     // Arrives wide and cool, reading the structure from a distance.
-    zoom: [1.0, 1.06],
-    pan: [-0.01, 0.0],
+    zoom: [1.0, 1.12],
+    pan: [-0.025, 0.01],
     grade: {
       ...BASE_GRADE,
       exposure: -0.06,
@@ -153,8 +161,8 @@ export const SCENES: readonly Scene[] = [
     horizon: 0.64,
     lateral: 0.7,
     // Continues the same camera rather than cutting: scene 05 hands over.
-    zoom: [1.0, 1.055],
-    pan: [0.0, 0.006],
+    zoom: [1.12, 1.22],
+    pan: [0.01, 0.028],
     grade: {
       ...BASE_GRADE,
       exposure: 0.22,

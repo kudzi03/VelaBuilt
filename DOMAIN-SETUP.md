@@ -34,7 +34,7 @@ Today `http://velabuilt.com/`, `https://velabuilt.com/` and
 `https://www.velabuilt.com/` all return `302` → `https://velabuilt-com.l.ink/`
 (served by `openresty`, Porkbun's forwarding service).
 
-> **Do not touch the MX or TXT records.** `hello@velabuilt.com` receives mail
+> **Do not touch the MX or TXT records.** `jace@velabuilt.com` receives mail
 > through Google Workspace. Deleting them stops enquiry email arriving.
 
 ---

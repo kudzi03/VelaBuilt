@@ -37,6 +37,11 @@ export const PLATE_FRAGMENT = /* glsl */ `
   uniform float uMix;
   /** 1 when A and B are the same image, so the dissolve is skipped. */
   uniform float uSamePlate;
+  /** Radial (dolly) blur per slot. Non-zero only while a cut is running. */
+  uniform float uBlurA;
+  uniform float uBlurB;
+  /** 0 when settled, 0 to 1 across a committed cut. Drives the light bleed. */
+  uniform float uCut;
 
   uniform vec2 uResolution;
   uniform vec2 uPlateSize;
@@ -146,6 +151,22 @@ export const PLATE_FRAGMENT = /* glsl */ `
     return framed + parallax + drift;
   }
 
+  /**
+   * Samples along the axis the camera is travelling down, so a fast push
+   * smears the frame the way a real lens does. Five taps is enough: this only
+   * runs while the camera is moving hard, and nothing moving that fast is
+   * being read.
+   */
+  vec3 radialSample(sampler2D plate, vec2 uv, vec2 focal, float amount) {
+    vec2 toward = (uv - focal) * amount;
+    vec3 sum = vec3(0.0);
+    for (int i = 0; i < 5; i++) {
+      vec2 p = uv - toward * (float(i) / 4.0);
+      sum += texture2D(plate, clamp(p, vec2(0.0015), vec2(0.9985))).rgb;
+    }
+    return sum * 0.2;
+  }
+
   /** Warm bloom keyed off the plate's own practicals. */
   vec3 bloomAt(sampler2D plate, vec2 uv, float strength) {
     if (strength <= 0.001) return vec3(0.0);
@@ -198,7 +219,7 @@ export const PLATE_FRAGMENT = /* glsl */ `
     sampler2D plate, vec2 uv, vec2 focal, float zoom, vec2 pan,
     float horizon, float lateral,
     float exposure, float contrast, float saturation, float warmth,
-    float bloom, float haze
+    float bloom, float haze, float blur
   ) {
     float depth;
     vec2 suv = frame(uv, focal, zoom, pan, horizon, lateral, depth);
@@ -206,7 +227,9 @@ export const PLATE_FRAGMENT = /* glsl */ `
     // Clamp rather than wrap: a repeated edge is instantly readable as a bug.
     vec2 clamped = clamp(suv, vec2(0.0015), vec2(0.9985));
 
-    vec3 colour = texture2D(plate, clamped).rgb;
+    vec3 colour = blur > 0.001
+      ? radialSample(plate, clamped, focal, blur)
+      : texture2D(plate, clamped).rgb;
     colour += bloomAt(plate, clamped, bloom * 0.9);
     colour = grade(colour, exposure, contrast, saturation, warmth);
 
@@ -222,7 +245,7 @@ export const PLATE_FRAGMENT = /* glsl */ `
 
     vec3 colour = renderPlate(
       uPlateA, uv, uFocalA, uZoomA, uPanA, uHorizonA, uLateralA,
-      uExposureA, uContrastA, uSaturationA, uWarmthA, uBloomA, uHazeA
+      uExposureA, uContrastA, uSaturationA, uWarmthA, uBloomA, uHazeA, uBlurA
     );
 
     // Hand over to the next room. When both slots hold the same plate the
@@ -231,13 +254,26 @@ export const PLATE_FRAGMENT = /* glsl */ `
     if (uMix > 0.001) {
       vec3 next = renderPlate(
         uPlateB, uv, uFocalB, uZoomB, uPanB, uHorizonB, uLateralB,
-        uExposureB, uContrastB, uSaturationB, uWarmthB, uBloomB, uHazeB
+        uExposureB, uContrastB, uSaturationB, uWarmthB, uBloomB, uHazeB, uBlurB
       );
 
+      // The incoming room's own light crosses first, and the window in which
+      // both rooms are on screen is deliberately narrow. A long 50/50 blend is
+      // precisely what reads as a double exposure rather than as a place.
       float key = smoothstep(0.05, 0.75, luma(next));
-      float led = smoothstep(uMix - 0.42, uMix + 0.26, key * 0.55 + 0.45);
-      float blend = mix(led, uMix, uSamePlate);
+      float led = smoothstep(uMix - 0.22, uMix + 0.12, key * 0.45 + 0.55);
+      float hard = smoothstep(0.32, 0.68, uMix);
+      float blend = mix(mix(led, hard, 0.5), uMix, uSamePlate);
       colour = mix(colour, next, clamp(blend, 0.0, 1.0));
+    }
+
+    // The change of room is lit rather than faded: a champagne bloom peaks as
+    // the cut passes through, so whatever overlap remains is washed by light
+    // instead of showing two rooms at once.
+    if (uCut > 0.001) {
+      float flash = sin(uCut * 3.14159265);
+      flash *= flash;
+      colour += CHAMPAGNE * flash * 0.09 * (0.3 + luma(colour));
     }
 
     // Selective lighting: the room falls away except where attention is.
