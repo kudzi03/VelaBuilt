@@ -96,6 +96,7 @@ export const footerNav = [
       ...(site.phone ? [{ label: site.phone.display, href: `tel:${site.phone.e164}` }] : []),
       { label: "Instagram", href: site.social.instagram },
       { label: "Privacy", href: "/privacy" },
+      { label: "Cookies", href: "/cookies" },
     ],
   },
 ] as const;
