@@ -2,7 +2,6 @@ import Link from "next/link";
 import { CHAPTERS } from "@/lib/journey";
 import { ChapterFrame } from "./ChapterFrame";
 import { Reveal } from "@/components/ui/Reveal";
-import { SystemLabRoom } from "@/components/lab/SystemLabRoom";
 import { ArrowRight, CategoryBadge } from "@/components/ui/Primitives";
 
 const chapter = CHAPTERS[3]!;
@@ -26,14 +25,32 @@ export function SceneLab() {
         </div>
       </Reveal>
 
+      {/* A teaser, not a second copy of the room. The full lab is one click
+          away and renders the same modules interactively. */}
       <Reveal delay={140} className="mt-12">
-        <SystemLabRoom />
+        <ul className="flex flex-wrap gap-2">
+          {[
+            "Website",
+            "CRM",
+            "Follow-up",
+            "Booking",
+            "AI assistant",
+            "Analytics",
+          ].map((module) => (
+            <li
+              key={module}
+              className="border border-[color:var(--color-hairline)] px-4 py-2 text-[0.75rem] uppercase tracking-[0.2em] text-[color:var(--color-faint)]"
+            >
+              {module}
+            </li>
+          ))}
+        </ul>
       </Reveal>
 
       <Reveal delay={200} className="mt-10">
-        <Link href="/system-lab" className="btn btn-ghost">
+        <Link href="/system-lab" className="btn btn-primary">
           <span className="inline-flex items-center gap-3">
-            Open the full System Lab
+            Open the System Lab
             <ArrowRight />
           </span>
         </Link>

@@ -4,7 +4,7 @@ import { pageMetadata } from "@/lib/seo";
 import { breadcrumbSchema, graph } from "@/lib/schema";
 import { PageBackdrop } from "@/components/cinematic/PageBackdrop";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
-import { WorkCategoryKey, WorkGrid } from "@/components/work/WorkGrid";
+import { WorkGrid } from "@/components/work/WorkGrid";
 import { Reveal } from "@/components/ui/Reveal";
 import { Label } from "@/components/ui/Primitives";
 import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
@@ -40,21 +40,11 @@ export default function WorkPage() {
           </Reveal>
 
           <Reveal delay={120}>
-            <p className="lede mt-9 max-w-[52ch]">
-              Three categories, kept strictly apart. What each label means is stated
-              below, because a portfolio that blurs them is not a portfolio.
+            <p className="lede mt-9 max-w-[54ch]">
+              Every piece carries a label: client work delivered for a business,
+              a concept study, or a working demonstration on sample data. The
+              labels are the point.
             </p>
-          </Reveal>
-        </div>
-      </section>
-
-      <section aria-labelledby="key-heading" className="relative py-16">
-        <div className="shell">
-          <h2 id="key-heading" className="sr-only">
-            What each category means
-          </h2>
-          <Reveal>
-            <WorkCategoryKey />
           </Reveal>
         </div>
       </section>
@@ -74,16 +64,10 @@ export default function WorkPage() {
             </div>
           ) : (
             <Reveal delay={100}>
-              <div className="panel mt-10 p-10">
+              <div className="reading-ground mt-10">
                 <p className="max-w-[58ch] text-[1.05rem] leading-relaxed text-[color:var(--color-ivory-dim)]">
-                  Nothing here yet. VelaBuilt launched without inventing case
-                  studies, and client projects will appear here once they are
-                  delivered and the client has agreed to be named.
-                </p>
-                <p className="mt-5 max-w-[58ch] text-sm leading-relaxed text-[color:var(--color-muted)]">
-                  In the meantime, the concepts and demonstrations below are real
-                  work — they are simply ours rather than a client&rsquo;s. The
-                  site you are reading is one of them.
+                  Client projects appear here once they are delivered and the
+                  client has agreed to be named.
                 </p>
               </div>
             </Reveal>

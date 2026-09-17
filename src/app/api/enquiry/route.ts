@@ -10,6 +10,7 @@ import { formToEnquiry } from "@/lib/enquiry/form";
 import { fieldHints, renderFallbackPage } from "@/lib/enquiry/fallback-page";
 import type { EnquiryDraft } from "@/lib/enquiry/format";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
+import { persistEnquiry } from "@/lib/enquiry/store";
 import { site } from "@/content/site";
 
 /**
@@ -50,7 +51,7 @@ const GENERIC_ERROR =
 const TOO_LONG = "That message is too long to send.";
 const TOO_MANY = "That is a few too many inquiries. Please try again shortly.";
 const NOT_FILED =
-  `We received that but could not file it automatically. Please email ${site.email} so nothing is lost.`;
+  `That didn’t send. Your answers are still here. Try again, or email them directly to ${site.email}.`;
 
 type Mode = "json" | "form";
 
@@ -208,24 +209,41 @@ export async function POST(request: Request): Promise<Response> {
     receivedAt: new Date().toISOString(),
   };
 
+  // 1. Durable capture. This, and only this, decides whether the visitor is
+  //    told their inquiry arrived.
+  let stored;
   try {
-    const adapter = getEnquiryAdapter();
-    const result = await adapter.deliver(record);
-
-    return sent(
-      mode,
-      record.reference,
-      201,
-      result.bookingUrl ? { bookingUrl: result.bookingUrl } : {},
-    );
+    stored = await persistEnquiry(record);
   } catch (error) {
-    // Log the failure, never the enquiry contents.
-    console.error("[enquiry] delivery failed", {
+    // Log the failure, never the inquiry contents.
+    console.error("[enquiry] capture failed", {
       reference: record.reference,
       reason: error instanceof Error ? error.message : "unknown",
     });
     return failure(mode, 502, NOT_FILED, { raw: input });
   }
+
+  console.info("[enquiry] captured", {
+    reference: record.reference,
+    pathname: stored.pathname,
+  });
+
+  // 2. Notification. The inquiry is already safe, so a mail server having a
+  //    bad day must not turn a captured inquiry into a visible failure — it
+  //    turns into a loud log line and a record that can be replayed.
+  let bookingUrl: string | undefined;
+  try {
+    const result = await getEnquiryAdapter().deliver(record);
+    bookingUrl = result.bookingUrl;
+  } catch (error) {
+    console.error("[enquiry] notification failed — inquiry IS stored", {
+      reference: record.reference,
+      pathname: stored.pathname,
+      reason: error instanceof Error ? error.message : "unknown",
+    });
+  }
+
+  return sent(mode, record.reference, 201, bookingUrl ? { bookingUrl } : {});
 }
 
 /** Everything else is explicitly not allowed. */

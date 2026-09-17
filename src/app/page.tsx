@@ -4,10 +4,9 @@ import { preload } from "react-dom";
 import { SCENES, plateSource } from "@/content/scenes";
 import { site } from "@/content/site";
 import { services } from "@/content/services";
-import { faqsFor } from "@/content/faq";
 import { workItems } from "@/content/work";
 import { pageMetadata } from "@/lib/seo";
-import { faqSchema, graph, serviceSchema } from "@/lib/schema";
+import { graph, serviceSchema } from "@/lib/schema";
 import { CinematicStage } from "@/components/cinematic/CinematicStage";
 import { ChapterIndex } from "@/components/scenes/ChapterIndex";
 import { SceneFriction } from "@/components/scenes/SceneFriction";
@@ -16,7 +15,6 @@ import { SceneEnquiry } from "@/components/scenes/SceneEnquiry";
 import { SceneLab } from "@/components/scenes/SceneLab";
 import { SceneDiscoverability } from "@/components/scenes/SceneDiscoverability";
 import { SceneDestination } from "@/components/scenes/SceneDestination";
-import { FaqSection } from "@/components/ui/FaqSection";
 import { WorkGrid } from "@/components/work/WorkGrid";
 import { Reveal } from "@/components/ui/Reveal";
 import { ArrowRight, Label } from "@/components/ui/Primitives";
@@ -28,7 +26,6 @@ export const metadata: Metadata = pageMetadata({
   bareTitle: true,
 });
 
-const homeFaqs = faqsFor("home");
 
 /**
  * The homepage is one continuous journey through one space — but it is a
@@ -50,9 +47,10 @@ export default function HomePage() {
     type: "image/avif",
   });
 
+  // No FAQPage here any more: the questions moved to /approach, and markup
+  // for content a page does not show is markup Google is right to distrust.
   const structuredData = graph([
     ...services.map((service) => serviceSchema(service)),
-    faqSchema(homeFaqs),
   ]);
 
   return (
@@ -90,7 +88,7 @@ export default function HomePage() {
           </Reveal>
 
           <div className="mt-14">
-            <WorkGrid items={workItems.slice(0, 4)} />
+            <WorkGrid items={workItems.slice(0, 3)} />
           </div>
 
           <Reveal delay={140} className="mt-10">
@@ -102,7 +100,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <FaqSection entries={homeFaqs} heading="Straight answers." />
 
       <script
         type="application/ld+json"

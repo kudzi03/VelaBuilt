@@ -75,9 +75,14 @@ export function EnquiryConfirmation({
             tabIndex={-1}
             className="display-md outline-none"
           >
-            {firstName ? `Thank you, ${firstName}.` : "Thank you."}{" "}
-            <span className="foil">It is in the system.</span>
+            Got <span className="foil">it.</span>
           </h2>
+
+          <p className="lede mt-6 max-w-[46ch] text-[color:var(--color-ivory)]">
+            {firstName ? `${firstName}, your` : "Your"} inquiry has been
+            received. I&rsquo;ll review what you&rsquo;ve sent and reply by
+            email.
+          </p>
 
           {reference ? (
             <p className="mt-5 text-sm text-[color:var(--color-muted)]">

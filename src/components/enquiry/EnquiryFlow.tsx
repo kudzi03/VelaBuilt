@@ -262,7 +262,7 @@ export function EnquiryFlow({
         setPhase("sent");
       } catch {
         setSubmitError(
-          `That did not reach us — check your connection, or email ${site.email}.`,
+          `That didn’t send. Your answers are still here. Try again, or email them directly to ${site.email}.`,
         );
       } finally {
         setSubmitting(false);

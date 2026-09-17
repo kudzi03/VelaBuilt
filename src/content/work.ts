@@ -49,11 +49,46 @@ export interface WorkItem {
   /** What was designed or built. */
   readonly response: string;
   readonly disciplines: readonly string[];
-  /** Optional in-site destination — a live demo, not a case study. */
+  /** Optional in-site destination — a demonstration, or a case study. */
   readonly href?: string;
+  /** Sector and place, shown under the title. Client work only. */
+  readonly context?: string;
+  /** The delivered site, opened in a new tab. Client work only. */
+  readonly liveUrl?: string;
+  /** Overrides the card's default "Open the demonstration". */
+  readonly linkLabel?: string;
+  /**
+   * Work delivered by the founder before the current VelaBuilt studio
+   * identity existed. Stated on the card and in the case study rather than
+   * quietly absorbed into the studio's record.
+   */
+  readonly priorToStudio?: boolean;
 }
 
 export const workItems: readonly WorkItem[] = [
+  {
+    slug: "cardio-life",
+    title: "Cardio Life",
+    category: "client-work",
+    context: "Corporate training · Botswana",
+    problem:
+      "HR, procurement and safety teams have to work out which training is required, satisfy themselves that the provider is genuinely accredited, and get to a quotation.",
+    response:
+      "A focused commercial website that presents Cardio Life’s training and accreditation clearly, and gives prospective clients a direct path from training requirement to inquiry.",
+    disciplines: [
+      "Website strategy",
+      "Positioning",
+      "Information architecture",
+      "UX/UI",
+      "Development",
+      "Mobile experience",
+      "Quotation journey",
+    ],
+    href: "/work/cardio-life",
+    liveUrl: "https://www.cardiolife.co.bw/",
+    linkLabel: "Read the case study",
+    priorToStudio: true,
+  },
   {
     slug: "follow-up-recovery-demo",
     title: "Follow-Up & Recovery",

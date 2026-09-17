@@ -6,6 +6,9 @@ import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Reveal } from "@/components/ui/Reveal";
 import { Label } from "@/components/ui/Primitives";
 import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
+import { FaqSection } from "@/components/ui/FaqSection";
+import { faqsFor } from "@/content/faq";
+import { faqSchema } from "@/lib/schema";
 
 export const metadata: Metadata = pageMetadata({
   title: "Approach",
@@ -18,6 +21,8 @@ const crumbs = [
   { name: "Home", path: "/" },
   { name: "Approach", path: "/approach" },
 ];
+
+const generalFaqs = faqsFor("home");
 
 const STAGES = [
   {
@@ -149,9 +154,13 @@ export default function ApproachPage() {
         </div>
       </section>
 
+      <FaqSection entries={generalFaqs} heading="Straight answers." id="faq" />
+
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: graph([breadcrumbSchema(crumbs)]) }}
+        dangerouslySetInnerHTML={{
+          __html: graph([breadcrumbSchema(crumbs), faqSchema(generalFaqs)]),
+        }}
       />
     </>
   );

@@ -55,28 +55,7 @@ export function OfferBody({
         </div>
       </Reveal>
 
-      <Reveal delay={160}>
-        {children}
-
-        <div className={children ? "mt-12" : undefined}>
-          <Label>What that involves</Label>
-          <ul className="mt-5 grid gap-x-8 gap-y-3 sm:grid-cols-2">
-            {service.capabilities.map((capability) => (
-              <li
-                key={capability}
-                className="border-b border-[color:var(--color-hairline)] pb-3 text-sm text-[color:var(--color-ivory-dim)]"
-              >
-                {capability}
-              </li>
-            ))}
-          </ul>
-          {/* The boundary is read, not glanced at, and sits in the right-hand
-              column where the plates are brightest: a fixed shield. */}
-          <p className="mt-6 max-w-[46ch] text-sm leading-relaxed text-[color:var(--color-muted)]">
-            {service.boundary}
-          </p>
-        </div>
-      </Reveal>
+      <Reveal delay={160}>{children}</Reveal>
       </div>
     </div>
   );

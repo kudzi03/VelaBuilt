@@ -25,6 +25,9 @@ export function WorkGrid({ items }: { readonly items: readonly WorkItem[] }) {
                 {category.label}
               </CategoryBadge>
               <h3 className="display-md mt-6">{item.title}</h3>
+              {item.context ? (
+                <p className="label mt-3">{item.context}</p>
+              ) : null}
 
               <div className="mt-7">
                 <Label>The problem</Label>
@@ -53,11 +56,34 @@ export function WorkGrid({ items }: { readonly items: readonly WorkItem[] }) {
                 ))}
               </ul>
 
-              {item.href ? (
+              {item.href && !item.liveUrl ? (
                 <span className="label label-champagne mt-7 inline-flex items-center gap-3">
-                  Open the demonstration
+                  {item.linkLabel ?? "Open the demonstration"}
                   <ArrowRight className="transition-transform duration-500 group-hover:translate-x-1.5" />
                 </span>
+              ) : null}
+
+              {item.liveUrl ? (
+                <div className="mt-7 flex flex-wrap items-center gap-x-8 gap-y-3">
+                  {item.href ? (
+                    <Link
+                      href={item.href}
+                      className="label label-champagne inline-flex items-center gap-3 transition-colors duration-400 hover:text-[color:var(--color-ivory)]"
+                    >
+                      {item.linkLabel ?? "Read the case study"}
+                      <ArrowRight />
+                    </Link>
+                  ) : null}
+                  <a
+                    href={item.liveUrl}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="label inline-flex items-center gap-3 transition-colors duration-400 hover:text-[color:var(--color-ivory)]"
+                  >
+                    View live site
+                    <ArrowRight />
+                  </a>
+                </div>
               ) : null}
             </div>
           </>
@@ -65,7 +91,7 @@ export function WorkGrid({ items }: { readonly items: readonly WorkItem[] }) {
 
         return (
           <Reveal as="li" key={item.slug} delay={index * 90}>
-            {item.href ? (
+            {item.href && !item.liveUrl ? (
               <Link
                 href={item.href}
                 className="panel panel-interactive group flex h-full flex-col justify-between !border-0 p-8 lg:p-10"

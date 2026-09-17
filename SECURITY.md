@@ -25,6 +25,7 @@ Adding a credential activates its integration and nothing else.
 | `CANONICAL_HOST_REDIRECT` | No | `1` to 301 the old Vercel host to the canonical origin |
 | `CANONICAL_REDIRECT_FROM` | No | Comma-separated hosts to redirect (default `vela-built.vercel.app`) |
 | `ENQUIRY_ADAPTER` | No | `email`, `webhook` or `log`. Unset: `email` if `SMTP_HOST` is set, else `log` |
+| `BLOB_READ_WRITE_TOKEN` | **Yes, in production** | Durable capture. Injected automatically when a private Vercel Blob store is connected to the project. Without it the endpoint refuses every submission rather than accepting an inquiry into nothing |
 | `SMTP_HOST` / `SMTP_PORT` | For email | SMTP submission server; port defaults to 465 (TLS), 587 requires STARTTLS |
 | `SMTP_USER` / `SMTP_PASS` | For email | Mailbox login. For Google Workspace, an app password — never the account password |
 | `ENQUIRY_FROM_EMAIL` | No | Envelope sender; defaults to `SMTP_USER` |
@@ -35,6 +36,28 @@ Adding a credential activates its integration and nothing else.
 Never place a CRM key, Airtable PAT, n8n credential, model-provider key, email
 or calendar credential, or a Supabase service-role key anywhere a
 `NEXT_PUBLIC_` prefix could reach.
+
+## How a submission is captured
+
+Capture and notification are separate, and only capture decides what the
+visitor is told:
+
+1. **Validate** against the shared zod schema, server-side.
+2. **Screen** for bots (honeypot and elapsed-time) and rate-limit by client key.
+3. **Persist** the whole inquiry to a private Vercel Blob object at
+   `enquiries/<year>/<month>/<timestamp>__<reference>.json`. If this throws,
+   the visitor sees the failure state with their answers intact.
+4. **Notify** by email. A mail server having a bad day produces a loud log line
+   and a stored record that can be replayed — never a visible failure for an
+   inquiry that is already safe.
+
+The store is **private**: an inquiry holds a name, an email address and
+whatever the person chose to write, and a public object URL is readable by
+anyone who obtains it.
+
+This ordering is why the endpoint used to fail in production. Delivery *was*
+capture: with no SMTP credentials configured, the adapter refused to run and
+the inquiry died with it, unstored and unrecoverable.
 
 ## The enquiry endpoint
 

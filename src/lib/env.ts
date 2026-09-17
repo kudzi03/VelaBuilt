@@ -47,6 +47,12 @@ const serverEnvSchema = z.object({
    * (Google Workspace: smtp.gmail.com, 465, the mailbox address, an app
    * password). No form service sits in between.
    */
+  /**
+   * Durable capture. Injected automatically by Vercel when a Blob store is
+   * connected to the project; never set by hand, never sent to the client.
+   */
+  BLOB_READ_WRITE_TOKEN: unsetIfEmpty(z.string().min(1)),
+
   SMTP_HOST: unsetIfEmpty(z.string().min(1)),
   SMTP_PORT: unsetIfEmpty(z.coerce.number().int().min(1).max(65535)),
   SMTP_USER: unsetIfEmpty(z.string().min(1)),
