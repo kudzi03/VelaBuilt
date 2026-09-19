@@ -685,6 +685,31 @@
    * so the shield sits behind the text and in front of the canvas, instead of
    * escaping to the page's stacking context and disappearing behind the world.
    */
+  /* THE GROUND THE SIGNAL SITS ON.
+     The scene's canvas is transparent, so the world needs a floor. A single
+     vertical fall from obsidian to true black, with one faint champagne
+     horizon where the path enters from — no nebula, no vignette, nothing
+     that reads as a stock space background. */
+  .signal-ground {
+    background:
+      radial-gradient(120% 62% at 50% -8%, rgb(224 195 152 / 0.07) 0%, transparent 62%),
+      linear-gradient(180deg, #0a0a0c 0%, #070709 46%, #050506 100%);
+  }
+
+  /* Far lighter than the scrim the photographic plates needed: the scene is
+     mostly black, so type needs protection only where the path passes. The
+     contrast rig decides this value, not taste. */
+  .signal-scrim {
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      rgb(5 5 6 / 0.46) 0%,
+      rgb(5 5 6 / 0.2) 38%,
+      transparent 72%,
+      rgb(5 5 6 / 0.14) 100%
+    );
+  }
+
   /* READING GROUND.
      Body copy does not sit on a photograph. Over a plate, a paragraph's
      contrast is whatever the room happens to be doing behind it — which is
