@@ -96,14 +96,18 @@ export function serverEnv(): ServerEnv {
     );
   }
 
-  if (
-    env.ENQUIRY_ADAPTER === "email" &&
-    !(env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS)
-  ) {
-    throw new Error(
-      "ENQUIRY_ADAPTER=email requires SMTP_HOST, SMTP_USER and SMTP_PASS to be set.",
-    );
-  }
+  // Deliberately NOT validated here any more.
+  //
+  // Throwing for a half-configured mail adapter meant serverEnv() threw, and
+  // serverEnv() is read by the durable store as well — so one missing SMTP
+  // variable disabled capture too, and an inquiry that could have been
+  // written to the store was lost instead. Observed in production: a missing
+  // SMTP_PASS produced "store unavailable" and "notification failed" from the
+  // same root cause.
+  //
+  // The email adapter validates its own credentials at delivery time and
+  // throws there, which the route turns into a logged notification failure
+  // against an inquiry that is already safely stored.
 
   cached = env;
   return env;
