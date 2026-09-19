@@ -259,6 +259,24 @@ function Structure({ tier }: { readonly tier: Exclude<Tier, "C"> }) {
           showroom. The pulse carries its own light as it travels. */}
       <primitive object={environment} attach="environment" />
 
+      {/* Atmosphere. Without it the far gates sit at full strength against
+          black and the corridor has no depth; with it the route recedes and
+          the gate being passed is unambiguously the subject. */}
+      <fogExp2 attach="fog" args={["#050506", 0.031]} />
+
+      {/* A floor for the structure to stand on. Nearly black and fairly
+          rough — it is not a mirror, it just stops the gates floating in a
+          void and gives the key light somewhere to fall. */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.92, PATH_END_Z / 2]}>
+        <planeGeometry args={[46, Math.abs(PATH_END_Z) + 40]} />
+        <meshStandardMaterial
+          color="#0a0a0d"
+          metalness={0.26}
+          roughness={0.62}
+          envMapIntensity={0.8}
+        />
+      </mesh>
+
       <ambientLight intensity={0.42} color="#8f8a80" />
       <directionalLight position={[-6, 5, 3]} intensity={1.9} color="#cfc6b6" />
       {/* Rim from behind the structure: an unbuilt gate is still an object,
