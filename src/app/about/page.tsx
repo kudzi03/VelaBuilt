@@ -4,7 +4,7 @@ import { disclosures, site } from "@/content/site";
 import { services } from "@/content/services";
 import { pageMetadata } from "@/lib/seo";
 import { breadcrumbSchema, graph } from "@/lib/schema";
-import { SignalBackdrop } from "@/components/signal/SignalBackdrop";
+import { SignalStill } from "@/components/signal/SignalStill";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Reveal } from "@/components/ui/Reveal";
 import { ArrowRight, Label } from "@/components/ui/Primitives";
@@ -31,8 +31,10 @@ const crumbs = [
 export default function AboutPage() {
   return (
     <>
+      {/* The world: mid-system, looking both ways. */}
+      <SignalStill parked={0.55} />
+
       <section className="relative overflow-hidden pb-20 pt-[calc(var(--nav-height)+5rem)]">
-        <SignalBackdrop lean="right" presence={0.42} />
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />

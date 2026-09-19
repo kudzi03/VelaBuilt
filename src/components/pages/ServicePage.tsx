@@ -2,7 +2,7 @@ import Link from "next/link";
 import { services, type Service } from "@/content/services";
 import { faqsFor } from "@/content/faq";
 import { graph, breadcrumbSchema, faqSchema, serviceSchema } from "@/lib/schema";
-import { SignalBackdrop } from "@/components/signal/SignalBackdrop";
+import { SignalStill } from "@/components/signal/SignalStill";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { FaqSection } from "@/components/ui/FaqSection";
 import { Reveal } from "@/components/ui/Reveal";
@@ -34,10 +34,11 @@ export function ServicePage({
 
   return (
     <>
+      {/* The world: the stage each offer addresses. */}
+      <SignalStill parked={0.35} />
+
       {/* ---- Opening ---------------------------------------------------- */}
       <section className="relative overflow-hidden pb-24 pt-[calc(var(--nav-height)+5rem)] lg:pb-32 lg:pt-[calc(var(--nav-height)+7rem)]">
-        <SignalBackdrop lean="left" presence={0.4} />
-
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />
 
