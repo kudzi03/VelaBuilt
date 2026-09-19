@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { pageMetadata } from "@/lib/seo";
 import { breadcrumbSchema, graph } from "@/lib/schema";
-import { PageBackdrop } from "@/components/cinematic/PageBackdrop";
+import { SignalStill } from "@/components/signal/SignalStill";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ArrowRight, CategoryBadge, Label } from "@/components/ui/Primitives";
 import { Reveal } from "@/components/ui/Reveal";
@@ -43,9 +43,11 @@ const SERVICES = [
 export default function CardioLifePage() {
   return (
     <>
+      {/* The world: delivered: the end of the path, where a person decides. */}
+      <SignalStill parked={1} />
+
       {/* 1 — Hero */}
       <section className="relative overflow-hidden pb-20 pt-[calc(var(--nav-height)+5rem)]">
-        <PageBackdrop plate="gateway" focal={[0.5, 0.48]} presence={0.34} />
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />

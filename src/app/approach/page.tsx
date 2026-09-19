@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/seo";
 import { breadcrumbSchema, graph } from "@/lib/schema";
-import { PageBackdrop } from "@/components/cinematic/PageBackdrop";
+import { SignalStill } from "@/components/signal/SignalStill";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Reveal } from "@/components/ui/Reveal";
 import { Label } from "@/components/ui/Primitives";
@@ -77,8 +77,10 @@ const PRINCIPLES = [
 export default function ApproachPage() {
   return (
     <>
+      {/* The world: how the early stages are built. */}
+      <SignalStill parked={0.3} />
+
       <section className="relative overflow-hidden pb-20 pt-[calc(var(--nav-height)+5rem)]">
-        <PageBackdrop plate="website-chamber" focal={[0.6, 0.5]} presence={0.38} />
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />

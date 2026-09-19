@@ -209,37 +209,58 @@ export async function POST(request: Request): Promise<Response> {
     receivedAt: new Date().toISOString(),
   };
 
-  // 1. Durable capture. This, and only this, decides whether the visitor is
-  //    told their inquiry arrived.
-  let stored;
+  // An inquiry is "captured" once it exists somewhere that outlives this
+  // request. There are two such places, and either one is enough:
+  //
+  //   the store  — a private blob, queryable, the intended home
+  //   the inbox  — a mailbox the owner already runs
+  //
+  // Requiring the store alone would be stricter, and it is what this route
+  // did first. But with no store configured and a working mailbox, that
+  // strictness threw away inquiries it could have delivered — which is the
+  // failure this whole route exists to prevent. Success is still never
+  // reported unless one of the two actually succeeded.
+  let stored: Awaited<ReturnType<typeof persistEnquiry>> | null = null;
   try {
     stored = await persistEnquiry(record);
+    console.info("[enquiry] captured", {
+      reference: record.reference,
+      pathname: stored.pathname,
+    });
   } catch (error) {
     // Log the failure, never the inquiry contents.
-    console.error("[enquiry] capture failed", {
+    console.error("[enquiry] store unavailable", {
       reference: record.reference,
       reason: error instanceof Error ? error.message : "unknown",
     });
-    return failure(mode, 502, NOT_FILED, { raw: input });
   }
 
-  console.info("[enquiry] captured", {
-    reference: record.reference,
-    pathname: stored.pathname,
-  });
-
-  // 2. Notification. The inquiry is already safe, so a mail server having a
-  //    bad day must not turn a captured inquiry into a visible failure — it
-  //    turns into a loud log line and a record that can be replayed.
+  let notified = false;
   let bookingUrl: string | undefined;
   try {
     const result = await getEnquiryAdapter().deliver(record);
     bookingUrl = result.bookingUrl;
+    notified = true;
   } catch (error) {
-    console.error("[enquiry] notification failed — inquiry IS stored", {
+    console.error("[enquiry] notification failed", {
       reference: record.reference,
-      pathname: stored.pathname,
+      stored: Boolean(stored),
       reason: error instanceof Error ? error.message : "unknown",
+    });
+  }
+
+  if (!stored && !notified) {
+    // Nowhere durable. The visitor keeps their answers and is given the
+    // address to send them to directly.
+    console.error("[enquiry] NOT CAPTURED — no store and no notification", {
+      reference: record.reference,
+    });
+    return failure(mode, 502, NOT_FILED, { raw: input });
+  }
+
+  if (!stored) {
+    console.warn("[enquiry] captured by email only — connect a blob store", {
+      reference: record.reference,
     });
   }
 

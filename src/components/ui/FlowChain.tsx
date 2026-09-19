@@ -1,11 +1,14 @@
 import { Fragment } from "react";
 
 /**
- * A path through a system, shown as a path.
+ * A sequence, drawn as the route it is.
  *
- * Used wherever the site describes a sequence — enquiry to booking, capture to
- * report. It is an ordered list underneath, so it reads correctly in sequence
- * to a screen reader and survives with the arrows stripped out.
+ * This used to be outlined rectangles joined by arrows — a wireframe of the
+ * one thing VelaBuilt actually sells, and the cheapest-looking element on the
+ * site. It is now the signal path in miniature: a node for each stage, a rule
+ * between them, the label sitting under its own node. Same data, same
+ * semantics, same <ol>; it simply stops looking like a placeholder for a
+ * diagram someone meant to draw later.
  */
 export function FlowChain({
   steps,
@@ -18,21 +21,25 @@ export function FlowChain({
   readonly emphasise?: number;
 }) {
   return (
-    <ol className={`flex flex-wrap items-center gap-x-3 gap-y-3 ${className ?? ""}`}>
+    <ol className={`flex flex-wrap items-start gap-x-2 gap-y-5 ${className ?? ""}`}>
       {steps.map((step, index) => (
         <Fragment key={step}>
           <li
             data-emphasised={emphasise === index}
-            className="border border-[color:var(--color-hairline)] px-3.5 py-2 text-[0.75rem] uppercase tracking-[0.2em] text-[color:var(--color-ivory-dim)] transition-colors duration-500 data-[emphasised=true]:border-[rgb(224_195_152/0.45)] data-[emphasised=true]:text-[color:var(--color-champagne)]"
+            className="group flex min-w-[4.5rem] flex-col items-start gap-2.5 text-[0.75rem] uppercase tracking-[0.2em] text-[color:var(--color-ivory-dim)] transition-colors duration-500 data-[emphasised=true]:text-[color:var(--color-champagne)]"
           >
+            <span
+              aria-hidden="true"
+              className="block h-[7px] w-[7px] rotate-45 border border-[rgb(224_195_152/0.4)] transition-colors duration-500 group-data-[emphasised=true]:border-[color:var(--color-champagne)] group-data-[emphasised=true]:bg-[color:var(--color-champagne)]"
+            />
             {step}
           </li>
+
           {index < steps.length - 1 ? (
-            <li aria-hidden="true" className="text-[color:var(--color-faint)]">
-              <svg viewBox="0 0 16 8" className="h-2 w-4" fill="none" stroke="currentColor" strokeWidth="1">
-                <path d="M0 4h14M11 1l3 3-3 3" />
-              </svg>
-            </li>
+            <li
+              aria-hidden="true"
+              className="mt-[3px] h-px w-5 shrink-0 bg-[rgb(224_195_152/0.22)]"
+            />
           ) : null}
         </Fragment>
       ))}

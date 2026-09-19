@@ -2,7 +2,6 @@
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { systemModules, type SystemId, type SystemModule } from "@/content/systems";
-import { plateSource } from "@/content/scenes";
 import { FlowChain } from "@/components/ui/FlowChain";
 import { Label } from "@/components/ui/Primitives";
 import { CORE, STATIONS, focusStation, labRoom } from "./labRoom";
@@ -60,7 +59,6 @@ export function SystemLabRoom({
     };
   }, [drivesBackdrop]);
 
-  const room = plateSource("system-lab");
   const activeStation = STATIONS[activeId];
 
   return (
@@ -70,25 +68,76 @@ export function SystemLabRoom({
         className="relative overflow-hidden border border-[color:var(--color-hairline)]"
         style={{ aspectRatio: "1672 / 941" }}
       >
-        {/* The chamber. */}
-        <picture>
-          <source type="image/avif" srcSet={room.avifSrcSet} sizes="(min-width: 1024px) 80vw, 100vw" />
-          <source type="image/webp" srcSet={room.webpSrcSet} sizes="(min-width: 1024px) 80vw, 100vw" />
-          <img
-            src={room.webp}
-            alt="The VelaBuilt System Lab: a circular chamber with a suspended core at its center and glass stations around the perimeter."
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        </picture>
+        {/* The chamber, drawn. Every module is wired to the core whether or
+            not it is selected, so the structure is legible before the visitor
+            touches anything — the point being that it is one system, not six
+            tools that happen to be on the same screen. */}
+        <div aria-hidden="true" className="signal-ground absolute inset-0" />
 
-        {/* The room falls into shadow away from the selected chain. */}
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          className="pointer-events-none absolute inset-0 h-full w-full"
+        >
+          <ellipse
+            cx={CORE[0] * 100}
+            cy={CORE[1] * 100}
+            rx="41"
+            ry="33"
+            fill="none"
+            stroke="rgb(224 195 152 / 0.1)"
+            strokeWidth="0.9"
+            vectorEffect="non-scaling-stroke"
+          />
+          <ellipse
+            cx={CORE[0] * 100}
+            cy={CORE[1] * 100}
+            rx="24"
+            ry="19"
+            fill="none"
+            stroke="rgb(224 195 152 / 0.06)"
+            strokeWidth="0.9"
+            vectorEffect="non-scaling-stroke"
+          />
+
+          {systemModules.map((unit) => {
+            const station = STATIONS[unit.id];
+            if (!station) return null;
+            return (
+              <line
+                key={`wire-${unit.id}`}
+                x1={CORE[0] * 100}
+                y1={CORE[1] * 100}
+                x2={station[0] * 100}
+                y2={station[1] * 100}
+                stroke="rgb(224 195 152 / 0.09)"
+                strokeWidth="0.8"
+                vectorEffect="non-scaling-stroke"
+              />
+            );
+          })}
+
+          {/* The core: a machined square stood on its corner. */}
+          <rect
+            x={CORE[0] * 100 - 1.3}
+            y={CORE[1] * 100 - 1.3}
+            width="2.6"
+            height="2.6"
+            fill="none"
+            stroke="rgb(224 195 152 / 0.55)"
+            strokeWidth="1"
+            vectorEffect="non-scaling-stroke"
+            transform={`rotate(45 ${CORE[0] * 100} ${CORE[1] * 100})`}
+          />
+        </svg>
+
+        {/* Attention falls away from the selected chain. */}
         <div
           aria-hidden="true"
           className="absolute inset-0 transition-[background] duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none"
           style={{
-            background: `radial-gradient(38% 54% at ${activeStation[0] * 100}% ${activeStation[1] * 100}%, rgb(4 4 5 / 0) 0%, rgb(4 4 5 / 0.28) 34%, rgb(4 4 5 / 0.68) 66%, rgb(4 4 5 / 0.86) 100%)`,
+            background: `radial-gradient(44% 60% at ${activeStation[0] * 100}% ${activeStation[1] * 100}%, rgb(4 4 5 / 0) 0%, rgb(4 4 5 / 0.18) 40%, rgb(4 4 5 / 0.5) 72%, rgb(4 4 5 / 0.66) 100%)`,
           }}
         />
 

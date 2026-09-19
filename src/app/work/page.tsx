@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { workByCategory, workCategories, workItems } from "@/content/work";
 import { pageMetadata } from "@/lib/seo";
 import { breadcrumbSchema, graph } from "@/lib/schema";
-import { PageBackdrop } from "@/components/cinematic/PageBackdrop";
+import { SignalStill } from "@/components/signal/SignalStill";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { WorkGrid } from "@/components/work/WorkGrid";
 import { Reveal } from "@/components/ui/Reveal";
@@ -26,8 +26,10 @@ export default function WorkPage() {
 
   return (
     <>
+      {/* The world: work is what the far end of the system produces. */}
+      <SignalStill parked={0.86} />
+
       <section className="relative overflow-hidden pb-20 pt-[calc(var(--nav-height)+5rem)]">
-        <PageBackdrop plate="atrium" focal={[0.42, 0.5]} presence={0.4} />
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />

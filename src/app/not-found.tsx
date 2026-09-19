@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { primaryNav } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
-import { PageBackdrop } from "@/components/cinematic/PageBackdrop";
+import { SignalStill } from "@/components/signal/SignalStill";
 import { ArrowRight, Label } from "@/components/ui/Primitives";
 import { Monogram } from "@/components/chrome/Monogram";
 
@@ -15,8 +15,11 @@ export const metadata: Metadata = pageMetadata({
 
 export default function NotFound() {
   return (
-    <section className="relative flex min-h-[100svh] items-center overflow-hidden py-32">
-      <PageBackdrop plate="atrium" focal={[0.5, 0.5]} presence={0.5} />
+    <>
+      {/* The world: off the path, early. */}
+      <SignalStill parked={0.18} />
+
+      <section className="relative flex min-h-[100svh] items-center overflow-hidden py-32">
 
       <div className="shell relative">
         <Monogram
@@ -58,5 +61,6 @@ export default function NotFound() {
         </div>
       </div>
     </section>
+    </>
   );
 }
