@@ -4,7 +4,7 @@ import { disclosures, site } from "@/content/site";
 import { services } from "@/content/services";
 import { pageMetadata } from "@/lib/seo";
 import { breadcrumbSchema, graph } from "@/lib/schema";
-import { PageBackdrop } from "@/components/cinematic/PageBackdrop";
+import { SignalBackdrop } from "@/components/signal/SignalBackdrop";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Reveal } from "@/components/ui/Reveal";
 import { ArrowRight, Label } from "@/components/ui/Primitives";
@@ -32,7 +32,7 @@ export default function AboutPage() {
   return (
     <>
       <section className="relative overflow-hidden pb-20 pt-[calc(var(--nav-height)+5rem)]">
-        <PageBackdrop plate="atrium" focal={[0.62, 0.48]} presence={0.4} />
+        <SignalBackdrop lean="right" presence={0.42} />
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />

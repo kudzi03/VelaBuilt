@@ -9,7 +9,7 @@ import type { Crumb } from "@/lib/seo";
 export function Breadcrumbs({ crumbs }: { readonly crumbs: readonly Crumb[] }) {
   return (
     <nav aria-label="Breadcrumb">
-      <ol className="flex flex-wrap items-center gap-3">
+      <ol className="on-plate flex flex-wrap items-center gap-3">
         {crumbs.map((crumb, index) => {
           const isLast = index === crumbs.length - 1;
           return (

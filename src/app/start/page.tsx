@@ -7,7 +7,7 @@ import { breadcrumbSchema, graph } from "@/lib/schema";
 import { BookingLink, PhoneLink } from "@/components/chrome/ContactLinks";
 import { EnquiryConfirmation } from "@/components/enquiry/EnquiryConfirmation";
 import { EnquiryFlow } from "@/components/enquiry/EnquiryFlow";
-import { PageBackdrop } from "@/components/cinematic/PageBackdrop";
+import { SignalBackdrop } from "@/components/signal/SignalBackdrop";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Label } from "@/components/ui/Primitives";
 
@@ -56,7 +56,7 @@ export default async function StartPage({
   return (
     <>
       <section className="relative min-h-[100svh] overflow-hidden pb-20 pt-[calc(var(--nav-height)+3.5rem)]">
-        <PageBackdrop plate="gateway" focal={[0.5, 0.46]} presence={0.34} />
+        <SignalBackdrop lean="left" presence={0.34} />
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />

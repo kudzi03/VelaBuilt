@@ -3,7 +3,7 @@ import { systemModules } from "@/content/systems";
 import { pageMetadata } from "@/lib/seo";
 import { breadcrumbSchema, graph } from "@/lib/schema";
 import { SystemLabRoom } from "@/components/lab/SystemLabRoom";
-import { PageBackdrop } from "@/components/cinematic/PageBackdrop";
+import { SignalBackdrop } from "@/components/signal/SignalBackdrop";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { FlowChain } from "@/components/ui/FlowChain";
 import { Reveal } from "@/components/ui/Reveal";
@@ -26,7 +26,7 @@ export default function SystemLabPage() {
   return (
     <>
       <section className="relative overflow-hidden pb-20 pt-[calc(var(--nav-height)+5rem)]">
-        <PageBackdrop plate="system-lab" focal={[0.5, 0.44]} presence={0.5} />
+        <SignalBackdrop presence={0.4} />
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />
