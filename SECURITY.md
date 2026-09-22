@@ -215,11 +215,37 @@ site beyond pure utilities. Authenticated pages must never be statically
 generated. Nothing in this codebase currently establishes a session, and that
 property is worth keeping deliberately.
 
+## The voice guide
+
+- **The ElevenLabs API key never reaches the browser.** It is read only by
+  `/api/voice/session`, which exchanges it for a short-lived WebRTC
+  conversation token or signed WebSocket URL. No `NEXT_PUBLIC_` variable
+  holds anything ElevenLabs issues. Without a key the route returns the
+  public agent id, and the agent's allowlist (velabuilt.com,
+  www.velabuilt.com, vela-built.vercel.app) is the gate.
+- The session route is GET-only, rate-limited to 6 per minute per IP, and
+  `no-store`.
+- **The agent can only move the page along enumerated rails.** Seven client
+  tools, every parameter an enum except the prefill summary, and every call
+  re-validated by `parseToolCall` (`src/voice/tools.ts`) with own-property
+  lookups. There is no tool that takes a URL, selector, script or HTML. The
+  prefill summary is stripped of control characters, capped at 1,200
+  characters and rendered as text.
+- **Nothing is submitted by voice.** `prefill_enquiry` shows the summary and
+  waits for the visitor to press "Yes, open the form"; the visitor then
+  reviews and sends the form themselves.
+- The client may override only `text_only` on the agent. Prompt, first
+  message, voice, LLM and tools cannot be changed from the browser.
+- The microphone is requested only after the consent sheet, only for Start
+  talking, and released on End. `Permissions-Policy: microphone=(self)`.
+- Privacy on the agent: voice not recorded, audio deleted, transcripts kept
+  30 days. `/privacy#talking-to-vela` says the same.
+
 ## Maintenance
 
 ```bash
 npm audit --omit=dev     # dependency advisories
 npm run check            # types, lint, build
-node scripts/qa.mjs      # every route, both viewports
-node scripts/fallbacks.mjs
+node scripts/qa.mjs           # every route, six widths, fallbacks
+node scripts/voice-tools.mjs  # voice tool rails, against a mocked socket
 ```
