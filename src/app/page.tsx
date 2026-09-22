@@ -12,6 +12,7 @@ import { WorkGrid } from "@/components/work/WorkGrid";
 import { Reveal } from "@/components/ui/Reveal";
 import { ArrowRight, Label } from "@/components/ui/Primitives";
 import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
+import { WorldStage } from "@/components/world/WorldStage";
 
 export const metadata: Metadata = pageMetadata({
   title: `${site.name} — ${site.tagline}`,
@@ -232,6 +233,11 @@ export default function HomePage() {
           </Reveal>
         </div>
       </section>
+
+      {/* The facility. It mounts over this page on capable devices and is
+          dismissed back to it; the markup above is never removed, which is
+          what keeps the site crawlable and usable without WebGL. */}
+      <WorldStage />
 
       <script
         type="application/ld+json"

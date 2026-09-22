@@ -1161,3 +1161,30 @@
     transform: none;
   }
 }
+
+/* ── the facility ───────────────────────────────────────────────────────────
+   While the world is open it owns the viewport. The conventional page is not
+   unmounted or hidden from the document — it stays exactly where it was, in
+   the DOM, rendered and crawlable — it simply stops scrolling underneath and
+   stops being announced, because a screen reader should not read a page the
+   visitor cannot currently see. Leaving the world restores both.
+
+   This is the whole of the standard-view guarantee: there is no state in
+   which the site's content has been replaced by WebGL. */
+html.world-open,
+html.world-open body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* The overlay is opaque and fixed, so the page beneath cannot be seen or
+   reached. It is still in the DOM, still server-rendered, still crawled —
+   which is the entire point. */
+
+@media (prefers-reduced-motion: reduce) {
+  /* The world still works — the gait is off and the guide never auto-walks
+     the visitor anywhere. See src/world/player.ts and WorldStage. */
+  html.world-open {
+    scroll-behavior: auto;
+  }
+}
