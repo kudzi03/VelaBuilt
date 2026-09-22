@@ -215,6 +215,15 @@ site beyond pure utilities. Authenticated pages must never be statically
 generated. Nothing in this codebase currently establishes a session, and that
 property is worth keeping deliberately.
 
+## Enquiries in Google Sheets
+
+- Enquiries are appended to the studio's own Google Sheet by an Apps Script
+  web app (`integrations/google-sheets/`). The site holds only the web-app
+  URL and a shared secret (`ENQUIRY_SHEET_SECRET`); no Google credentials.
+- A row counts only when the script answers `{ "ok": true }`. A wrong secret,
+  an error page or a timeout makes the route report failure to the visitor.
+- Visitor text that Sheets would evaluate as a formula is stored as text.
+
 ## The voice guide
 
 - **The ElevenLabs API key never reaches the browser.** It is read only by

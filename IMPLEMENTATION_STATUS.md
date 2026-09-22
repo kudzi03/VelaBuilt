@@ -92,13 +92,12 @@ What moved the numbers, found by profiling rather than guessed:
   cannot open outbound WebSockets or WebRTC. The agent's decisions were tested
   on ElevenLabs and the site's handling against a mocked socket; the two
   halves meet only on the live site. Talk to it on velabuilt.com.
-- **Enquiries are not captured in production yet.** Verified with a test
-  submission on 2026-09-22: `BLOB_READ_WRITE_TOKEN` is unset and the email
-  adapter has no `SMTP_PASS`, so the route returns 502 and tells the visitor
-  to email jace@velabuilt.com. It never shows a false success. Fix either:
-  connect a private Vercel Blob store to the project (the deploy token was
-  refused permission to create one), or add `SMTP_PASS` (a Google Workspace
-  app password for `SMTP_USER`). Then redeploy.
+- **Enquiries go to Google Sheets once the sheet is connected.** The site
+  side is built and tested (`tests/sheet.test.ts`, including Apps Script's
+  302 redirect and every refusal path). Until `ENQUIRY_SHEET_URL` is set in
+  Vercel, production still returns 502 and gives the visitor the email
+  address; it never shows a false success. Setup:
+  `integrations/google-sheets/README.md`.
 - **Production is deployed from this branch, not the default branch.** The
   default branch (`claude/velabuilt-cinematic-site-69azha`) still holds the
   previous site; a push to it would redeploy the old site over this one.
@@ -114,5 +113,5 @@ What moved the numbers, found by profiling rather than guessed:
 1. Talk to Vela on the live site, on a phone and a laptop, and listen for
    latency and interruptions.
 2. Add `ELEVENLABS_API_KEY` (convai scope) to Vercel.
-3. Connect a Blob store if one is not already set.
+3. Connect the enquiries sheet (integrations/google-sheets/README.md).
 4. Publish the next case study; it becomes a `show_project` value.

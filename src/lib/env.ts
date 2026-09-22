@@ -48,6 +48,18 @@ const serverEnvSchema = z.object({
    * password). No form service sits in between.
    */
   /**
+   * Durable capture in Google Sheets: the web-app URL of the Apps Script in
+   * integrations/google-sheets/, and the secret it checks. When set, every
+   * inquiry is appended to the sheet before the visitor is told it arrived.
+   */
+  ENQUIRY_SHEET_URL: unsetIfEmpty(
+    z.url().refine((u) => u.startsWith("https://script.google.com/"), {
+      message: "must be an Apps Script web-app URL (https://script.google.com/…)",
+    }),
+  ),
+  ENQUIRY_SHEET_SECRET: unsetIfEmpty(z.string().min(24)),
+
+  /**
    * Durable capture. Injected automatically by Vercel when a Blob store is
    * connected to the project; never set by hand, never sent to the client.
    */

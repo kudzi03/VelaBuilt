@@ -199,6 +199,24 @@ async function sign(body: string, secret: string): Promise<string> {
     .join("");
 }
 
+/**
+ * Whether the selected adapter has what it needs to deliver. An adapter that
+ * is not configured is not a failure when the inquiry is already stored — the
+ * sheet is then the delivery — so the route skips it quietly rather than
+ * logging an error for every submission.
+ */
+export function adapterConfigured(): boolean {
+  const env = serverEnv();
+  switch (env.ENQUIRY_ADAPTER) {
+    case "email":
+      return Boolean(env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS);
+    case "webhook":
+      return Boolean(env.ENQUIRY_WEBHOOK_URL);
+    default:
+      return env.VERCEL_ENV !== "production";
+  }
+}
+
 export function getEnquiryAdapter(): EnquiryAdapter {
   switch (serverEnv().ENQUIRY_ADAPTER) {
     case "email":
