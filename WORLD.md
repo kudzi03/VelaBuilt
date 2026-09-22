@@ -7,6 +7,14 @@ checkpoint, not a summary.
 
 ---
 
+## Live
+
+**https://velabuilt.com** — deployed to the default branch
+(`claude/velabuilt-cinematic-site-69azha`), which is what Vercel serves as
+production. Verified: all routes 200, `/api/voice/session` returns the agent,
+`microphone=(self)` and `autoplay=(self)` in the Permissions-Policy, and the
+CSP permits `*.elevenlabs.io` over both https and wss.
+
 ## What exists right now
 
 A walkable first-person building, mounted over the home page, dismissible back
@@ -46,37 +54,40 @@ about what the system does.
 
 Listed honestly, in the order I would do them.
 
-### 1. ElevenLabs voice guide — BLOCKED ON CREDENTIALS
+### 1. The voice guide — BUILT AND DEPLOYED
 
-**This session has no ElevenLabs access.** There is no ElevenLabs MCP server
-attached, no key in the repo, and nothing in `.env.example`. The brief said
-access would be given; it has not arrived, so nothing has been built against a
-real agent, and I have not guessed at an agent id or written a fake integration.
+Agent: `agent_9001m347033mfsfbnzk4t695g3f3` ("VelaBuilt Guide").
 
-What is already in place for it: `src/world/state.ts` is the context bridge the
-guide is meant to read (`hall`, `focus`, `entered`, `muted`, `voice`), and the
-threshold already offers "Enter with the guide" / "Enter silently" as two equal
-choices with no microphone request on load.
+It was a phone receptionist wearing that name. Rewritten as the in-world
+guide, with three client tools (`navigate_to_space`, `open_enquiry`,
+`exit_to_standard_view`) dispatched through a switch in `src/world/voice.ts`.
+Two settings on the agent were wrong for a browser and are fixed: ASR was
+`ulaw_8000` (8 kHz telephony) and the turn timeout was 1 second.
 
-What is needed to finish it:
+`ELEVENLABS_AGENT_ID` is set on Vercel for all three targets. The id is not a
+secret — it is what the public widget puts in the page — but it is kept
+server-side so the guide can be switched off without a deploy.
 
-- `ELEVENLABS_API_KEY` (server-side only — never `NEXT_PUBLIC_`)
-- the agent id of the existing agent
-- confirmation to edit that agent's prompt
+**What is NOT verified:** the conversation itself. This container's egress
+proxy will not hold a WebSocket to `livekit.rtc.elevenlabs.io`, so the chain
+was proved only as far as: session minted (200), ElevenLabs token minted
+(200), LiveKit validate (200), media socket refused by the proxy. Everything
+before the socket is confirmed on production. **Somebody needs to press
+"Enter with the guide" on a real machine and talk to it.**
 
-Then: a server route that mints a short-lived signed URL, a client that opens
-the conversation only after the visitor asks for it, a tool/context channel
-that posts `worldContext.hall` on change, and a small closed set of actions
-(`navigate(hall)`, `openProject(slug)`, `showEnquiry()`, `exitToStandard()`)
-dispatched through a switch — never arbitrary DOM access.
+**Recommended, not done:** turn on the agent's allowlist (ElevenLabs → Agent →
+Security) and restrict it to `velabuilt.com`. Right now `enable_auth` is false
+and an empty allowlist means anyone with the agent id can start a conversation
+from their own site on your credits. Once the allowlist is on, set
+`ELEVENLABS_API_KEY` on Vercel and `/api/voice/session` starts minting signed
+URLs automatically — no code change.
 
-### 2. Audio
+### 2. Audio — BUILT
 
-Not started. The plan: procedurally synthesised room tone per hall (`Hall.tone`
-already exists in the spec), footsteps driven by `PlayerState.distance`, and
-positional sources on the rack room and the pendulums. Generated with the Web
-Audio API rather than downloaded, for the same reason the textures are.
-Everything behind the existing mute state.
+`src/world/audio.ts`. Synthesised in the browser, no files. A filtered pink
+noise bed per hall crossfaded over 1.4s, a mains hum in the halls that have
+equipment, and footsteps driven by metres walked rather than a timer. Muting
+ramps the master gain rather than suspending the context.
 
 ### 3. Interactive objects and the gallery plinths
 
@@ -111,6 +122,14 @@ Android before shipping.
 - **Never mutate `scene`.** Every material already carries the envMap, so
   `scene.environment` is not needed. Fog and background are set in `onCreated`,
   outside React's render.
+- **Two of the site's own security headers blocked the guide**, and the failure
+  mode was a single console line. `Permissions-Policy: microphone=()` meant the
+  microphone could never open. The CSP needed the voice origins, and the first
+  guess was wrong in an instructive way: the SDK mints a token against
+  `api.elevenlabs.io` and then hands the session to
+  `livekit.rtc.elevenlabs.io`. Allow only the first and you get a clean 200
+  followed by a silent refusal. Both are in `next.config.ts` with the reason
+  written beside them — do not "tidy" them back.
 - **Headless WebGL in this container** needs
   `--use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader
   --disable-gpu-sandbox`. Without them three.js throws and you will think the
