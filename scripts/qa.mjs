@@ -1,254 +1,197 @@
 /**
- * Visual and behavioural QA pass.
+ * QA — every route, six widths, and the behaviours that matter here.
  *
- * Drives a real browser over every route at desktop and phone widths and
- * reports the failures that matter for this site specifically:
+ *   node scripts/qa.mjs [baseUrl]            (default http://127.0.0.1:3000)
  *
- *   · console errors and failed requests
- *   · horizontal overflow (the one thing that ruins a dark full-bleed layout)
- *   · headings missing, or more than one <h1>
- *   · text smaller than 12px
- *   · elements overflowing the viewport
- *   · WebGL actually initialising, and the tier that was chosen
+ * Routes × widths: console errors, failed requests, horizontal overflow,
+ * exactly one <h1>, no text under 12px, JSON-LD that parses, and the WebGL
+ * object actually going live. Then: no-JavaScript and reduced-motion
+ * fallbacks, a keyboard walk, the enquiry dialog, and the voice entry flow
+ * (consent sheet, microphone refused, Vela unavailable).
  *
- * Usage:  node scripts/qa.mjs [baseUrl] [--shots]
+ * Set CHROME_PATH to use a specific Chromium. Software GL flags are passed so
+ * it runs in CI containers; real hardware is faster.
  */
-
 import { chromium } from "playwright";
-import { mkdir } from "node:fs/promises";
 
-const BASE = process.argv[2]?.startsWith("http")
-  ? process.argv[2]
-  : "http://127.0.0.1:3000";
-const TAKE_SHOTS = process.argv.includes("--shots");
-const SHOT_DIR = process.env.QA_SHOT_DIR ?? "/tmp/velabuilt-qa";
-
+const BASE = process.argv[2]?.startsWith("http") ? process.argv[2] : "http://127.0.0.1:3000";
 const ROUTES = [
-  "/",
-  "/website-conversion-systems",
-  "/lead-follow-up-systems",
-  "/website-engine-optimization",
-  "/system-lab",
-  "/work",
-  "/approach",
-  "/about",
-  "/start",
-  "/privacy",
-  "/this-route-does-not-exist",
+  "/", "/website-conversion-systems", "/ai-systems", "/lead-follow-up-systems", "/business-systems",
+  "/website-engine-optimization", "/work", "/work/cardio-life", "/system-lab", "/approach", "/about",
+  "/start", "/privacy", "/cookies", "/this-route-does-not-exist",
+];
+const WIDTHS = [
+  { name: "375", width: 375, height: 812, mobile: true },
+  { name: "430", width: 430, height: 932, mobile: true },
+  { name: "tablet", width: 820, height: 1180, mobile: true },
+  { name: "1366", width: 1366, height: 768 },
+  { name: "1440", width: 1440, height: 900 },
+  { name: "1920", width: 1920, height: 1080 },
 ];
 
-const VIEWPORTS = [
-  { name: "desktop", width: 1512, height: 945, isMobile: false },
-  { name: "phone", width: 390, height: 844, isMobile: true },
-];
-
-const problems = [];
-const note = (route, viewport, message) =>
-  problems.push(`[${viewport}] ${route} — ${message}`);
-
-const browser = await chromium.launch({
-  executablePath:
-    process.env.QA_CHROME ?? "/opt/pw-browsers/chromium-1194/chrome-linux/chrome",
-  args: ["--use-gl=swiftshader", "--enable-unsafe-swiftshader", "--no-sandbox"],
-});
-
-if (TAKE_SHOTS) await mkdir(SHOT_DIR, { recursive: true });
-
-for (const viewport of VIEWPORTS) {
-  const context = await browser.newContext({
-    viewport: { width: viewport.width, height: viewport.height },
-    deviceScaleFactor: viewport.isMobile ? 2 : 1,
-    hasTouch: viewport.isMobile,
-    isMobile: viewport.isMobile,
-    userAgent: viewport.isMobile
-      ? "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
-      : undefined,
+const launch = () =>
+  chromium.launch({
+    executablePath: process.env.CHROME_PATH || undefined,
+    args: ["--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"],
   });
 
+const failures = [];
+const fail = (where, what) => failures.push(`${where}: ${what}`);
+const browser = await launch();
+
+/* ── routes × widths ─────────────────────────────────────────────────── */
+for (const vp of WIDTHS) {
+  const ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height }, isMobile: !!vp.mobile, hasTouch: !!vp.mobile });
   for (const route of ROUTES) {
-    const page = await context.newPage();
-    const errors = [];
-
-    page.on("console", (message) => {
-      if (message.type() === "error") errors.push(message.text().slice(0, 200));
+    const page = await ctx.newPage();
+    const where = `${vp.name} ${route}`;
+    const is404 = route.includes("does-not-exist");
+    page.on("console", (m) => {
+      // The 404 route's own 404 is the expected response, not an error.
+      if (m.type() === "error" && !(is404 && m.text().includes("404"))) fail(where, `console: ${m.text().slice(0, 160)}`);
     });
-    page.on("pageerror", (error) => errors.push(`pageerror: ${error.message}`));
-    page.on("requestfailed", (request) => {
-      const failure = request.failure()?.errorText ?? "";
-      if (!failure.includes("ERR_ABORTED")) {
-        errors.push(`request failed: ${request.url().slice(0, 90)} ${failure}`);
+    page.on("pageerror", (e) => fail(where, `pageerror: ${e.message.slice(0, 160)}`));
+    page.on("response", (r) => {
+      if (r.status() >= 400 && !r.url().endsWith(route)) fail(where, `HTTP ${r.status()} ${r.url()}`);
+    });
+    const res = await page.goto(BASE + route, { waitUntil: "networkidle" });
+    const expected = route.includes("does-not-exist") ? 404 : 200;
+    if (res?.status() !== expected) fail(where, `status ${res?.status()} (expected ${expected})`);
+    await page.waitForTimeout(400);
+    const r = await page.evaluate(() => {
+      const small = [...document.querySelectorAll("main *, header *, footer *")].filter((el) => {
+        if (!el.childNodes.length || ![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) return false;
+        const cs = getComputedStyle(el);
+        if (cs.visibility === "hidden" || cs.display === "none" || el.closest(".sr-only,[hidden],[aria-hidden=true]")) return false;
+        return parseFloat(cs.fontSize) < 12;
+      }).map((el) => el.textContent.trim().slice(0, 40));
+      let ld = 0, ldBad = 0;
+      for (const s of document.querySelectorAll('script[type="application/ld+json"]')) {
+        ld++;
+        try { JSON.parse(s.textContent); } catch { ldBad++; }
       }
-    });
-
-    const response = await page.goto(`${BASE}${route}`, {
-      waitUntil: "networkidle",
-      timeout: 45_000,
-    });
-
-    const expected404 = route.includes("does-not-exist");
-    const status = response?.status() ?? 0;
-    if (expected404 && status !== 404) note(route, viewport.name, `expected 404, got ${status}`);
-    if (!expected404 && status !== 200) note(route, viewport.name, `status ${status}`);
-
-    // Let the canvas mount and the reveals settle.
-    await page.waitForTimeout(2600);
-
-    const audit = await page.evaluate(() => {
-      const doc = document.documentElement;
-      const results = {
-        overflow: doc.scrollWidth - doc.clientWidth,
-        h1Count: document.querySelectorAll("h1").length,
+      return {
+        overflow: document.documentElement.scrollWidth - window.innerWidth,
+        h1: document.querySelectorAll("h1").length,
+        small: small.slice(0, 3),
+        ld, ldBad,
         title: document.title,
-        description:
-          document.querySelector('meta[name="description"]')?.getAttribute("content") ?? null,
-        canonical: document.querySelector('link[rel="canonical"]')?.getAttribute("href") ?? null,
-        jsonLd: document.querySelectorAll('script[type="application/ld+json"]').length,
-        tier: document.querySelector("[data-tier]")?.getAttribute("data-tier") ?? null,
-        canvas: Boolean(document.querySelector("canvas")),
-        tiny: [],
-        wide: [],
-        contrast: [],
+        desc: document.querySelector('meta[name="description"]')?.content ?? "",
+        canonical: document.querySelector('link[rel="canonical"]')?.href ?? "",
       };
-
-      // Relative luminance and contrast ratio, per WCAG 2.
-      const luminance = (rgb) => {
-        const channel = (value) => {
-          const v = value / 255;
-          return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
-        };
-        return (
-          0.2126 * channel(rgb[0]) + 0.7152 * channel(rgb[1]) + 0.0722 * channel(rgb[2])
-        );
-      };
-
-      const parseColor = (value) => {
-        const match = value.match(/rgba?\(([^)]+)\)/);
-        if (!match) return null;
-        const parts = match[1].split(",").map((n) => Number.parseFloat(n));
-        // Text mid-fade is invisible, not low-contrast — skip it.
-        if (parts.length > 3 && parts[3] < 0.95) return null;
-        return parts.slice(0, 3);
-      };
-
-      const contrast = (foreground, background) => {
-        const a = parseColor(foreground);
-        const b = parseColor(background);
-        if (!a || !b) return 0;
-        const la = luminance(a);
-        const lb = luminance(b);
-        return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
-      };
-
-      /** First opaque background colour up the ancestor chain. */
-      const effectiveBackground = (element) => {
-        let node = element;
-        while (node && node !== document.documentElement) {
-          const background = getComputedStyle(node).backgroundColor;
-          const parsed = parseColor(background);
-          if (parsed) return background;
-          node = node.parentElement;
-        }
-        // The page ground: <html> carries it, since <body> is transparent.
-        return "rgb(5, 5, 6)";
-      };
-
-      const viewportWidth = doc.clientWidth;
-      for (const element of document.body.querySelectorAll("*")) {
-        const rect = element.getBoundingClientRect();
-        if (rect.width === 0 || rect.height === 0) continue;
-
-        if (rect.right > viewportWidth + 2 && rect.width < viewportWidth * 3) {
-          const style = getComputedStyle(element);
-          // Decorative layers are deliberately larger than the frame and are
-          // clipped by an overflow-hidden parent; only real content counts.
-          const decorative = element.closest("[aria-hidden='true']") !== null;
-          // Anything inside a horizontal scroller is meant to run past the
-          // frame; only overflow the visitor cannot reach is a fault.
-          let scroller = element.parentElement;
-          let scrollable = false;
-          while (scroller && scroller !== document.body) {
-            const parentStyle = getComputedStyle(scroller);
-            if (parentStyle.overflowX === "auto" || parentStyle.overflowX === "scroll") {
-              scrollable = true;
-              break;
-            }
-            scroller = scroller.parentElement;
-          }
-          if (!decorative && !scrollable && style.position !== "fixed" && style.overflowX !== "auto") {
-            results.wide.push(
-              `${element.tagName.toLowerCase()}.${String(element.className).slice(0, 40)} right=${Math.round(rect.right)}`,
-            );
-          }
-        }
-
-        const text = element.textContent?.trim() ?? "";
-        if (text.length > 0 && element.children.length === 0) {
-          const style = getComputedStyle(element);
-          const size = Number.parseFloat(style.fontSize);
-          if (size > 0 && size < 12) {
-            results.tiny.push(`${Math.round(size * 10) / 10}px "${text.slice(0, 30)}"`);
-          }
-
-          // WCAG AA contrast against the background actually behind the text.
-          // Most of the site sits on near-black, but a primary button is dark
-          // ink on ivory — assuming one ground would report every CTA as
-          // failing and make the whole check worthless.
-          const ratio = contrast(style.color, effectiveBackground(element));
-          const weight = Number.parseInt(style.fontWeight, 10) || 400;
-          const large = size >= 24 || (size >= 18.66 && weight >= 700);
-          const required = large ? 3 : 4.5;
-          if (ratio > 0 && ratio < required) {
-            results.contrast.push(
-              `${ratio.toFixed(2)}:1 (needs ${required}) ${style.color} "${text.slice(0, 26)}"`,
-            );
-          }
-        }
-      }
-
-      results.wide = [...new Set(results.wide)].slice(0, 5);
-      results.tiny = [...new Set(results.tiny)].slice(0, 5);
-      results.contrast = [...new Set(results.contrast)].slice(0, 6);
-      return results;
     });
-
-    if (audit.overflow > 1) {
-      note(route, viewport.name, `horizontal overflow ${audit.overflow}px`);
-    }
-    for (const wide of audit.wide) note(route, viewport.name, `overflows viewport: ${wide}`);
-    for (const tiny of audit.tiny) note(route, viewport.name, `tiny text ${tiny}`);
-    for (const low of audit.contrast) note(route, viewport.name, `low contrast ${low}`);
-    if (audit.h1Count !== 1) note(route, viewport.name, `${audit.h1Count} <h1> elements`);
-    if (!audit.title) note(route, viewport.name, "missing <title>");
-    if (!audit.description) note(route, viewport.name, "missing meta description");
-    if (!expected404 && !audit.canonical) note(route, viewport.name, "missing canonical");
-    for (const error of errors) {
-      // The 404 route is *meant* to 404; its own document response is not a fault.
-      if (expected404 && error.includes("404")) continue;
-      note(route, viewport.name, `console: ${error}`);
-    }
-
-    if (route === "/") {
-      console.log(
-        `  ${viewport.name}: tier=${audit.tier} canvas=${audit.canvas} jsonLd=${audit.jsonLd}`,
-      );
-    }
-
-    if (TAKE_SHOTS) {
-      const slug = route === "/" ? "home" : route.replaceAll("/", "-").slice(1);
-      await page.screenshot({
-        path: `${SHOT_DIR}/${viewport.name}-${slug}.png`,
-        fullPage: false,
-      });
-    }
-
+    if (r.overflow > 0) fail(where, `horizontal overflow ${r.overflow}px`);
+    if (r.h1 !== 1) fail(where, `${r.h1} <h1> elements`);
+    if (r.small.length) fail(where, `text under 12px: ${r.small.join(" | ")}`);
+    if (!r.ld || r.ldBad) fail(where, `JSON-LD blocks ${r.ld}, invalid ${r.ldBad}`);
+    if (!r.title || r.desc.length < 50) fail(where, "title/description missing or thin");
+    if (expected === 200 && !r.canonical) fail(where, "no canonical");
     await page.close();
   }
+  await ctx.close();
+}
 
-  await context.close();
+/* ── the object goes live, and sleeps under a sheet ──────────────────── */
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.goto(BASE + "/", { waitUntil: "networkidle" });
+  const live = await page.waitForSelector(".vela-canvas[data-on]", { timeout: 25000 }).then(() => true, () => false);
+  if (!live) fail("webgl", "canvas never went live on /");
+  await page.close();
+}
+
+/* ── no JavaScript: everything readable ──────────────────────────────── */
+{
+  const ctx = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 1366, height: 768 } });
+  const page = await ctx.newPage();
+  for (const route of ["/", "/ai-systems", "/start"]) {
+    await page.goto(BASE + route);
+    const hidden = await page.evaluate(() =>
+      [...document.querySelectorAll(".reveal")].filter((el) => getComputedStyle(el).opacity === "0").length,
+    );
+    if (hidden) fail(`no-js ${route}`, `${hidden} sections invisible`);
+    const still = await page.locator(".vela-still").count();
+    if (route === "/" && !still) fail("no-js /", "server-rendered still missing");
+  }
+  const form = await page.locator("form[action='/api/enquiry']").count();
+  if (!form) fail("no-js /start", "native enquiry form missing");
+  await ctx.close();
+}
+
+/* ── reduced motion: content visible, no waiting on animation ────────── */
+{
+  const ctx = await browser.newContext({ reducedMotion: "reduce", viewport: { width: 1366, height: 768 } });
+  const page = await ctx.newPage();
+  await page.goto(BASE + "/", { waitUntil: "networkidle" });
+  await page.evaluate(() => document.getElementById("automation")?.scrollIntoView());
+  await page.waitForTimeout(300);
+  const invisible = await page.evaluate(() =>
+    [...document.querySelectorAll("#automation .reveal")].filter((el) => getComputedStyle(el).opacity !== "1").length,
+  );
+  if (invisible) fail("reduced-motion", `${invisible} reveals not immediately visible`);
+  await ctx.close();
+}
+
+/* ── keyboard ────────────────────────────────────────────────────────── */
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.goto(BASE + "/", { waitUntil: "networkidle" });
+  await page.keyboard.press("Tab");
+  const first = await page.evaluate(() => document.activeElement?.textContent?.trim());
+  if (first !== "Skip to content") fail("keyboard", `first stop is "${first}", not the skip link`);
+  const stops = [];
+  for (let i = 0; i < 14; i++) {
+    await page.keyboard.press("Tab");
+    stops.push(
+      await page.evaluate(() => {
+        const el = document.activeElement;
+        const cs = el ? getComputedStyle(el) : null;
+        const name = el?.getAttribute("aria-label") || el?.textContent?.trim().slice(0, 30) || "";
+        const visible = !!cs && (cs.outlineStyle !== "none" || cs.boxShadow !== "none");
+        return { name, visible };
+      }),
+    );
+  }
+  for (const s of stops) if (!s.name) fail("keyboard", "a focus stop has no accessible name");
+  for (const s of stops) if (!s.visible) fail("keyboard", `no visible focus on "${s.name}"`);
+
+  // Enquiry dialog: opens, holds focus, closes on Escape.
+  await page.getByRole("link", { name: /start a project/i }).first().click();
+  await page.waitForSelector("dialog.enquiry-dialog[open]", { timeout: 5000 }).catch(() => fail("enquiry", "dialog did not open"));
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(400);
+  if (await page.locator("dialog.enquiry-dialog[open]").count()) fail("enquiry", "Escape did not close the dialog");
+  await page.close();
+}
+
+/* ── voice entry: consent first, refusal and unavailability handled ──── */
+{
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, permissions: [] });
+  const page = await ctx.newPage();
+  let sdkEarly = false;
+  page.on("request", (r) => {
+    if (/elevenlabs/.test(r.url())) sdkEarly = true;
+  });
+  await page.goto(BASE + "/", { waitUntil: "networkidle" });
+  if (sdkEarly) fail("voice", "contacted ElevenLabs before the visitor chose to talk");
+  await page.getByRole("button", { name: /talk to vela/i }).first().click();
+  const consent = await page.waitForSelector("dialog.voice-consent[open]", { timeout: 5000 }).then(() => true, () => false);
+  if (!consent) fail("voice", "consent sheet did not open");
+  const micBefore = await page.evaluate(() => navigator.permissions.query({ name: "microphone" }).then((p) => p.state).catch(() => "?"));
+  if (micBefore === "granted") fail("voice", "microphone granted before consent");
+  await page.getByRole("button", { name: /start talking/i }).click();
+  const panel = await page.waitForSelector(".voice-panel [role=alert]", { timeout: 15000 }).then((h) => h.textContent(), () => null);
+  if (!panel) fail("voice", "no plain failure message when the microphone is refused or Vela is unavailable");
+  const stillWorks = await page.getByRole("link", { name: /^work$/i }).first().isVisible();
+  if (!stillWorks) fail("voice", "navigation unusable after a voice failure");
+  await page.getByRole("button", { name: /^close$/i }).click().catch(() => {});
+  console.log("voice failure message:", panel?.trim());
+  await ctx.close();
 }
 
 await browser.close();
-
-console.log(`\n${problems.length} problem(s) found\n`);
-for (const problem of problems) console.log(`  ${problem}`);
-process.exit(problems.length > 0 ? 1 : 0);
+if (failures.length) {
+  console.log(`\n${failures.length} failure(s):\n` + [...new Set(failures)].map((f) => ` ✗ ${f}`).join("\n"));
+  process.exit(1);
+}
+console.log(`\n✓ ${ROUTES.length} routes × ${WIDTHS.length} widths, no-JS, reduced motion, keyboard, enquiry, voice entry — all clean`);

@@ -4,7 +4,6 @@ import { disclosures, site } from "@/content/site";
 import { services } from "@/content/services";
 import { pageMetadata } from "@/lib/seo";
 import { breadcrumbSchema, graph } from "@/lib/schema";
-import { SignalStill } from "@/components/signal/SignalStill";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Reveal } from "@/components/ui/Reveal";
 import { ArrowRight, Label } from "@/components/ui/Primitives";
@@ -31,18 +30,16 @@ const crumbs = [
 export default function AboutPage() {
   return (
     <>
-      {/* The world: mid-system, looking both ways. */}
-      <SignalStill parked={0.55} />
 
-      <section className="relative overflow-hidden pb-20 pt-[calc(var(--nav-height)+5rem)]">
+      <section data-chapter="page-studio" className="page-hero">
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />
 
           <Reveal className="mt-10">
-            <Label tone="champagne">About</Label>
+            <Label>About</Label>
             <h1 className="display-xl mt-6 max-w-[16ch]">
-              A creative technology <span className="foil">studio.</span>
+              A creative technology studio.
             </h1>
           </Reveal>
 
@@ -52,16 +49,18 @@ export default function AboutPage() {
         </div>
       </section>
 
+      <div className="sheet" data-chapter="reading">
+
       <section aria-labelledby="what-heading" className="relative py-24 lg:py-28">
         <div className="shell grid gap-14 lg:grid-cols-[1fr_1.2fr] lg:gap-24">
           <Reveal>
-            <Label tone="champagne">What we build</Label>
+            <Label>What we build</Label>
             <h2 id="what-heading" className="display-md mt-5 max-w-[18ch]">
-              Three things, done properly.
+              Four areas, one system.
             </h2>
             <p className="mt-8 max-w-[42ch] text-sm leading-relaxed text-[color:var(--color-muted)]">
-              Websites, automation and AI systems are the capabilities. These are
-              what a business actually buys.
+              The website brings the enquiry in; the agents, automation and systems
+              behind it make sure it is answered, followed up and recorded.
             </p>
           </Reveal>
 
@@ -72,14 +71,14 @@ export default function AboutPage() {
                   <Link href={`/${service.slug}`} className="group block py-7">
                     <div className="flex items-start justify-between gap-8">
                       <div>
-                        <h3 className="display-sm transition-colors duration-500 group-hover:text-[color:var(--color-champagne)]">
+                        <h3 className="display-sm transition-colors duration-500 group-hover:underline underline-offset-4">
                           {service.name}
                         </h3>
                         <p className="mt-3 max-w-[52ch] text-sm leading-relaxed text-[color:var(--color-muted)]">
                           {service.summary}
                         </p>
                       </div>
-                      <ArrowRight className="mt-3 shrink-0 text-[color:var(--color-champagne)] transition-transform duration-500 group-hover:translate-x-1.5" />
+                      <ArrowRight className="mt-3 shrink-0 transition-transform duration-500 group-hover:translate-x-1.5" />
                     </div>
                   </Link>
                 </li>
@@ -93,17 +92,17 @@ export default function AboutPage() {
       <section aria-labelledby="facts-heading" className="relative py-24 lg:py-28">
         <div className="shell">
           <Reveal>
-            <Label tone="champagne">In plain terms</Label>
+            <Label>In plain terms</Label>
             <h2 id="facts-heading" className="display-lg mt-5 max-w-[18ch]">
               The short version.
             </h2>
           </Reveal>
 
-          <dl className="mt-14 grid gap-px bg-[color:var(--color-hairline)] md:grid-cols-2">
+          <dl className="mt-14 grid gap-3 md:grid-cols-2">
             {[
               {
                 q: "What is VelaBuilt?",
-                a: "A creative technology studio that designs and builds websites, follow-up systems and the technical foundations that make a business discoverable.",
+                a: "A creative technology studio that designs and builds websites and interactive experiences, AI agents, business automation, and operational systems such as CRMs and dashboards.",
               },
               {
                 q: "Who does VelaBuilt work with?",
@@ -111,14 +110,14 @@ export default function AboutPage() {
               },
               {
                 q: "What makes VelaBuilt different?",
-                a: "We build the experience and the infrastructure underneath it. The same studio that designs the website builds the system that catches what it generates.",
+                a: "We build the experience and the infrastructure underneath it. The same studio that designs the website builds the agents, automation and systems that handle what it generates — this site and its voice guide, Vela, are an example.",
               },
               {
                 q: "What does VelaBuilt not do?",
                 a: "We do not publish results we cannot evidence, guarantee rankings, or sell automation as a substitute for a business having something worth buying.",
               },
             ].map((item) => (
-              <div key={item.q} className="panel !border-0 p-8 lg:p-10">
+              <div key={item.q} className="panel p-7 lg:p-9">
                 <dt className="display-sm">{item.q}</dt>
                 <dd className="mt-4 max-w-[50ch] text-[0.98rem] leading-relaxed text-[color:var(--color-ivory-dim)]">
                   {item.a}
@@ -132,7 +131,7 @@ export default function AboutPage() {
       <section aria-labelledby="claims-heading" className="relative py-24 lg:py-28">
         <div className="shell grid gap-14 lg:grid-cols-[1fr_1.2fr] lg:gap-24">
           <Reveal>
-            <Label tone="champagne">Honesty</Label>
+            <Label>Honesty</Label>
             <h2 id="claims-heading" className="display-md mt-5 max-w-[16ch]">
               What this site does not claim.
             </h2>
@@ -161,6 +160,8 @@ export default function AboutPage() {
           </Reveal>
         </div>
       </section>
+
+      </div>
 
       <script
         type="application/ld+json"

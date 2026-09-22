@@ -65,8 +65,8 @@ function legacyHostRedirects() {
  *               enquiry confirmation — which echoes nothing the visitor typed.
  *   style-src   'unsafe-inline' is required by React inline styles and the
  *               critical CSS Next inlines.
- *   worker-src  'self' only. The plate compositor is plain WebGL2 and spawns
- *               no workers; the blob: allowance existed for three.js loaders.
+ *   worker-src  'self' blob:. The object is plain WebGL2 and spawns no
+ *               workers; blob: is for the voice SDK's AudioWorklet (below).
  *   font-src    'self' only: fonts are self-hosted by next/font at build time,
  *               so no third-party font origin is ever contacted at runtime.
  */
@@ -101,8 +101,7 @@ const contentSecurityPolicy = [
   // instantiates from a blob URL. Without blob: here the worklet is blocked
   // and the microphone produces silence with no error worth the name.
   "worker-src 'self' blob:",
-  // Synthesised speech arrives as blobs, and the ambience is generated in
-  // the page rather than fetched.
+  // Synthesised speech arrives as blobs.
   "media-src 'self' blob: data:",
   "object-src 'none'",
   "base-uri 'self'",
@@ -124,9 +123,8 @@ const securityHeaders = [
     key: "Permissions-Policy",
     value: [
       "accelerometer=()",
-      // The facility generates its own ambience and the guide speaks; both
-      // begin only after the visitor presses something, so this permits our
-      // own origin and nobody else's.
+      // Vela speaks only after the visitor presses Start talking, so this
+      // permits our own origin and nobody else's.
       "autoplay=(self)",
       "camera=()",
       "display-capture=()",
@@ -155,6 +153,8 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // `next dev` would otherwise write AGENTS.md / CLAUDE.md into the repo root.
+  agentRules: false,
 
   env: { NEXT_PUBLIC_SITE_URL: canonical.origin },
 

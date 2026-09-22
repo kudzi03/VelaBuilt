@@ -59,6 +59,14 @@ const SECTIONS = [
     ],
   },
   {
+    title: "Talking to Vela",
+    body: [
+      "Vela, the voice guide on this site, is an AI agent built by VelaBuilt and run on ElevenLabs. Nothing is recorded until you choose to talk: the microphone is requested only after you press Start talking, and only while the conversation is open. You can mute it or end the conversation at any time, or type instead.",
+      "Your speech is transcribed and answered by ElevenLabs and the language model behind the agent. The audio of the conversation is not stored. The text transcript is kept for 30 days so the studio can check the guide is answering correctly, and is then deleted.",
+      "Vela can move you around this site and open the enquiry form. It cannot send an enquiry. If it offers to summarise your conversation into the form, you are asked to confirm first, and you can edit or delete the summary before you send anything.",
+    ],
+  },
+  {
     title: "Your rights",
     body: [
       "You can ask what we hold about you, ask for it to be corrected, or ask for it to be deleted. Write to the address below and we will action it.",
@@ -69,11 +77,11 @@ const SECTIONS = [
 export default function PrivacyPage() {
   return (
     <>
-      <section className="relative pb-24 pt-[calc(var(--nav-height)+5rem)]">
+      <section data-chapter="reading" className="sheet mt-[calc(var(--nav-height)+1.5rem)] pb-24 pt-16">
         <div className="shell-narrow">
           <Breadcrumbs crumbs={crumbs} />
 
-          <Label tone="champagne" className="mt-10">
+          <Label className="mt-10">
             Privacy
           </Label>
           <h1 className="display-lg mt-5">What we collect, and why.</h1>

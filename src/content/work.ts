@@ -112,14 +112,14 @@ export const workItems: readonly WorkItem[] = [
     href: "/system-lab",
   },
   {
-    slug: "operator-concept",
-    title: "The Operator",
-    category: "concept",
+    slug: "vela-voice-guide",
+    title: "Vela, the guide on this site",
+    category: "system-demo",
     problem:
-      "A business owner spends the day operating the machinery instead of operating the business.",
+      "A website that can only be read, when a visitor would rather ask.",
     response:
-      "The visual study behind this site: one continuous space in which disconnected systems resolve into one architecture, and the operator stops driving it by hand.",
-    disciplines: ["Art direction", "Real-time 3D", "Motion"],
+      "A voice agent grounded in VelaBuilt’s own information that can move the site while it talks — through a short list of enumerated actions and nothing else. The structure behind the page is its presence: it listens, computes and speaks.",
+    disciplines: ["AI agents", "Voice", "Real-time 3D", "Interaction design"],
   },
   {
     slug: "discoverability-concept",

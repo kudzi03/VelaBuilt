@@ -3,7 +3,6 @@ import { systemModules } from "@/content/systems";
 import { pageMetadata } from "@/lib/seo";
 import { breadcrumbSchema, graph } from "@/lib/schema";
 import { SystemLabRoom } from "@/components/lab/SystemLabRoom";
-import { SignalStill } from "@/components/signal/SignalStill";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { FlowChain } from "@/components/ui/FlowChain";
 import { Reveal } from "@/components/ui/Reveal";
@@ -25,10 +24,8 @@ const crumbs = [
 export default function SystemLabPage() {
   return (
     <>
-      {/* The world: the middle of the system, taken apart. */}
-      <SignalStill parked={0.5} />
 
-      <section className="relative overflow-hidden pb-20 pt-[calc(var(--nav-height)+5rem)]">
+      <section data-chapter="page-lab" className="page-hero">
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />
@@ -36,7 +33,7 @@ export default function SystemLabPage() {
           <Reveal className="mt-10">
             <CategoryBadge tone="champagne">Interactive system demonstrations</CategoryBadge>
             <h1 className="display-xl mt-6 max-w-[14ch]">
-              The room where the parts <span className="foil">meet.</span>
+              The room where the parts meet.
             </h1>
           </Reveal>
 
@@ -54,12 +51,14 @@ export default function SystemLabPage() {
         </div>
       </section>
 
+      <div className="sheet" data-chapter="reading">
+
       <section aria-labelledby="lab-heading" className="relative pb-24">
         <div className="shell">
           <h2 id="lab-heading" className="sr-only">
             System modules
           </h2>
-          <SystemLabRoom drivesBackdrop />
+          <SystemLabRoom />
         </div>
       </section>
 
@@ -67,7 +66,7 @@ export default function SystemLabPage() {
       <section aria-labelledby="reference-heading" className="relative py-24 lg:py-28">
         <div className="shell">
           <Reveal>
-            <Label tone="champagne">Reference</Label>
+            <Label>Reference</Label>
             <h2 id="reference-heading" className="display-lg mt-5 max-w-[18ch]">
               Every module, in full.
             </h2>
@@ -105,6 +104,8 @@ export default function SystemLabPage() {
           </Reveal>
         </div>
       </section>
+
+      </div>
 
       <script
         type="application/ld+json"

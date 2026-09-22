@@ -32,9 +32,8 @@ const VIEWPORT = { width: 1440, height: 900 };
 const FOIL_INK = [224, 195, 152];
 
 const browser = await chromium.launch({
-  channel: "chrome",
-  headless: false, // real GPU, so the compositor runs rather than the stills
-  args: ["--hide-scrollbars"],
+  executablePath: process.env.CHROME_PATH || undefined,
+  args: ["--hide-scrollbars", "--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"],
 });
 const page = await browser.newPage({ viewport: VIEWPORT, deviceScaleFactor: 1 });
 
@@ -91,11 +90,15 @@ for (const route of ROUTES) {
         const m = foil ? FOIL : (cs.color.match(/[\d.]+/g) || []).map(Number);
         if (m.length < 3) continue;
 
+        const headerBottom = document.querySelector(".site-header")?.getBoundingClientRect().bottom ?? 0;
         const range = document.createRange();
         range.selectNodeContents(node);
         const rects = [...range.getClientRects()]
           .filter((r) => r.width >= 4 && r.height >= 4)
           .filter((r) => r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth)
+          // Text scrolled under the fixed header is occluded by it: what is
+          // behind its glyphs in the photograph is the header, not its ground.
+          .filter((r) => el.closest(".site-header") || r.top >= headerBottom)
           .map((r) => ({
             x: Math.max(0, Math.round(r.left)),
             y: Math.max(0, Math.round(r.top)),

@@ -75,7 +75,7 @@ export function EnquiryConfirmation({
             tabIndex={-1}
             className="display-md outline-none"
           >
-            Got <span className="foil">it.</span>
+            Got it.
           </h2>
 
           <p className="lede mt-6 max-w-[46ch] text-[color:var(--color-ivory)]">

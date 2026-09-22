@@ -2,30 +2,21 @@ import Link from "next/link";
 import { footerNav, site, disclosures } from "@/content/site";
 import { Label } from "@/components/ui/Primitives";
 import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
-import { Monogram } from "./Monogram";
+import { Wordmark } from "./Monogram";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative border-t border-[color:var(--color-hairline)] bg-[color:var(--color-void)]">
+    <footer className="sheet" data-chapter="reading">
       <div className="shell py-20 lg:py-28">
         <div className="grid gap-14 lg:grid-cols-[1.3fr_2fr]">
           <div>
-            <Link href="/" className="inline-flex items-center gap-4">
-              <Monogram
-                className="h-10 w-auto text-[color:var(--color-champagne)]"
-                title="VelaBuilt"
-              />
-              <span
-                className="text-2xl leading-none text-[color:var(--color-ivory)]"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                VelaBuilt
-              </span>
+            <Link href="/" className="inline-flex" aria-label="VelaBuilt — home">
+              <Wordmark />
             </Link>
 
-            <p className="lede mt-8 max-w-[38ch]">{site.tagline}</p>
+            <p className="display-md mt-8 max-w-[18ch]">{site.tagline}</p>
             <p className="mt-4 max-w-[42ch] text-sm leading-relaxed text-[color:var(--color-muted)]">
               {site.shortDescription}
             </p>
@@ -42,7 +33,7 @@ export function SiteFooter() {
                     landmark already carries the same name for screen readers.
                     As <h2>s they put three "Solutions/Studio/Contact" entries
                     at the top level of every page's outline. */}
-                <Label tone="champagne" className="mb-6">
+                <Label className="mb-6">
                   {column.heading}
                 </Label>
                 <ul className="flex flex-col gap-3.5">
@@ -50,7 +41,7 @@ export function SiteFooter() {
                     const external = link.href.startsWith("http");
                     const mail = /^(mailto|tel):/.test(link.href);
                     const className =
-                      "text-sm text-[color:var(--color-ivory-dim)] transition-colors duration-400 hover:text-[color:var(--color-champagne)]";
+                      "text-sm text-[color:var(--color-ivory-dim)] transition-colors duration-400 hover:text-[color:var(--color-ivory)] underline-offset-4 hover:underline";
                     return (
                       <li key={link.href}>
                         {link.href === "/start" ? (
@@ -88,7 +79,7 @@ export function SiteFooter() {
           <ul className="grid gap-2.5 text-sm text-[color:var(--color-faint)] sm:grid-cols-2">
             {disclosures.map((line) => (
               <li key={line} className="flex gap-3">
-                <span aria-hidden="true" className="mt-2.5 h-px w-3 shrink-0 bg-[color:var(--color-champagne-deep)]" />
+                <span aria-hidden="true" className="mt-2.5 h-px w-3 shrink-0 bg-[color:var(--color-hairline-strong)]" />
                 <span>{line}</span>
               </li>
             ))}
@@ -97,7 +88,7 @@ export function SiteFooter() {
 
         <div className="mt-14 flex flex-col gap-4 border-t border-[color:var(--color-hairline)] pt-8 sm:flex-row sm:items-center sm:justify-between">
           <p className="label">© {year} {site.name}</p>
-          <p className="label">Built by VelaBuilt</p>
+          <p className="label">Designed and engineered by VelaBuilt</p>
         </div>
       </div>
     </footer>

@@ -62,18 +62,18 @@ export function renderFallbackPage({
 <meta name="robots" content="noindex">
 <title>Start a project — ${escapeHtml(site.name)}</title>
 <style>
-  :root { color-scheme: dark; }
-  body { margin: 0; background: #050506; color: #f2efe9; font: 300 1rem/1.65 Inter, system-ui, sans-serif; }
+  :root { color-scheme: light; }
+  body { margin: 0; background: #f4f1ec; color: #151412; font: 400 1rem/1.65 system-ui, -apple-system, "Segoe UI", sans-serif; }
   main { max-width: 40rem; margin: 0 auto; padding: 4rem 1.5rem 5rem; }
-  .label { font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: #e0c398; }
-  h1 { font: 400 clamp(2rem, 6vw, 2.8rem)/1.1 "Cormorant Garamond", Georgia, serif; margin: 1.25rem 0 1.5rem; }
-  p { color: #c9c5bd; }
-  ul { color: #c9c5bd; padding-left: 1.2rem; }
-  .btn { display: inline-block; margin: 1.5rem 0 0; padding: 0.95rem 1.6rem; background: #f2efe9; color: #050506; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; }
-  .btn:focus-visible, a:focus-visible { outline: 2px solid #e0c398; outline-offset: 3px; }
-  pre { margin: 1rem 0 0; padding: 1.1rem; white-space: pre-wrap; word-break: break-word; background: rgb(255 255 255 / 0.03); border: 1px solid rgb(255 255 255 / 0.16); color: #f2efe9; font: 0.9rem/1.6 ui-monospace, monospace; }
-  a { color: #e0c398; }
-  hr { border: 0; border-top: 1px solid rgb(255 255 255 / 0.09); margin: 2.5rem 0; }
+  .label { font: 500 0.75rem/1.4 ui-monospace, "SFMono-Regular", Menlo, monospace; letter-spacing: 0.12em; text-transform: uppercase; color: #5a564f; }
+  h1 { font: 400 clamp(1.8rem, 5vw, 2.5rem)/1.1 system-ui, sans-serif; text-transform: uppercase; letter-spacing: 0.02em; margin: 1.25rem 0 1.5rem; }
+  p, ul { color: #34322e; }
+  ul { padding-left: 1.2rem; }
+  .btn { display: inline-block; margin: 1.5rem 0 0; padding: 0.95rem 1.4rem; background: #151412; color: #f7f5f1; border-radius: 12px; font: 500 0.78rem/1 ui-monospace, monospace; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; }
+  .btn:focus-visible, a:focus-visible { outline: 2px solid #151412; outline-offset: 3px; }
+  pre { margin: 1rem 0 0; padding: 1.1rem; white-space: pre-wrap; word-break: break-word; background: #fff; border: 1px solid rgb(22 21 19 / 0.14); border-radius: 12px; color: #151412; font: 0.9rem/1.6 ui-monospace, monospace; }
+  a { color: #151412; }
+  hr { border: 0; border-top: 1px solid rgb(22 21 19 / 0.13); margin: 2.5rem 0; }
 </style>
 </head>
 <body>

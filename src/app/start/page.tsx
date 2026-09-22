@@ -7,7 +7,6 @@ import { breadcrumbSchema, graph } from "@/lib/schema";
 import { BookingLink, PhoneLink } from "@/components/chrome/ContactLinks";
 import { EnquiryConfirmation } from "@/components/enquiry/EnquiryConfirmation";
 import { EnquiryFlow } from "@/components/enquiry/EnquiryFlow";
-import { SignalStill } from "@/components/signal/SignalStill";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Label } from "@/components/ui/Primitives";
 
@@ -55,19 +54,17 @@ export default async function StartPage({
 
   return (
     <>
-      {/* The world: an inquiry arriving is the whole subject of this page. */}
-      <SignalStill parked={0} />
 
-      <section className="relative min-h-[100svh] overflow-hidden pb-20 pt-[calc(var(--nav-height)+3.5rem)]">
+      <section data-chapter="page-quiet" className="relative min-h-[100svh] pb-20 pt-[calc(var(--nav-height)+3.5rem)]">
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />
 
           <div className="mt-10 grid gap-12 lg:grid-cols-[1fr_1.35fr] lg:gap-20">
             <div>
-              <Label tone="champagne">Start a project</Label>
+              <Label>Start a project</Label>
               <h1 className="display-lg mt-6 max-w-[14ch]">
-                Tell us what is <span className="foil">not working.</span>
+                Tell us what is not working.
               </h1>
               <p className="lede mt-8 max-w-[40ch]">
                 {(focus && focusIntro[focus]) ?? (

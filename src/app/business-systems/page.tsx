@@ -3,14 +3,14 @@ import { getService } from "@/content/services";
 import { pageMetadata } from "@/lib/seo";
 import { ServicePage } from "@/components/pages/ServicePage";
 
-const service = getService("lead-follow-up-systems");
+const service = getService("business-systems");
 
 export const metadata: Metadata = pageMetadata({
-  title: "Business automation and lead follow-up",
+  title: "CRM systems, dashboards and business systems",
   description: service.summary,
   path: `/${service.slug}`,
 });
 
 export default function Page() {
-  return <ServicePage service={service} focus="follow-up" />;
+  return <ServicePage service={service} focus="systems" />;
 }

@@ -6,7 +6,7 @@ import { ServicePage } from "@/components/pages/ServicePage";
 const service = getService("website-conversion-systems");
 
 export const metadata: Metadata = pageMetadata({
-  title: service.name,
+  title: "Websites and interactive digital experiences",
   description: service.summary,
   path: `/${service.slug}`,
 });
