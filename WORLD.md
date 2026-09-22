@@ -86,11 +86,11 @@ sentence the agent can say, and nothing happens.
 
 ## The session route
 
-`GET /api/voice/session?mode=voice|text`, rate-limited to 6 per minute per
-IP, `Cache-Control: no-store`.
+`POST /api/voice/session`, rate-limited to 6 per minute per IP,
+`Cache-Control: no-store`.
 
-1. `ELEVENLABS_API_KEY` set → mints a WebRTC **conversation token** (voice)
-   or a **signed WebSocket URL** (text). The key never leaves the server.
+1. `ELEVENLABS_API_KEY` set → mints a WebRTC **conversation token**, falling
+   back to a **signed WebSocket URL**. The key never leaves the server.
 2. No key → returns the public agent id. The allowlist is the gate.
 3. No agent id → 503, and the panel says Vela is unavailable.
 

@@ -219,11 +219,11 @@ property is worth keeping deliberately.
 
 - **The ElevenLabs API key never reaches the browser.** It is read only by
   `/api/voice/session`, which exchanges it for a short-lived WebRTC
-  conversation token or signed WebSocket URL. No `NEXT_PUBLIC_` variable
+  conversation token (or, failing that, a signed WebSocket URL). No `NEXT_PUBLIC_` variable
   holds anything ElevenLabs issues. Without a key the route returns the
   public agent id, and the agent's allowlist (velabuilt.com,
   www.velabuilt.com, vela-built.vercel.app) is the gate.
-- The session route is GET-only, rate-limited to 6 per minute per IP, and
+- The session route is POST-only, rate-limited to 6 per minute per IP, and
   `no-store`.
 - **The agent can only move the page along enumerated rails.** Seven client
   tools, every parameter an enum except the prefill summary, and every call

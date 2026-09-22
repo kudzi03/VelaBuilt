@@ -126,7 +126,7 @@ sheet and pressed Start talking or Type instead.
 | `/privacy`, `/cookies` | What the site and Vela collect |
 | `/llms.txt` | Generated from content at build time |
 | `/api/enquiry` | Inbound enquiries (POST only) |
-| `/api/voice/session` | Mints a conversation credential (GET, rate-limited, no-store) |
+| `/api/voice/session` | Mints a conversation credential (POST, rate-limited, no-store) |
 
 ### Adding a service page
 

@@ -4,7 +4,10 @@ Last updated: 2026-09-22 (Vela: the object and the voice guide)
 
 ## State
 
-Built, verified locally, and ready to deploy. The object, the voice guide,
+Live on https://velabuilt.com (deployment `dpl_9Qzv6bkEJHxHLncdeCoF1h1UgZC1`,
+built from `claude/velabuilt-voice-immersive-c5xvth` @ `09f6ccd`), and
+verified there: `scripts/qa.mjs` and `scripts/voice-tools.mjs` both pass
+against the production origin. The object, the voice guide,
 the light redesign and the new service pages are in. The walkable world and
 three.js are gone.
 
@@ -89,10 +92,18 @@ What moved the numbers, found by profiling rather than guessed:
   cannot open outbound WebSockets or WebRTC. The agent's decisions were tested
   on ElevenLabs and the site's handling against a mocked socket; the two
   halves meet only on the live site. Talk to it on velabuilt.com.
-- **Enquiry capture in production** depends on a Vercel Blob store or SMTP
-  password being set in the Vercel project. The route never reports success
-  unless one of them actually took the enquiry; without either, the visitor
-  is told plainly and given the email address.
+- **Enquiries are not captured in production yet.** Verified with a test
+  submission on 2026-09-22: `BLOB_READ_WRITE_TOKEN` is unset and the email
+  adapter has no `SMTP_PASS`, so the route returns 502 and tells the visitor
+  to email jace@velabuilt.com. It never shows a false success. Fix either:
+  connect a private Vercel Blob store to the project (the deploy token was
+  refused permission to create one), or add `SMTP_PASS` (a Google Workspace
+  app password for `SMTP_USER`). Then redeploy.
+- **Production is deployed from this branch, not the default branch.** The
+  default branch (`claude/velabuilt-cinematic-site-69azha`) still holds the
+  previous site; a push to it would redeploy the old site over this one.
+  Merge this branch into it (or make this the default branch) to keep them
+  in step.
 - **No `ELEVENLABS_API_KEY` in Vercel.** Vela runs on the public agent id,
   gated by the allowlist. Adding the key switches to server-minted tokens with
   no code change.
