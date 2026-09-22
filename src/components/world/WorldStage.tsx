@@ -27,6 +27,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { capabilityStore } from "@/lib/capability";
 import { coarsePointerStore } from "@/world/pointer";
@@ -35,6 +36,9 @@ import type { TouchStick } from "@/world/input";
 import type { WorldHandle } from "./WorldCanvas";
 import { setAudio, setEntered, subscribe, worldContext } from "@/world/state";
 import { WorldBoundary } from "./WorldBoundary";
+import { GuidePanel } from "./GuidePanel";
+import type { VoiceHandle, VoiceLine, VoiceStatus } from "@/world/voice";
+import { createWorldAudio, type WorldAudio } from "@/world/audio";
 
 const WorldCanvas = dynamic(() => import("./WorldCanvas").then((m) => m.WorldCanvas), {
   ssr: false,
@@ -66,8 +70,32 @@ export function WorldStage() {
   const [stick, setStick] = useState<TouchStick>({ origin: null, point: null });
   const [hall, setHall] = useState<HallId | null>(null);
   const handle = useRef<WorldHandle | null>(null);
+  const router = useRouter();
 
-  useEffect(() => subscribe("hall", () => setHall(worldContext.hall)), []);
+  /* ── the guide ─────────────────────────────────────────────────────────
+     Held in a ref, not state: the conversation object is a live connection
+     and re-rendering must never re-create it. Only what the interface has
+     to draw — status, transcript, mic state — is state. */
+  const guide = useRef<VoiceHandle | null>(null);
+  const [voiceStatus, setVoiceStatus] = useState<VoiceStatus>("idle");
+  const [lines, setLines] = useState<readonly VoiceLine[]>([]);
+  const [micMuted, setMicMuted] = useState(false);
+
+  /* Ambience. Created on the visitor's gesture — a context built any earlier
+     starts suspended and the first sound is swallowed by autoplay policy. */
+  const audio = useRef<WorldAudio | null>(null);
+  const [sound, setSound] = useState(true);
+
+  useEffect(
+    () =>
+      subscribe("hall", () => {
+        setHall(worldContext.hall);
+        // The guide is told where the visitor now is. It does not reply to
+        // this — see sendContextualUpdate in src/world/voice.ts.
+        guide.current?.moveTo(worldContext.hall);
+      }),
+    [],
+  );
 
   // The world owns the document while it is open: the page behind must not
   // scroll under it, and it must be inert to assistive technology so a screen
@@ -90,21 +118,86 @@ export function WorldStage() {
     window.setTimeout(() => setPhase("threshold"), 260);
   }, []);
 
+  const stopGuide = useCallback(() => {
+    const g = guide.current;
+    guide.current = null;
+    setVoiceStatus("idle");
+    setMicMuted(false);
+    void g?.stop();
+  }, []);
+
+  const leave = useCallback(() => {
+    stopGuide();
+    audio.current?.dispose();
+    audio.current = null;
+    setPhase("closed");
+    setEntered(false);
+    setProgress(0);
+  }, [stopGuide]);
+
   const begin = useCallback(
     (voice: boolean) => {
       setAudio({ voice, muted: !voice });
       setEntered(true);
       setPhase("open");
+      audio.current = createWorldAudio();
+      audio.current?.setMuted(false);
+      setSound(true);
       if (!touch) handle.current?.requestLook();
+      if (!voice) return;
+
+      /* Loaded only now, and only for a visitor who asked for it. Somebody
+         who chose silence never downloads the SDK at all. */
+      void (async () => {
+        try {
+          const { startGuide } = await import("@/world/voice");
+          guide.current = await startGuide(
+            {
+              navigate(h) {
+                const target = HALL_BY_ID[h];
+                handle.current?.goTo(target.entry[0], target.entry[1], 0);
+              },
+              openEnquiry() {
+                // The real enquiry route, not a mock inside the world. Close
+                // the facility first so the visitor lands on a page that is
+                // theirs to read rather than one behind an overlay.
+                leave();
+                router.push("/start");
+              },
+              exitToStandard() {
+                leave();
+              },
+            },
+            {
+              onStatus: setVoiceStatus,
+              onLine: (line) =>
+                // Bounded: a long conversation must not grow the DOM
+                // without limit behind a scroll container nobody reads.
+                setLines((prev) => [...prev, line].slice(-40)),
+            },
+            worldContext.hall,
+          );
+        } catch (e) {
+          // A refused microphone, a missing key, a 503 — all the same to the
+          // visitor: the world is open and nobody is talking. That is a
+          // complete experience, so it is not an error screen.
+          console.warn("[velabuilt] the guide did not open:", e);
+          setVoiceStatus("idle");
+          setAudio({ voice: false });
+        }
+      })();
     },
-    [touch],
+    [touch, leave, router],
   );
 
-  const leave = useCallback(() => {
-    setPhase("closed");
-    setEntered(false);
-    setProgress(0);
-  }, []);
+  // A conversation must never outlive the page that opened it.
+  useEffect(
+    () => () => {
+      void guide.current?.stop();
+      audio.current?.dispose();
+    },
+    [],
+  );
 
   useEffect(() => {
     if (phase === "closed") return;
@@ -146,6 +239,7 @@ export function WorldStage() {
       <WorldBoundary onFailure={leave}>
         <WorldCanvas
           capability={capability}
+          audioRef={audio}
           onReady={onReady}
           onLockChange={setLocked}
           onStick={setStick}
@@ -170,10 +264,30 @@ export function WorldStage() {
           onLeave={leave}
           onLook={() => handle.current?.requestLook()}
           onGoTo={goToHall}
+          sound={sound}
+          onToggleSound={() => {
+            const next = !sound;
+            setSound(next);
+            audio.current?.setMuted(!next);
+          }}
         />
       )}
 
       {phase === "open" && touch && <TouchLayer stick={stick} />}
+
+      {phase === "open" && (
+        <GuidePanel
+          status={voiceStatus}
+          lines={lines}
+          micMuted={micMuted}
+          onToggleMic={() => {
+            const next = !micMuted;
+            setMicMuted(next);
+            guide.current?.setMuted(next);
+          }}
+          onStop={stopGuide}
+        />
+      )}
     </div>
   );
 }
@@ -293,6 +407,8 @@ function Hud({
   onLeave,
   onLook,
   onGoTo,
+  sound,
+  onToggleSound,
 }: {
   hall: (typeof HALLS)[number] | null;
   locked: boolean;
@@ -300,6 +416,8 @@ function Hud({
   onLeave: () => void;
   onLook: () => void;
   onGoTo: (id: HallId) => void;
+  sound: boolean;
+  onToggleSound: () => void;
 }) {
   const index = hall ? ROUTE.indexOf(hall.id) : -1;
   const next = index >= 0 && index < ROUTE.length - 1 ? ROUTE[index + 1]! : null;
@@ -328,6 +446,14 @@ function Hud({
         >
           Start a project
         </a>
+        <button
+          type="button"
+          onClick={onToggleSound}
+          aria-pressed={!sound}
+          className="rounded-full border border-[var(--color-hairline-strong)] bg-[rgb(8_8_10/0.7)] px-4 py-2 text-[0.72rem] tracking-[0.06em] text-[var(--color-ivory-dim)] backdrop-blur-md transition-colors hover:text-[var(--color-ivory)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-champagne)]"
+        >
+          {sound ? "Sound on" : "Sound off"}
+        </button>
         <button
           type="button"
           onClick={onLeave}

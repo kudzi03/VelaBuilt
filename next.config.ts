@@ -72,15 +72,38 @@ function legacyHostRedirects() {
  */
 const isDev = process.env.NODE_ENV === "development";
 
+/**
+ * The voice guide's origins.
+ *
+ * Kept as a named list rather than inlined, so what the site is allowed to
+ * talk to is a thing you can read in one place. ElevenLabs' conversational
+ * API is reached over WebSocket; its WebRTC transport runs on LiveKit, and
+ * the SDK picks between them depending on how the session was minted, so
+ * both are permitted and nothing else is.
+ */
+const VOICE_ORIGINS = [
+  // The conversational API, and the WebRTC transport it hands the session
+  // to. Found by running it: the SDK mints a token against api.elevenlabs.io
+  // and then connects to livekit.rtc.elevenlabs.io, so allowing only the
+  // first gets you a 200 followed by a silent refusal.
+  "https://*.elevenlabs.io",
+  "wss://*.elevenlabs.io",
+].join(" ");
+
 const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
-  `connect-src 'self'${isDev ? " ws: wss:" : ""}`,
-  "worker-src 'self'",
-  "media-src 'self'",
+  `connect-src 'self' ${VOICE_ORIGINS}${isDev ? " ws: wss:" : ""}`,
+  // The SDK runs its audio processing in an AudioWorklet, which it
+  // instantiates from a blob URL. Without blob: here the worklet is blocked
+  // and the microphone produces silence with no error worth the name.
+  "worker-src 'self' blob:",
+  // Synthesised speech arrives as blobs, and the ambience is generated in
+  // the page rather than fetched.
+  "media-src 'self' blob: data:",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -101,14 +124,19 @@ const securityHeaders = [
     key: "Permissions-Policy",
     value: [
       "accelerometer=()",
-      "autoplay=()",
+      // The facility generates its own ambience and the guide speaks; both
+      // begin only after the visitor presses something, so this permits our
+      // own origin and nobody else's.
+      "autoplay=(self)",
       "camera=()",
       "display-capture=()",
       "encrypted-media=()",
       "geolocation=()",
       "gyroscope=()",
       "magnetometer=()",
-      "microphone=()",
+      // The voice guide. Requested on a deliberate press, never on load, and
+      // never granted to an embedded third party.
+      "microphone=(self)",
       "payment=()",
       "usb=()",
       "interest-cohort=()",

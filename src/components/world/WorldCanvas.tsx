@@ -41,6 +41,7 @@ import { buildEnvironment, buildSurfaces } from "@/world/materials";
 import { buildWorld, type World } from "@/world/scene";
 import type { Surfaces } from "@/world/materials";
 import { setHall, worldContext } from "@/world/state";
+import type { WorldAudio } from "@/world/audio";
 import type { Capability } from "@/lib/capability";
 
 export interface WorldHandle {
@@ -51,13 +52,20 @@ export interface WorldHandle {
 
 interface Props {
   capability: Capability;
+  /**
+   * The ambience, by reference rather than by value. It is created on the
+   * visitor's gesture — which may land before or after this canvas mounts —
+   * so the frame loop reads the ref each frame instead of the component
+   * reading it during render.
+   */
+  audioRef: React.RefObject<WorldAudio | null>;
   onReady: () => void;
   onLockChange: (locked: boolean) => void;
   onStick: (s: TouchStick) => void;
   handleRef: React.MutableRefObject<WorldHandle | null>;
 }
 
-export function WorldCanvas({ capability, onReady, onLockChange, onStick, handleRef }: Props) {
+export function WorldCanvas({ capability, audioRef, onReady, onLockChange, onStick, handleRef }: Props) {
   const quality = capability.tier === "A" ? "high" : "low";
   return (
     <Canvas
@@ -91,6 +99,7 @@ export function WorldCanvas({ capability, onReady, onLockChange, onStick, handle
       <Stage
         quality={quality}
         capability={capability}
+        audioRef={audioRef}
         onReady={onReady}
         onLockChange={onLockChange}
         onStick={onStick}
@@ -103,6 +112,7 @@ export function WorldCanvas({ capability, onReady, onLockChange, onStick, handle
 function Stage({
   quality,
   capability,
+  audioRef,
   onReady,
   onLockChange,
   onStick,
@@ -110,6 +120,7 @@ function Stage({
 }: {
   quality: "high" | "low";
   capability: Capability;
+  audioRef: React.RefObject<WorldAudio | null>;
   onReady: () => void;
   onLockChange: (locked: boolean) => void;
   onStick: (s: TouchStick) => void;
@@ -180,6 +191,14 @@ function Stage({
     const hall = hallAt(s.x, s.z);
     setHall(hall?.id ?? null);
     rig.world.focusHall(hall);
+
+    const sound = audioRef.current;
+    if (sound) {
+      sound.setTone(hall?.tone ?? null);
+      // Footsteps are keyed to metres walked, not to the clock, so they
+      // slow as the visitor slows and stop dead when they do.
+      sound.step(s.distance);
+    }
     rig.world.tick(performance.now() / 1000, !capability.reducedMotion);
   });
 

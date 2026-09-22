@@ -12,6 +12,7 @@
     "check": "npm run typecheck && npm run build"
   },
   "dependencies": {
+    "@elevenlabs/client": "^1.25.0",
     "@react-three/fiber": "^9.7.0",
     "@vercel/blob": "^2.8.0",
     "gsap": "^3.15.0",
