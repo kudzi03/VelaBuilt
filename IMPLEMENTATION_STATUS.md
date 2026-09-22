@@ -92,12 +92,10 @@ What moved the numbers, found by profiling rather than guessed:
   cannot open outbound WebSockets or WebRTC. The agent's decisions were tested
   on ElevenLabs and the site's handling against a mocked socket; the two
   halves meet only on the live site. Talk to it on velabuilt.com.
-- **Enquiries go to Google Sheets once the sheet is connected.** The site
-  side is built and tested (`tests/sheet.test.ts`, including Apps Script's
-  302 redirect and every refusal path). Until `ENQUIRY_SHEET_URL` is set in
-  Vercel, production still returns 502 and gives the visitor the email
-  address; it never shows a false success. Setup:
-  `integrations/google-sheets/README.md`.
+- **Enquiries land in Google Sheets.** Connected 2026-09-22; a test
+  enquiry through velabuilt.com returned 201 (reference VB-2026-73565U),
+  which the route only does after the sheet confirms the row. Setup and
+  secret rotation: `integrations/google-sheets/README.md`.
 - **Production is deployed from this branch, not the default branch.** The
   default branch (`claude/velabuilt-cinematic-site-69azha`) still holds the
   previous site; a push to it would redeploy the old site over this one.
@@ -113,5 +111,4 @@ What moved the numbers, found by profiling rather than guessed:
 1. Talk to Vela on the live site, on a phone and a laptop, and listen for
    latency and interruptions.
 2. Add `ELEVENLABS_API_KEY` (convai scope) to Vercel.
-3. Connect the enquiries sheet (integrations/google-sheets/README.md).
 4. Publish the next case study; it becomes a `show_project` value.
