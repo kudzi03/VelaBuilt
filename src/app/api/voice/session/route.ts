@@ -2,24 +2,22 @@
  * MINTING A CONVERSATION.
  *
  * The browser never sees an ElevenLabs API key. It asks this route for a
- * session and gets back either a short-lived signed URL or — while the agent
- * is configured to accept public connections — the agent id, which is
- * designed to be public and is all the official widget uses.
+ * session and gets back one of:
  *
- * Both shapes are handled by the client, so turning the allowlist on in the
- * ElevenLabs dashboard upgrades this path with no code change. That ordering
- * matters: the alternative is shipping the key in a bundle and discovering it
- * during a security review.
+ *   { kind: "token",  token }     a short-lived WebRTC conversation token,
+ *                                 minted with the key — used whenever
+ *                                 ELEVENLABS_API_KEY is configured
+ *   { kind: "signed", signedUrl } a signed WebSocket URL, if the token
+ *                                 endpoint refuses but signing works
+ *   { kind: "public", agentId }   the agent id alone, which is public by
+ *                                 design (it is what the official widget
+ *                                 puts in the page) — the fallback while no
+ *                                 key is configured. The agent's allowlist
+ *                                 restricts which origins may use it.
  *
- * ── WHY THIS IS A ROUTE AND NOT A CONSTANT ───────────────────────────────
- *
- * Three things it buys, none of which a hardcoded id gives you:
- *
- *   · the key stays on the server, today and after auth is enabled
- *   · the guide can be switched off site-wide by unsetting one variable,
- *     without a deploy touching the world itself
- *   · a bot hammering the endpoint is refused here rather than at
- *     ElevenLabs' expense
+ * Why a route rather than a constant: the key stays server-side, Vela can be
+ * switched off by unsetting one variable, and a script hammering this
+ * endpoint is refused here rather than at ElevenLabs' expense.
  */
 
 import { NextResponse } from "next/server";
@@ -31,12 +29,14 @@ export const dynamic = "force-dynamic";
 
 const AGENT_ID = process.env.ELEVENLABS_AGENT_ID?.trim();
 const API_KEY = process.env.ELEVENLABS_API_KEY?.trim();
+const API = "https://api.elevenlabs.io/v1/convai/conversation";
+
+const noStore = { "cache-control": "no-store" };
 
 export async function POST(request: Request): Promise<NextResponse> {
   if (!AGENT_ID) {
-    // Not an error state. The guide is simply not configured on this
-    // deployment, and the world is fully usable without it.
-    return NextResponse.json({ error: "guide_unavailable" }, { status: 503 });
+    // Not an error state: Vela is simply not configured on this deployment.
+    return NextResponse.json({ error: "guide_unavailable" }, { status: 503, headers: noStore });
   }
 
   const ip =
@@ -44,43 +44,41 @@ export async function POST(request: Request): Promise<NextResponse> {
     request.headers.get("x-real-ip") ||
     "unknown";
 
-  // A voice session costs real credits, so the limit is tighter than the
-  // enquiry form's. Six openings a minute is far more than a person browsing
-  // a building will ever need and far less than a script can profit from.
+  // A conversation costs real credits. Six a minute is far more than a person
+  // needs and far less than a script can profit from.
   const limit = rateLimit(`voice:${ip}`, 6, 60_000);
   if (!limit.ok) {
     return NextResponse.json(
       { error: "rate_limited" },
-      { status: 429, headers: { "Retry-After": String(limit.retryAfter) } },
+      { status: 429, headers: { ...noStore, "Retry-After": String(limit.retryAfter) } },
     );
   }
 
-  // No key: the agent accepts public connections, which is how the widget
-  // works. The id is not a secret.
   if (!API_KEY) {
-    return NextResponse.json({ kind: "public", agentId: AGENT_ID });
+    return NextResponse.json({ kind: "public", agentId: AGENT_ID }, { headers: noStore });
   }
+
+  const id = encodeURIComponent(AGENT_ID);
+  const headers = { "xi-api-key": API_KEY };
 
   try {
-    const res = await fetch(
-      `https://api.elevenlabs.io/v1/convai/conversation/get-signed-url?agent_id=${encodeURIComponent(AGENT_ID)}`,
-      { headers: { "xi-api-key": API_KEY }, cache: "no-store" },
-    );
-
-    if (!res.ok) {
-      // The agent may simply not require auth, in which case the signed-URL
-      // endpoint refuses. Falling back to the public id is correct rather
-      // than failing the visitor over a configuration detail.
-      console.warn("[velabuilt] signed url refused:", res.status);
-      return NextResponse.json({ kind: "public", agentId: AGENT_ID });
+    const res = await fetch(`${API}/token?agent_id=${id}`, { headers, cache: "no-store" });
+    if (res.ok) {
+      const data = (await res.json()) as { token?: string };
+      if (data.token) return NextResponse.json({ kind: "token", token: data.token }, { headers: noStore });
     }
-
-    const data = (await res.json()) as { signed_url?: string };
-    if (!data.signed_url) return NextResponse.json({ kind: "public", agentId: AGENT_ID });
-
-    return NextResponse.json({ kind: "signed", signedUrl: data.signed_url });
+    const signed = await fetch(`${API}/get-signed-url?agent_id=${id}`, { headers, cache: "no-store" });
+    if (signed.ok) {
+      const data = (await signed.json()) as { signed_url?: string };
+      if (data.signed_url) {
+        return NextResponse.json({ kind: "signed", signedUrl: data.signed_url }, { headers: noStore });
+      }
+    }
+    console.warn("[velabuilt] voice credentials refused:", res.status, signed.status);
   } catch (e) {
-    console.warn("[velabuilt] signed url failed:", e);
-    return NextResponse.json({ kind: "public", agentId: AGENT_ID });
+    console.warn("[velabuilt] voice credential mint failed:", e);
   }
+  // The key can fail (revoked, wrong workspace) without the agent being
+  // private; the public id is still the honest fallback.
+  return NextResponse.json({ kind: "public", agentId: AGENT_ID }, { headers: noStore });
 }

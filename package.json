@@ -2,25 +2,23 @@
   "name": "velabuilt",
   "version": "0.1.0",
   "private": true,
-  "description": "VelaBuilt — websites, follow-up systems and intelligent digital infrastructure.",
+  "description": "VelaBuilt \u2014 websites, follow-up systems and intelligent digital infrastructure.",
   "scripts": {
     "dev": "next dev",
     "build": "npm run lint && next build",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "check": "npm run typecheck && npm run build"
+    "check": "npm run typecheck && npm test && npm run build",
+    "test": "node --import tsx --test tests/*.test.ts"
   },
   "dependencies": {
-    "@elevenlabs/client": "^1.25.0",
-    "@react-three/fiber": "^9.7.0",
+    "@elevenlabs/react": "^1.15.2",
     "@vercel/blob": "^2.8.0",
-    "gsap": "^3.15.0",
     "next": "16.3.4",
     "nodemailer": "10.0.10",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "three": "^0.186.0",
     "zod": "4.6.1"
   },
   "devDependencies": {
@@ -29,12 +27,12 @@
     "@types/nodemailer": "^8.0.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "@types/three": "^0.186.0",
     "eslint": "^9.38.0",
     "eslint-config-next": "^16.3.4",
     "playwright": "^1.63.0",
     "sharp": "^0.35.4",
     "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.3"
   },
   "engines": {
