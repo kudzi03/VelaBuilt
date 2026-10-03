@@ -1,17 +1,37 @@
 "use client";
 
-import Script from "next/script";
-import { useEffect } from "react";
-import { GA_MEASUREMENT_ID, analyticsEnabled, track } from "@/lib/analytics";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
+import { analyticsEnabled, track } from "@/lib/analytics";
 
 const BOOKING_HOSTS = /(^|\.)(calendly\.com|cal\.com|savvycal\.com|tidycal\.com)$|calendar\.app\.google|calendar\.google\.com\/calendar\/appointments/;
 
 /**
- * Loads GA4 (storage off — see src/lib/analytics.ts) and reports the clicks
- * that matter for leads through one delegated listener, so individual
- * components do not each need wiring.
+ * First-party analytics (see src/lib/analytics.ts). Loads no third-party
+ * script. Reports page views on every navigation and the clicks that matter
+ * for leads through one delegated listener.
  */
 export function Analytics() {
+  const pathname = usePathname();
+  const entryReferrer = useRef<string | null>(null);
+  const scrolled = useRef(false);
+
+  // Page views, including client-side navigation.
+  useEffect(() => {
+    if (!analyticsEnabled) return;
+    const first = entryReferrer.current === null;
+    if (first) entryReferrer.current = document.referrer;
+    scrolled.current = false;
+    // Let the new page set its title first.
+    const t = window.setTimeout(() => {
+      track("page_view", {
+        page_path: pathname,
+        ...(first && document.referrer ? { page_referrer: document.referrer, entry_referrer: document.referrer } : {}),
+      });
+    }, 50);
+    return () => window.clearTimeout(t);
+  }, [pathname]);
+
   useEffect(() => {
     if (!analyticsEnabled) return;
 
@@ -19,7 +39,6 @@ export function Analytics() {
       const target = e.target as Element | null;
       if (!target?.closest) return;
 
-      // Demo / System Lab interactions — anything inside a marked demo region.
       const demo = target.closest<HTMLElement>("[data-demo]");
       if (demo && target.closest("button, a, [role=button], [role=tab]")) {
         track("demo_interaction", { demo: demo.dataset.demo || window.location.pathname });
@@ -28,51 +47,53 @@ export function Analytics() {
       const link = target.closest<HTMLAnchorElement>("a[href]");
       if (!link) return;
       const href = link.getAttribute("href") ?? "";
-      const location = link.closest("[data-chapter]")?.getAttribute("data-chapter") ?? link.closest("header, footer")?.tagName.toLowerCase() ?? "page";
-      const label = (link.textContent ?? "").trim().slice(0, 60);
+      const where =
+        link.closest("[data-chapter]")?.getAttribute("data-chapter") ??
+        link.closest("header, footer")?.tagName.toLowerCase() ??
+        "page";
 
-      if (href.startsWith("mailto:")) return track("email_click", { link_location: location });
-      if (href.startsWith("tel:")) return track("phone_click", { link_location: location });
-      if (/wa\.me|whatsapp\.com/.test(href)) return track("whatsapp_click", { link_location: location });
+      if (href.startsWith("mailto:")) return track("email_click", { link_location: where });
+      if (href.startsWith("tel:")) return track("phone_click", { link_location: where });
+      if (/wa\.me|whatsapp\.com/.test(href)) return track("whatsapp_click", { link_location: where });
 
-      let url: URL | null = null;
+      let url: URL;
       try {
         url = new URL(href, window.location.href);
       } catch {
         return;
       }
-      if (BOOKING_HOSTS.test(url.hostname + url.pathname)) return track("book_call_click", { link_location: location });
+      if (BOOKING_HOSTS.test(url.hostname + url.pathname)) return track("book_call_click", { link_location: where });
       if (url.origin === window.location.origin && url.pathname === "/start") {
+        const focus = url.searchParams.get("focus");
         return track("start_project_click", {
-          link_location: location,
-          link_text: label,
-          enquiry_focus: url.searchParams.get("focus") ?? undefined,
+          link_location: where,
+          link_text: (link.textContent ?? "").trim().slice(0, 60),
+          ...(focus ? { enquiry_focus: focus } : {}),
         });
       }
     };
 
     const onTalk = () => track("vela_talk_click", { page_path: window.location.pathname });
 
+    const onScroll = () => {
+      if (scrolled.current) return;
+      const h = document.documentElement;
+      if (h.scrollHeight <= h.clientHeight) return;
+      if ((h.scrollTop + h.clientHeight) / h.scrollHeight >= 0.9) {
+        scrolled.current = true;
+        track("scroll", { percent_scrolled: 90, page_path: window.location.pathname });
+      }
+    };
+
     document.addEventListener("click", onClick, { capture: true });
     window.addEventListener("vela:talk", onTalk);
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       document.removeEventListener("click", onClick, { capture: true });
       window.removeEventListener("vela:talk", onTalk);
+      window.removeEventListener("scroll", onScroll);
     };
   }, []);
 
-  if (!analyticsEnabled) return null;
-
-  return (
-    <>
-      <Script id="ga-init" strategy="afterInteractive">
-        {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;
-gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied'});
-var a=new Uint32Array(1);crypto.getRandomValues(a);var cid=a[0]+'.'+Math.floor(Date.now()/1000);
-gtag('js',new Date());
-gtag('config','${GA_MEASUREMENT_ID}',{client_storage:'none',client_id:cid,allow_google_signals:false,allow_ad_personalization_signals:false});`}
-      </Script>
-      <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} strategy="afterInteractive" />
-    </>
-  );
+  return null;
 }

@@ -174,10 +174,9 @@ What limits the practical risk:
 - All JSON-LD is generated server-side from typed content, never from input.
 - `object-src 'none'`, `base-uri 'self'`, `form-action 'self'` and
   `frame-ancestors 'none'` close the usual escalation routes.
-- `connect-src` allows only this origin, the voice provider (ElevenLabs) and
-  Google Analytics' collection endpoints.
-- The only third-party script is Google Analytics 4 (`gtag.js` from
-  www.googletagmanager.com). No Tag Manager container, no embeds, no ad tags.
+- `connect-src` allows only this origin and the voice provider (ElevenLabs).
+- There are no third-party scripts, tags or embeds. Analytics is first-party:
+  the page beacons to `/api/track`, which forwards to GA4 server-side.
 
 **Upgrade path**, if a stricter policy is later worth the cost: add a middleware
 that generates a nonce per request, sets
@@ -188,11 +187,12 @@ Expect every page to become dynamic; measure LCP before and after.
 
 ## Data
 
-The site sets **no cookies** and writes nothing to browser storage. It loads
-one third-party script: Google Analytics 4, configured with
-`client_storage: 'none'`, Google signals and ad personalisation off, and no
-personal data in any event (see `src/lib/analytics.ts` and `ANALYTICS.md`).
-There is no advertising pixel and no embed. `/privacy` and `/cookies` describe
+The site sets **no cookies**, writes nothing to browser storage and loads **no
+third-party scripts**. Usage analytics is first-party: pages send allowlisted,
+non-personal events to `/api/track`, which forwards them to Google Analytics 4
+through the Measurement Protocol (see `src/lib/analytics.ts`, `ANALYTICS.md`).
+The visitor's address is never forwarded. There is no advertising pixel and no
+embed. `/privacy` and `/cookies` describe
 exactly this and are written against the implementation — if either changes,
 both change in the same commit.
 

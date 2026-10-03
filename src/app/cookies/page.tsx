@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/Primitives";
 export const metadata: Metadata = pageMetadata({
   title: "Cookies",
   description:
-    "This site sets no cookies and stores nothing in your browser. It does use Google Analytics, with browser storage switched off. Exactly what that means.",
+    "This site sets no cookies, stores nothing in your browser and loads no tracking scripts. How visits are still counted, and exactly what is sent.",
   path: "/cookies",
 });
 
@@ -21,9 +21,9 @@ const crumbs = [
  * The cookie statement.
  *
  * Measured against the running site: no cookies, no localStorage, no
- * sessionStorage. One third-party script — Google Analytics 4 (gtag.js) —
- * configured with client_storage "none" (src/lib/analytics.ts), so it writes
- * nothing to the browser.
+ * sessionStorage, no third-party scripts. Analytics is first-party: pages
+ * beacon to /api/track, which forwards to GA4 server-side
+ * (src/lib/analytics.ts).
  *
  * If anything else is added — an embedded map, a booking widget, a chat
  * bubble — this page changes in the same commit, and anything that stores
@@ -41,21 +41,22 @@ const SECTIONS = [
     title: "We do measure visits — without storing anything",
     body: [
       "The site uses Google Analytics 4 to count visits, see which pages people read, where they came from, and which buttons lead to an enquiry. That is how we know whether the site is doing its job.",
-      "It is set up with browser storage switched off: Google Analytics sets no cookies here and writes nothing to your browser. Each visit gets a random identifier that exists only in the open tab and is gone when you close it, so we cannot recognise you on a later visit.",
-      "Google signals and advertising features are off. No name, email address or anything you type into the enquiry form is ever sent to Google Analytics.",
+      "Your browser never talks to Google for this. Pages send a short note to this site’s own server — which page, which button — and the server passes it on to Google Analytics. Your network address is not passed on; only the country and region it indicates.",
+      "Nothing is stored in your browser to do this. Each visit gets a random identifier that exists only in the open tab and is gone when you close it, so we cannot recognise you on a later visit.",
+      "No name, email address or anything you type into the enquiry form is ever sent to Google Analytics.",
     ],
   },
   {
     title: "Why there is no cookie banner",
     body: [
       "A consent banner exists to ask permission to store things in your browser that are not strictly necessary. This site stores nothing there, so there is nothing to consent to and nothing to refuse.",
-      "If you would rather not be counted at all, a content blocker or Google’s own Analytics opt-out add-on will stop the analytics script from loading; the site works the same without it.",
+      "If you would rather not be counted at all, blocking requests to /api/track with a content blocker stops it; the site works the same without it.",
     ],
   },
   {
-    title: "What else is loaded from other companies",
+    title: "Nothing is loaded from anyone else",
     body: [
-      "Only two things: Google Analytics, above, and — if you choose to talk to Vela — the voice service that runs her, described on the privacy page. Fonts, images and the rest of the site are served from this domain. There are no advertising pixels, embeds or social widgets.",
+      "Only one, and only if you choose it: talking to Vela connects you to the voice service that runs her, described on the privacy page. Fonts, images and scripts are served from this domain. There are no tag managers, advertising pixels, embeds or social widgets.",
     ],
   },
   {

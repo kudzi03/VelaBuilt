@@ -21,15 +21,15 @@ const crumbs = [
  * Plain-language privacy statement describing what this site actually does.
  *
  * It is written against the real implementation: one form, one endpoint,
- * Google Analytics 4 with browser storage off (src/lib/analytics.ts), no
- * embeds, no cookies. If any of that changes, this page changes in the same
+ * first-party analytics forwarded to GA4 server-side (src/lib/analytics.ts),
+ * no third-party scripts, no embeds, no cookies. If any of that changes, this page changes in the same
  * commit.
  */
 const SECTIONS = [
   {
     title: "What this site collects",
     body: [
-      "While you browse, anonymous usage data through Google Analytics: which pages are viewed, roughly where the visit came from (country, the referring site or search), the type of device and browser, and which buttons are pressed — for example Start a project, an email link, or Talk to Vela. Analytics runs with browser storage switched off: no cookies are set and nothing is written to your browser, so a later visit cannot be linked to this one. There are no advertising pixels, no third-party embeds and no cookies set by this site.",
+      "While you browse, anonymous usage data through Google Analytics: which pages are viewed, roughly where the visit came from (country, the referring site or search), the type of device and browser, and which buttons are pressed — for example Start a project, an email link, or Talk to Vela. These are sent to this site’s own server, which passes them to Google Analytics without your network address — only the country and region it indicates. No cookies are set and nothing is written to your browser, so a later visit cannot be linked to this one. There are no advertising pixels, no third-party embeds and no cookies set by this site.",
       "Google Analytics never receives your name, email address, or anything you type into the form. When an inquiry is sent it is told only that one was sent and which area it was about — for example, website or follow-up.",
       "When you complete the Start a Project form we receive what you typed: your name, your email address, optionally your company and website, your answers to the three questions, and anything you wrote in the message field.",
     ],
