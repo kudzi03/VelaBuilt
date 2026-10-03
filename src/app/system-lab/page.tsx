@@ -53,7 +53,7 @@ export default function SystemLabPage() {
 
       <div className="sheet" data-chapter="reading">
 
-      <section aria-labelledby="lab-heading" className="relative pb-24">
+      <section aria-labelledby="lab-heading" className="relative pb-24" data-demo="system-lab">
         <div className="shell">
           <h2 id="lab-heading" className="sr-only">
             System modules

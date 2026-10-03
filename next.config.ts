@@ -90,13 +90,21 @@ const VOICE_ORIGINS = [
   "wss://*.elevenlabs.io",
 ].join(" ");
 
+/**
+ * Google Analytics 4. Only gtag.js and GA's collection endpoints — no Tag
+ * Manager container, no ads origins. GA runs with browser storage off; see
+ * src/lib/analytics.ts.
+ */
+const GA_SCRIPT = "https://www.googletagmanager.com";
+const GA_CONNECT = "https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com";
+
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  `script-src 'self' 'unsafe-inline' ${GA_SCRIPT}${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  `img-src 'self' data: blob: ${GA_CONNECT}`,
   "font-src 'self' data:",
-  `connect-src 'self' ${VOICE_ORIGINS}${isDev ? " ws: wss:" : ""}`,
+  `connect-src 'self' ${VOICE_ORIGINS} ${GA_CONNECT}${isDev ? " ws: wss:" : ""}`,
   // The SDK runs its audio processing in an AudioWorklet, which it
   // instantiates from a blob URL. Without blob: here the worklet is blocked
   // and the microphone produces silence with no error worth the name.

@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@/lib/analytics";
 import {
   ConversationProvider,
   useConversationClientTool,
@@ -156,6 +157,7 @@ function Panel({
           mode,
         },
         onConnect: () => {
+          track("vela_conversation_start", { mode, page_path: window.location.pathname });
           vela.readLevels = () => ({
             input: Math.min(1, controls.getInputVolume() * 2.2),
             output: Math.min(1, controls.getOutputVolume() * 1.8),

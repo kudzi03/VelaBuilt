@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@/lib/analytics";
 import {
   useCallback,
   useEffect,
@@ -260,6 +261,7 @@ export function EnquiryFlow({
               ? String((payload as { message: unknown }).message)
               : "We could not send that just now. Please try again, or email us directly.";
           setSubmitError(message);
+          track("enquiry_error", { enquiry_focus: focus, status: response.status });
           return;
         }
 
@@ -270,6 +272,7 @@ export function EnquiryFlow({
 
         setReference(ref);
         setPhase("sent");
+        track("generate_lead", { enquiry_focus: focus, method: "enquiry_form" });
       } catch {
         setSubmitError(
           `That didn’t send. Your answers are still here. Try again, or email them directly to ${site.email}.`,

@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/Primitives";
 export const metadata: Metadata = pageMetadata({
   title: "Cookies",
   description:
-    "This site sets no cookies and loads nothing from third parties. What that means, and what would have to change for it to stop being true.",
+    "This site sets no cookies and stores nothing in your browser. It does use Google Analytics, with browser storage switched off. Exactly what that means.",
   path: "/cookies",
 });
 
@@ -20,14 +20,14 @@ const crumbs = [
 /**
  * The cookie statement.
  *
- * Every claim on this page was measured against the running site, not assumed
- * from the source: no cookies, no localStorage, no sessionStorage, no
- * third-party scripts, no iframes, and every network request same-origin.
+ * Measured against the running site: no cookies, no localStorage, no
+ * sessionStorage. One third-party script — Google Analytics 4 (gtag.js) —
+ * configured with client_storage "none" (src/lib/analytics.ts), so it writes
+ * nothing to the browser.
  *
- * If any of that stops being true — an analytics script, an embedded map, a
- * booking widget, a chat bubble — this page changes in the same commit that
- * introduces it, and a consent mechanism arrives with it. A page that says
- * "no cookies" while the site sets them is worse than no page at all.
+ * If anything else is added — an embedded map, a booking widget, a chat
+ * bubble — this page changes in the same commit, and anything that stores
+ * something in the browser asks first.
  */
 const SECTIONS = [
   {
@@ -38,16 +38,24 @@ const SECTIONS = [
     ],
   },
   {
-    title: "Why there is no cookie banner",
+    title: "We do measure visits — without storing anything",
     body: [
-      "A consent banner exists to ask permission for storage that is not strictly necessary. This site asks for no such storage, so there is nothing to consent to and nothing to refuse.",
-      "You are not being tracked into agreeing to anything, and dismissing a banner is not the price of reading the page.",
+      "The site uses Google Analytics 4 to count visits, see which pages people read, where they came from, and which buttons lead to an enquiry. That is how we know whether the site is doing its job.",
+      "It is set up with browser storage switched off: Google Analytics sets no cookies here and writes nothing to your browser. Each visit gets a random identifier that exists only in the open tab and is gone when you close it, so we cannot recognise you on a later visit.",
+      "Google signals and advertising features are off. No name, email address or anything you type into the enquiry form is ever sent to Google Analytics.",
     ],
   },
   {
-    title: "Nothing is loaded from anyone else",
+    title: "Why there is no cookie banner",
     body: [
-      "The fonts, images and scripts are served from this domain. There are no third-party embeds, no tag managers, no advertising pixels and no social widgets, so no other company is told that you visited.",
+      "A consent banner exists to ask permission to store things in your browser that are not strictly necessary. This site stores nothing there, so there is nothing to consent to and nothing to refuse.",
+      "If you would rather not be counted at all, a content blocker or Google’s own Analytics opt-out add-on will stop the analytics script from loading; the site works the same without it.",
+    ],
+  },
+  {
+    title: "What else is loaded from other companies",
+    body: [
+      "Only two things: Google Analytics, above, and — if you choose to talk to Vela — the voice service that runs her, described on the privacy page. Fonts, images and the rest of the site are served from this domain. There are no advertising pixels, embeds or social widgets.",
     ],
   },
   {
@@ -60,13 +68,13 @@ const SECTIONS = [
   {
     title: "Check it yourself",
     body: [
-      "Open your browser’s developer tools on any page of this site and look under Application, then Cookies. The list is empty. We would rather you verified this than took our word for it.",
+      "Open your browser’s developer tools on any page of this site and look under Application, then Cookies and Storage. The lists are empty. We would rather you verified this than took our word for it.",
     ],
   },
   {
     title: "If this changes",
     body: [
-      "Adding anything that sets a cookie — an analytics tool, an embedded video, a scheduling widget — would make this page wrong. So it is updated in the same change that introduces it, and anything non-essential would ask you first.",
+      "Adding anything that stores something in your browser — an embedded video, a scheduling widget — would make this page wrong. So it is updated in the same change that introduces it, and anything non-essential would ask you first.",
     ],
   },
 ] as const;

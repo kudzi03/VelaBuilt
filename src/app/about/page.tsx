@@ -11,7 +11,8 @@ import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
 
 export const metadata: Metadata = pageMetadata({
   title: "About",
-  description: site.longDescription,
+  description:
+    "VelaBuilt is a small studio that builds websites, AI agents, lead follow-up automation and CRMs for service businesses — scoped in writing, built properly.",
   path: "/about",
 });
 

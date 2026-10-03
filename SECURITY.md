@@ -174,8 +174,10 @@ What limits the practical risk:
 - All JSON-LD is generated server-side from typed content, never from input.
 - `object-src 'none'`, `base-uri 'self'`, `form-action 'self'` and
   `frame-ancestors 'none'` close the usual escalation routes.
-- `connect-src 'self'` — the page cannot exfiltrate to another origin.
-- There are no third-party scripts, tags, embeds or analytics of any kind.
+- `connect-src` allows only this origin, the voice provider (ElevenLabs) and
+  Google Analytics' collection endpoints.
+- The only third-party script is Google Analytics 4 (`gtag.js` from
+  www.googletagmanager.com). No Tag Manager container, no embeds, no ad tags.
 
 **Upgrade path**, if a stricter policy is later worth the cost: add a middleware
 that generates a nonce per request, sets
@@ -186,10 +188,13 @@ Expect every page to become dynamic; measure LCP before and after.
 
 ## Data
 
-The site sets **no cookies** and loads **no third-party scripts**. There is no
-analytics, no advertising pixel, no embed. `/privacy` describes exactly this and
-is written against the implementation — if either changes, both change in the
-same commit.
+The site sets **no cookies** and writes nothing to browser storage. It loads
+one third-party script: Google Analytics 4, configured with
+`client_storage: 'none'`, Google signals and ad personalisation off, and no
+personal data in any event (see `src/lib/analytics.ts` and `ANALYTICS.md`).
+There is no advertising pixel and no embed. `/privacy` and `/cookies` describe
+exactly this and are written against the implementation — if either changes,
+both change in the same commit.
 
 The rate limiter keeps a short-lived, in-memory record of requesting addresses.
 It is not persisted, not linked to enquiries, and does not survive a restart.

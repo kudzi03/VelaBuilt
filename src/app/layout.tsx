@@ -6,6 +6,7 @@ import { VelaStage } from "@/vela/VelaStage";
 import { VelaStill } from "@/vela/VelaStill";
 import { Hud } from "@/components/chrome/Hud";
 import { VoiceRoot } from "@/voice/VoiceRoot";
+import { Analytics } from "@/components/chrome/Analytics";
 import { EnquiryDialogProvider } from "@/components/enquiry/EnquiryDialogProvider";
 import { site } from "@/content/site";
 import { BASE_URL } from "@/lib/seo";
@@ -114,6 +115,7 @@ export default function RootLayout({
           <Hud />
           <VoiceRoot />
         </EnquiryDialogProvider>
+        <Analytics />
 
         <script
           type="application/ld+json"
