@@ -10,14 +10,20 @@
  * with no SMTP credentials configured, the adapter refused to run and the
  * inquiry died with it. Nothing was stored, so nothing could be recovered.
  *
- * Storage is Vercel Blob, private. Private matters: an inquiry contains a
- * name, an email address and whatever the person chose to tell us, and a
- * public object URL is readable by anyone who obtains it.
+ * Two stores, tried in this order:
+ *
+ *   Google Sheets  one row per inquiry in the studio's own sheet, via the
+ *                  Apps Script web app (ENQUIRY_SHEET_URL). See sheet.ts.
+ *   Vercel Blob    private JSON files, if a Blob store is connected. Private
+ *                  matters: an inquiry contains a name, an email address and
+ *                  whatever the person chose to tell us.
  */
 
 import { put } from "@vercel/blob";
+import { site } from "@/content/site";
 import { serverEnv } from "@/lib/env";
 import type { EnquiryRecord } from "./adapter";
+import { appendToSheet } from "./sheet";
 
 /** Where an inquiry ended up, for the log line and the notification. */
 export interface StoredEnquiry {
@@ -45,14 +51,24 @@ function pathFor(record: EnquiryRecord): string {
  */
 export async function persistEnquiry(record: EnquiryRecord): Promise<StoredEnquiry> {
   const env = serverEnv();
+
+  if (env.ENQUIRY_SHEET_URL) {
+    const { row } = await appendToSheet(record, {
+      url: env.ENQUIRY_SHEET_URL,
+      secret: env.ENQUIRY_SHEET_SECRET,
+      source: `${new URL(site.url).host}/start`,
+    });
+    return { pathname: `sheet row ${row}`, storedAt: new Date().toISOString() };
+  }
+
   const token = env.BLOB_READ_WRITE_TOKEN;
 
   if (!token) {
     // Outside a configured deployment there is nowhere durable to write. Say
     // so loudly rather than accepting the inquiry into nothing.
     throw new Error(
-      "No durable store is configured (BLOB_READ_WRITE_TOKEN is unset). " +
-        "Connect a Vercel Blob store to this project — see SECURITY.md.",
+      "No durable store is configured (set ENQUIRY_SHEET_URL, or connect a " +
+        "Vercel Blob store) — see integrations/google-sheets/README.md.",
     );
   }
 

@@ -5,31 +5,27 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { primaryNav } from "@/content/site";
 import { Wordmark } from "./Monogram";
-import { PhoneLink } from "./ContactLinks";
 import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
+import { TalkButton } from "@/voice/VoiceRoot";
+import { useVelaSnapshot } from "@/vela/store";
 
 /**
- * Restrained persistent navigation. Transparent over the opening frame so the
- * hero reads full-bleed, then resolving into a graphite bar with a lit seam
- * once the visitor has left the first screen.
+ * Quiet at the edge. The wordmark, four destinations with a lit marker under
+ * the current one, and two ways to act: talk to Vela, or start a project.
+ * Transparent over the field until the visitor scrolls, then a frosted strip.
  */
 export function SiteHeader() {
-  const [settled, setSettled] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const panelRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const { presence, chapter } = useVelaSnapshot();
 
-  // The panel is open *for a route*. Navigating therefore closes it during
-  // render, with no effect and no extra render pass.
   const [menu, setMenu] = useState({ open: false, path: pathname });
   const menuOpen = menu.open && menu.path === pathname;
-  const setMenuOpen = useCallback(
-    (open: boolean) => setMenu({ open, path: pathname }),
-    [pathname],
-  );
+  const setMenuOpen = useCallback((open: boolean) => setMenu({ open, path: pathname }), [pathname]);
 
   useEffect(() => {
-    const onScroll = () => setSettled(window.scrollY > 48);
+    const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -46,7 +42,6 @@ export function SiteHeader() {
       return;
     }
     document.documentElement.classList.add("no-scroll");
-
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") closeMenu();
     };
@@ -57,119 +52,79 @@ export function SiteHeader() {
     };
   }, [menuOpen, closeMenu]);
 
+  const isActive = (href: string) => {
+    if (href === "/#capabilities") {
+      return (
+        (pathname === "/" && ["digital", "ai", "automation", "systems"].includes(chapter)) ||
+        ["/website-conversion-systems", "/ai-systems", "/lead-follow-up-systems", "/business-systems", "/website-engine-optimization"].includes(pathname)
+      );
+    }
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
+
   return (
-    <header
-      data-settled={settled}
-      className="site-header fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,border-color] duration-700 data-[settled=true]:border-b data-[settled=true]:border-[color:var(--color-hairline)] data-[settled=true]:bg-[rgb(5_5_6/0.72)] data-[settled=true]:backdrop-blur-xl"
-      style={{ ["--nav-height" as string]: "4.75rem" }}
-    >
-      <nav
-        aria-label="Primary"
-        className="shell flex h-[var(--nav-height)] items-center justify-between gap-8"
-      >
-        <Link
-          href="/"
-          className="shrink-0"
-          aria-label={`VelaBuilt — home`}
-        >
+    <header className="site-header" data-scrolled={scrolled || menuOpen || undefined} data-presence={presence}>
+      <nav aria-label="Primary" className="shell flex h-full items-center justify-between gap-6">
+        <Link href="/" className="shrink-0 py-2" aria-label="VelaBuilt — home">
           <Wordmark />
         </Link>
 
-        <ul className="hidden items-center gap-9 lg:flex">
-          {primaryNav.map((item) => {
-            const active =
-              item.href.startsWith("/") &&
-              !item.href.includes("#") &&
-              pathname.startsWith(item.href);
-            return (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  aria-current={active ? "page" : undefined}
-                  className="label relative py-2 text-[color:var(--color-ivory-dim)] transition-colors duration-500 hover:text-[color:var(--color-ivory)] aria-[current=page]:text-[color:var(--color-champagne)]"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            );
-          })}
+        <ul className="hidden items-center gap-7 lg:flex">
+          {primaryNav.map((item) => (
+            <li key={item.href}>
+              <Link href={item.href} className="nav-link" aria-current={isActive(item.href) ? "page" : undefined}>
+                {item.label}
+              </Link>
+            </li>
+          ))}
         </ul>
 
-        <div className="hidden lg:block">
-          <PhoneLink className="label mr-8 transition-colors duration-500 hover:text-[color:var(--color-ivory)]" />
-          <StartProjectLink variant="secondary" className="!py-3.5">
+        <div className="flex items-center gap-2">
+          <TalkButton className="btn btn-ghost hidden sm:inline-flex">Talk to Vela</TalkButton>
+          <StartProjectLink variant="primary" withArrow={false} className="hidden lg:inline-flex">
             Start a project
           </StartProjectLink>
+          <button
+            ref={toggleRef}
+            type="button"
+            className="btn !min-h-[2.75rem] !px-3 lg:hidden"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-nav"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <span className="sr-only">{menuOpen ? "Close menu" : "Open menu"}</span>
+            <span aria-hidden="true" className="relative block h-2.5 w-5">
+              <span
+                className="absolute inset-x-0 top-0 h-px bg-[color:var(--color-ivory)] transition-transform duration-500"
+                style={{ transform: menuOpen ? "translateY(5px) rotate(45deg)" : undefined }}
+              />
+              <span
+                className="absolute inset-x-0 top-2.5 h-px bg-[color:var(--color-ivory)] transition-transform duration-500"
+                style={{ transform: menuOpen ? "translateY(-5px) rotate(-45deg)" : undefined }}
+              />
+            </span>
+          </button>
         </div>
-
-        <button
-          ref={toggleRef}
-          type="button"
-          className="flex h-11 w-11 items-center justify-center border border-[color:var(--color-hairline-strong)] lg:hidden"
-          aria-expanded={menuOpen}
-          aria-controls="mobile-nav"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          <span className="sr-only">{menuOpen ? "Close menu" : "Open menu"}</span>
-          <span aria-hidden="true" className="relative block h-3 w-5">
-            <span
-              className="absolute inset-x-0 top-0 h-px bg-[color:var(--color-ivory)] transition-transform duration-500"
-              style={{
-                transform: menuOpen ? "translateY(6px) rotate(45deg)" : undefined,
-              }}
-            />
-            <span
-              className="absolute inset-x-0 top-1.5 h-px bg-[color:var(--color-ivory)] transition-opacity duration-300"
-              style={{ opacity: menuOpen ? 0 : 1 }}
-            />
-            <span
-              className="absolute inset-x-0 top-3 h-px bg-[color:var(--color-ivory)] transition-transform duration-500"
-              style={{
-                transform: menuOpen ? "translateY(-6px) rotate(-45deg)" : undefined,
-              }}
-            />
-          </span>
-        </button>
       </nav>
 
-      {/* Mobile panel: a designed screen, not a squeezed desktop menu. */}
       <div
         id="mobile-nav"
-        ref={panelRef}
         hidden={!menuOpen}
-        className="fixed inset-0 top-[var(--nav-height)] z-40 bg-[color:var(--color-void)] lg:hidden"
+        className="fixed inset-x-0 bottom-0 top-[var(--nav-height)] z-40 overflow-y-auto bg-[color:var(--color-paper)] lg:hidden"
       >
-        <div className="horizon-field" aria-hidden="true">
-          <span className="horizon-bloom" style={{ top: "78%" }} />
-          <span className="horizon-line" style={{ top: "78%" }} />
-        </div>
-
-        <div className="relative flex h-full flex-col justify-between px-[var(--spacing-gutter)] pb-12 pt-10">
-          <ul className="flex flex-col gap-1">
-            {primaryNav.map((item, index) => (
+        <div className="shell flex min-h-full flex-col justify-between pb-10 pt-6">
+          <ul>
+            {[{ label: "Home", href: "/" }, ...primaryNav, { label: "Start a project", href: "/start" }].map((item, index) => (
               <li key={item.href} className="border-b border-[color:var(--color-hairline)]">
-                <Link
-                  href={item.href}
-                  className="flex items-baseline gap-5 py-5"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  <span className="label label-champagne">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <span className="display-sm text-[color:var(--color-ivory)]">
-                    {item.label}
-                  </span>
+                <Link href={item.href} className="flex items-baseline gap-5 py-5" onClick={() => setMenuOpen(false)}>
+                  <span className="label">{String(index + 1).padStart(2, "0")}</span>
+                  <span className="display-md">{item.label}</span>
                 </Link>
               </li>
             ))}
           </ul>
-
-          <div className="flex flex-col gap-6">
-            <StartProjectLink variant="primary" className="w-full justify-between">
-              Start a project
-            </StartProjectLink>
-            <PhoneLink className="display-sm text-[color:var(--color-ivory)]" />
-            <p className="label">Websites · Automation · AI Systems</p>
+          <div className="mt-10 flex flex-col gap-3">
+            <TalkButton className="btn w-full">Talk to Vela</TalkButton>
           </div>
         </div>
       </div>

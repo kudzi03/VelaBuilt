@@ -74,15 +74,15 @@ const SECTIONS = [
 export default function CookiesPage() {
   return (
     <>
-      <section className="relative pb-24 pt-[calc(var(--nav-height)+5rem)]">
+      <section data-chapter="reading" className="sheet mt-[calc(var(--nav-height)+1.5rem)] pb-24 pt-16">
         <div className="shell-narrow">
           <Breadcrumbs crumbs={crumbs} />
 
-          <Label tone="champagne" className="mt-10">
+          <Label className="mt-10">
             Cookies
           </Label>
           <h1 className="display-lg mt-5">
-            There are <span className="foil">none.</span>
+            There are none.
           </h1>
           <p className="lede mt-8">
             Shorter than most, because there is very little to declare.

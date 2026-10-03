@@ -64,19 +64,13 @@ export function Monogram({ className, title, metal = false }: MonogramProps) {
 }
 
 /**
- * Monogram plus wordmark. The wordmark is set in the display serif, matching
- * the identity's own web application of the brand.
+ * Monogram plus wordmark: the chisel mark in graphite, the name set wide.
  */
 export function Wordmark({ className }: { readonly className?: string }) {
   return (
-    <span className={`inline-flex items-center gap-3 ${className ?? ""}`}>
-      <Monogram className="h-7 w-auto text-[color:var(--color-champagne)]" />
-      <span
-        className="text-[1.35rem] leading-none tracking-[0.01em] text-[color:var(--color-ivory)]"
-        style={{ fontFamily: "var(--font-display)" }}
-      >
-        VelaBuilt
-      </span>
+    <span className={`inline-flex items-center gap-2.5 ${className ?? ""}`}>
+      <Monogram className="h-7 w-auto text-[color:var(--color-ivory)]" />
+      <span className="wordmark">VelaBuilt</span>
     </span>
   );
 }

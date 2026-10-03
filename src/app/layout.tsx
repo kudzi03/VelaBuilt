@@ -2,6 +2,10 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { SiteHeader } from "@/components/chrome/SiteHeader";
 import { SiteFooter } from "@/components/chrome/SiteFooter";
+import { VelaStage } from "@/vela/VelaStage";
+import { VelaStill } from "@/vela/VelaStill";
+import { Hud } from "@/components/chrome/Hud";
+import { VoiceRoot } from "@/voice/VoiceRoot";
 import { EnquiryDialogProvider } from "@/components/enquiry/EnquiryDialogProvider";
 import { site } from "@/content/site";
 import { BASE_URL } from "@/lib/seo";
@@ -9,36 +13,31 @@ import { graph, organizationSchema, webSiteSchema } from "@/lib/schema";
 import "./globals.css";
 
 /**
- * Refined serif against a precise modern sans — the identity's core type
- * contrast. Self-hosted from src/app/fonts: no runtime request to a font CDN,
- * no layout shift from a late swap (next/font generates metric-matched
- * fallbacks).
+ * Two families, self-hosted from src/app/fonts (see the README there).
  *
- * Only the faces the design renders are registered. Measured across every
- * route, both viewports, the dialog and the mobile menu, text uses Inter at
- * 300–600 and Cormorant Garamond at 300, upright and italic. Registering every
- * weight × every unicode subset had put 60 @font-face rules on each page; this
- * is 3 faces, plus the 2 metric-matched fallbacks next/font adds. See
- * src/app/fonts/README.md for how the files were produced.
+ *   Archivo      one variable file carrying weight (300–600) and width
+ *                (100–125%). Expanded uppercase for display, normal width
+ *                for reading — one family doing the work of two.
+ *   Geist Mono   labels, counters, controls. The instrument voice.
+ *
+ * next/font generates metric-matched fallbacks, so a late swap moves nothing.
  */
-const cormorant = localFont({
-  src: [
-    { path: "./fonts/cormorant-garamond-300-latin.woff2", weight: "300", style: "normal" },
-    { path: "./fonts/cormorant-garamond-300-italic-latin.woff2", weight: "300", style: "italic" },
-  ],
-  variable: "--font-cormorant",
-  display: "swap",
-  preload: true,
-  // The fallback next/font/google chose for a serif, so a swap moves nothing.
-  adjustFontFallback: "Times New Roman",
-});
-
-const inter = localFont({
-  src: [{ path: "./fonts/inter-latin.woff2", weight: "300 600", style: "normal" }],
-  variable: "--font-inter",
+const archivo = localFont({
+  src: [{ path: "./fonts/archivo-var.woff2", weight: "300 600", style: "normal" }],
+  variable: "--font-archivo",
   display: "swap",
   preload: true,
   adjustFontFallback: "Arial",
+  declarations: [{ prop: "font-stretch", value: "100% 125%" }],
+});
+
+const geistMono = localFont({
+  src: [{ path: "./fonts/geistmono-var.woff2", weight: "400 500", style: "normal" }],
+  variable: "--font-geist-mono",
+  display: "swap",
+  preload: true,
+  adjustFontFallback: false,
+  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
 });
 
 export const metadata: Metadata = {
@@ -67,8 +66,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#050506",
-  colorScheme: "dark",
+  themeColor: "#efebe5",
+  colorScheme: "light",
   width: "device-width",
   initialScale: 1,
   // Never trap a visitor at a zoom level they did not choose.
@@ -82,7 +81,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en-US" className={`${cormorant.variable} ${inter.variable}`}>
+    <html lang="en-US" className={`${archivo.variable} ${geistMono.variable}`}>
       <head>
         {/*
          * Marks the document as scripted before first paint. Section entrance
@@ -105,10 +104,15 @@ export default function RootLayout({
           Skip to content
         </a>
 
+        <VelaStage still={<VelaStill />} />
         <EnquiryDialogProvider>
-          <SiteHeader />
-          <main id="main">{children}</main>
-          <SiteFooter />
+          <div className="site">
+            <SiteHeader />
+            <main id="main">{children}</main>
+            <SiteFooter />
+          </div>
+          <Hud />
+          <VoiceRoot />
         </EnquiryDialogProvider>
 
         <script

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { workByCategory, workCategories, workItems } from "@/content/work";
 import { pageMetadata } from "@/lib/seo";
 import { breadcrumbSchema, graph } from "@/lib/schema";
-import { SignalStill } from "@/components/signal/SignalStill";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { WorkGrid } from "@/components/work/WorkGrid";
 import { Reveal } from "@/components/ui/Reveal";
@@ -26,18 +25,16 @@ export default function WorkPage() {
 
   return (
     <>
-      {/* The world: work is what the far end of the system produces. */}
-      <SignalStill parked={0.86} />
 
-      <section className="relative overflow-hidden pb-20 pt-[calc(var(--nav-height)+5rem)]">
+      <section data-chapter="page-work" className="page-hero">
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />
 
           <Reveal className="mt-10">
-            <Label tone="champagne">Real ideas · Real systems · Real possibilities</Label>
+            <Label>Real ideas · Real systems · Real possibilities</Label>
             <h1 className="display-xl mt-6 max-w-[13ch]">
-              Explore our <span className="foil">work.</span>
+              Explore our work.
             </h1>
           </Reveal>
 
@@ -50,6 +47,8 @@ export default function WorkPage() {
           </Reveal>
         </div>
       </section>
+
+      <div className="sheet" data-chapter="reading">
 
       {/* Client work: honest about being empty until it isn't. */}
       <section aria-labelledby="client-heading" className="relative py-16">
@@ -93,6 +92,8 @@ export default function WorkPage() {
           </Reveal>
         </div>
       </section>
+
+      </div>
 
       <script
         type="application/ld+json"

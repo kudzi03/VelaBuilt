@@ -56,6 +56,12 @@ interface EnquiryFlowProps {
   readonly variant?: "dialog" | "page";
   /** Server render time, for the no-JS path's bot timing check. */
   readonly renderedAt?: number;
+  /**
+   * A summary drafted by Vela from the conversation, placed in the message
+   * field for the visitor to read, change or delete. Only ever supplied after
+   * the visitor agreed to it, and never submitted on their behalf.
+   */
+  readonly initialMessage?: string;
 }
 
 interface Details {
@@ -96,6 +102,7 @@ export function EnquiryFlow({
   headingId,
   variant = "page",
   renderedAt,
+  initialMessage,
 }: EnquiryFlowProps) {
   const enhanced = useEnhanced();
 
@@ -111,7 +118,10 @@ export function EnquiryFlow({
   const [answers, setAnswers] = useState<Record<string, string[]>>(
     initialFocus ? { [focusStep.id]: [initialFocus] } : {},
   );
-  const [details, setDetails] = useState<Details>(EMPTY_DETAILS);
+  const [details, setDetails] = useState<Details>(() => ({
+    ...EMPTY_DETAILS,
+    message: initialMessage?.slice(0, 2000) ?? "",
+  }));
   const [errors, setErrors] = useState<Partial<Record<keyof Details, string>>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -348,6 +358,7 @@ export function EnquiryFlow({
               headingRef={headingRef}
               honeypot={honeypot}
               setHoneypot={setHoneypot}
+              drafted={!!initialMessage}
             />
           )}
         </div>
@@ -603,6 +614,8 @@ interface DetailsStepProps {
   readonly honeypot?: string;
   readonly setHoneypot?: (value: string) => void;
   readonly renderedAt?: number;
+  /** The message was drafted by Vela: say so above it. */
+  readonly drafted?: boolean;
 }
 
 function DetailsStep({
@@ -617,6 +630,7 @@ function DetailsStep({
   honeypot,
   setHoneypot,
   renderedAt,
+  drafted = false,
 }: DetailsStepProps) {
   const errorId = useId();
   const controlled = details !== undefined && setDetails !== undefined;
@@ -687,12 +701,19 @@ function DetailsStep({
         <label htmlFor="enq-message" className="label mb-2.5 block">
           Anything else <span className="text-[color:var(--color-faint)]">(optional)</span>
         </label>
+        {drafted ? (
+          <p id="enq-message-note" className="mb-3 text-sm text-[color:var(--color-muted)]">
+            Drafted by Vela from your conversation. Read it, change anything, or clear it —
+            nothing is sent until you press send.
+          </p>
+        ) : null}
         <textarea
           id="enq-message"
           name="message"
           rows={4}
           maxLength={2000}
           className="field resize-y"
+          aria-describedby={drafted ? "enq-message-note" : undefined}
           {...(controlled
             ? {
                 value: details.message,

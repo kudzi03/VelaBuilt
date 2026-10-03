@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/seo";
 import { breadcrumbSchema, graph } from "@/lib/schema";
-import { SignalStill } from "@/components/signal/SignalStill";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Reveal } from "@/components/ui/Reveal";
 import { Label } from "@/components/ui/Primitives";
@@ -77,18 +76,16 @@ const PRINCIPLES = [
 export default function ApproachPage() {
   return (
     <>
-      {/* The world: how the early stages are built. */}
-      <SignalStill parked={0.3} />
 
-      <section className="relative overflow-hidden pb-20 pt-[calc(var(--nav-height)+5rem)]">
+      <section data-chapter="page-lab" className="page-hero">
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />
 
           <Reveal className="mt-10">
-            <Label tone="champagne">Approach</Label>
+            <Label>Approach</Label>
             <h1 className="display-xl mt-6 max-w-[15ch]">
-              Understand it first. <span className="foil">Then build it.</span>
+              Understand it first. Then build it.
             </h1>
           </Reveal>
 
@@ -101,10 +98,12 @@ export default function ApproachPage() {
         </div>
       </section>
 
+      <div className="sheet" data-chapter="reading">
+
       <section aria-labelledby="stages-heading" className="relative py-24 lg:py-28">
         <div className="shell">
           <Reveal>
-            <Label tone="champagne">How a project runs</Label>
+            <Label>How a project runs</Label>
             <h2 id="stages-heading" className="display-lg mt-5 max-w-[16ch]">
               Five stages, in order.
             </h2>
@@ -114,7 +113,7 @@ export default function ApproachPage() {
             {STAGES.map((stage, index) => (
               <Reveal as="li" key={stage.title} delay={index * 70}>
                 <div className="grid gap-6 border-b border-[color:var(--color-hairline)] py-10 lg:grid-cols-[6rem_1fr_1.2fr] lg:gap-12">
-                  <Label tone="champagne" as="span">
+                  <Label as="span">
                     {String(index + 1).padStart(2, "0")}
                   </Label>
                   <h3 className="display-sm max-w-[18ch]">{stage.title}</h3>
@@ -131,7 +130,7 @@ export default function ApproachPage() {
       <section aria-labelledby="principles-heading" className="relative py-24 lg:py-28">
         <div className="shell">
           <Reveal>
-            <Label tone="champagne">Principles</Label>
+            <Label>Principles</Label>
             <h2 id="principles-heading" className="display-lg mt-5 max-w-[18ch]">
               What we hold to, including when it costs us the project.
             </h2>
@@ -157,6 +156,8 @@ export default function ApproachPage() {
       </section>
 
       <FaqSection entries={generalFaqs} heading="Straight answers." id="faq" />
+
+      </div>
 
       <script
         type="application/ld+json"

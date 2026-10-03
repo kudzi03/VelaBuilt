@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { pageMetadata } from "@/lib/seo";
 import { breadcrumbSchema, graph } from "@/lib/schema";
-import { SignalStill } from "@/components/signal/SignalStill";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ArrowRight, CategoryBadge, Label } from "@/components/ui/Primitives";
 import { Reveal } from "@/components/ui/Reveal";
@@ -43,11 +42,9 @@ const SERVICES = [
 export default function CardioLifePage() {
   return (
     <>
-      {/* The world: delivered: the end of the path, where a person decides. */}
-      <SignalStill parked={1} />
 
       {/* 1 — Hero */}
-      <section className="relative overflow-hidden pb-20 pt-[calc(var(--nav-height)+5rem)]">
+      <section data-chapter="page-project" className="page-hero">
 
         <div className="shell relative">
           <Breadcrumbs crumbs={crumbs} />
@@ -55,7 +52,7 @@ export default function CardioLifePage() {
           <Reveal className="mt-10">
             <CategoryBadge tone="champagne">Client Work</CategoryBadge>
             <h1 className="display-xl mt-6 max-w-[12ch]">
-              Cardio <span className="foil">Life.</span>
+              Cardio Life.
             </h1>
             <p className="label mt-5">Corporate training · Botswana</p>
           </Reveal>
@@ -80,6 +77,8 @@ export default function CardioLifePage() {
           </Reveal>
         </div>
       </section>
+
+      <div className="sheet" data-chapter="reading">
 
       {/* The delivered site, at the top, because it is the evidence. */}
       <section aria-label="The delivered website" className="relative pb-6">
@@ -108,7 +107,7 @@ export default function CardioLifePage() {
           <Reveal className="reading-ground">
             <div className="grid gap-12 lg:grid-cols-[auto_1fr] lg:gap-20">
               <div>
-                <Label tone="champagne">01</Label>
+                <Label>01</Label>
                 <h2 id="business-heading" className="display-md mt-4 max-w-[12ch]">
                   The business
                 </h2>
@@ -136,7 +135,7 @@ export default function CardioLifePage() {
           <Reveal className="reading-ground">
             <div className="grid gap-12 lg:grid-cols-[auto_1fr] lg:gap-20">
               <div>
-                <Label tone="champagne">02</Label>
+                <Label>02</Label>
                 <h2 id="challenge-heading" className="display-md mt-4 max-w-[12ch]">
                   The challenge
                 </h2>
@@ -177,7 +176,7 @@ export default function CardioLifePage() {
           <Reveal className="reading-ground">
             <div className="grid gap-12 lg:grid-cols-[auto_1fr] lg:gap-20">
               <div>
-                <Label tone="champagne">03</Label>
+                <Label>03</Label>
                 <h2 id="built-heading" className="display-md mt-4 max-w-[12ch]">
                   What we built
                 </h2>
@@ -248,7 +247,7 @@ export default function CardioLifePage() {
           <Reveal className="reading-ground">
             <div className="grid gap-12 lg:grid-cols-[auto_1fr] lg:gap-20">
               <div>
-                <Label tone="champagne">04</Label>
+                <Label>04</Label>
                 <h2 id="outcome-heading" className="display-md mt-4 max-w-[12ch]">
                   Outcome
                 </h2>
@@ -318,6 +317,8 @@ export default function CardioLifePage() {
           </Reveal>
         </div>
       </section>
+
+      </div>
 
       <script
         type="application/ld+json"

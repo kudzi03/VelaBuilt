@@ -12,6 +12,7 @@ export const FOCUS_OPTIONS = [
   "follow-up",
   "automation",
   "ai",
+  "systems",
   "discoverability",
   "not-sure",
 ] as const;
@@ -56,6 +57,11 @@ export const focusStep: FlowStep = {
       value: "ai",
       label: "AI system",
       hint: "Reading, drafting, classifying, answering.",
+    },
+    {
+      value: "systems",
+      label: "Business system",
+      hint: "CRM, enquiry handling, dashboards.",
     },
     {
       value: "discoverability",
@@ -124,6 +130,19 @@ export const branchSteps: Record<Focus, FlowStep> = {
       { value: "unsure", label: "Not sure — that is part of the question" },
     ],
   },
+  systems: {
+    id: "systems-problem",
+    question: "What would the system need to hold together?",
+    multi: true,
+    options: [
+      { value: "crm", label: "Customers and opportunities (CRM)" },
+      { value: "enquiries", label: "Enquiries and who owns them" },
+      { value: "dashboards", label: "The numbers we run the business on" },
+      { value: "jobs", label: "Jobs, projects or bookings" },
+      { value: "integrations", label: "Tools that do not talk to each other" },
+      { value: "unsure", label: "Not sure — that is part of the question" },
+    ],
+  },
   discoverability: {
     id: "discoverability-problem",
     question: "How are customers failing to find you?",
@@ -183,6 +202,7 @@ export const focusLabel: Record<Focus, string> = {
   "follow-up": "Follow-up / sales process",
   automation: "Automation",
   ai: "AI system",
+  systems: "Business system",
   discoverability: "Discoverability",
   "not-sure": "Not sure yet",
 };

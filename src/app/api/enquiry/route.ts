@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { FOCUS_OPTIONS, type Focus } from "@/content/enquiry-flow";
 import { enquirySchema, screenSubmission } from "@/lib/enquiry/schema";
 import {
+  adapterConfigured,
   createReference,
   getEnquiryAdapter,
   type EnquiryRecord,
@@ -235,18 +236,22 @@ export async function POST(request: Request): Promise<Response> {
     });
   }
 
+  // The store (the sheet) is the delivery when no notification channel is
+  // set up; only a configured channel is tried, and only its failure logged.
   let notified = false;
   let bookingUrl: string | undefined;
-  try {
-    const result = await getEnquiryAdapter().deliver(record);
-    bookingUrl = result.bookingUrl;
-    notified = true;
-  } catch (error) {
-    console.error("[enquiry] notification failed", {
-      reference: record.reference,
-      stored: Boolean(stored),
-      reason: error instanceof Error ? error.message : "unknown",
-    });
+  if (!stored || adapterConfigured()) {
+    try {
+      const result = await getEnquiryAdapter().deliver(record);
+      bookingUrl = result.bookingUrl;
+      notified = true;
+    } catch (error) {
+      console.error("[enquiry] notification failed", {
+        reference: record.reference,
+        stored: Boolean(stored),
+        reason: error instanceof Error ? error.message : "unknown",
+      });
+    }
   }
 
   if (!stored && !notified) {
@@ -259,7 +264,7 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   if (!stored) {
-    console.warn("[enquiry] captured by email only — connect a blob store", {
+    console.warn("[enquiry] captured by notification only — no store is configured", {
       reference: record.reference,
     });
   }

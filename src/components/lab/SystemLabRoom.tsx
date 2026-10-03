@@ -65,7 +65,7 @@ export function SystemLabRoom({
     <div>
       <div
         ref={roomRef}
-        className="relative overflow-hidden border border-[color:var(--color-hairline)]"
+        className="lab-chamber relative overflow-hidden border border-[color:var(--color-hairline)]"
         style={{ aspectRatio: "1672 / 941" }}
       >
         {/* The chamber, drawn. Every module is wired to the core whether or

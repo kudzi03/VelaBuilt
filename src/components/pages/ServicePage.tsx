@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { services, type Service } from "@/content/services";
 import { faqsFor } from "@/content/faq";
-import { graph, breadcrumbSchema, faqSchema, serviceSchema } from "@/lib/schema";
-import { SignalStill } from "@/components/signal/SignalStill";
+import { graph, breadcrumbSchema, faqSchema, serviceSchema, webPageSchema } from "@/lib/schema";
+import { CapabilityCards } from "@/components/home/CapabilityCards";
+import { FocusReceiver } from "@/components/home/FocusReceiver";
+import { TalkButton } from "@/voice/VoiceRoot";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { FaqSection } from "@/components/ui/FaqSection";
 import { Reveal } from "@/components/ui/Reveal";
@@ -24,9 +26,10 @@ export function ServicePage({
     { name: service.name, path: `/${service.slug}` },
   ];
 
-  const others = services.filter((entry) => entry.slug !== service.slug);
+  const others = services.filter((entry) => entry.slug !== service.slug && entry.area !== "discover");
 
   const structuredData = graph([
+    webPageSchema({ path: `/${service.slug}`, name: service.name, description: service.summary }),
     serviceSchema(service),
     breadcrumbSchema(crumbs),
     faqSchema(faqs),
@@ -34,41 +37,48 @@ export function ServicePage({
 
   return (
     <>
-      {/* The world: the stage each offer addresses. */}
-      <SignalStill parked={0.35} />
+      <FocusReceiver />
 
-      {/* ---- Opening ---------------------------------------------------- */}
-      <section className="relative overflow-hidden pb-24 pt-[calc(var(--nav-height)+5rem)] lg:pb-32 lg:pt-[calc(var(--nav-height)+7rem)]">
-        <div className="shell relative">
+      {/* ---- Opening: the structure stands in this area's form ----------- */}
+      <section data-chapter={service.chapter} className="page-hero">
+        <div className="shell relative w-full">
           <Breadcrumbs crumbs={crumbs} />
 
-          <Reveal className="mt-10">
-            <Label tone="champagne">
-              {service.index} — Solution
-            </Label>
-            <h1 className="display-xl mt-6 max-w-[16ch]">
+          <Reveal className="mt-10 max-w-[40rem]">
+            <p className="label">
+              {service.index} — {service.name}
+            </p>
+            <h1 className="display-xl mt-6">
               {service.headline[0]}
-              <span className="mt-3 block">
-                <span className="foil">{service.headline[1]}</span>
-              </span>
+              <span className="mt-3 block text-[color:var(--color-muted)]">{service.headline[1]}</span>
             </h1>
           </Reveal>
 
-          <Reveal delay={120}>
-            <p className="lede mt-10 max-w-[54ch]">{service.summary}</p>
-          </Reveal>
-
-          <Reveal delay={200}>
-            <div className="mt-11 flex flex-wrap items-center gap-4">
+          <Reveal delay={120} className="ground mt-10 max-w-[40rem]">
+            <p className="lede max-w-[54ch]">{service.summary}</p>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
               <StartProjectLink variant="primary" focus={focus}>
                 {service.cta}
               </StartProjectLink>
-              <Link href="/work" className="btn btn-ghost">
-                <span>See what we build</span>
-                <ArrowRight />
-              </Link>
+              <TalkButton className="btn">Ask Vela about it</TalkButton>
             </div>
           </Reveal>
+        </div>
+      </section>
+
+      <div className="sheet" data-chapter="reading">
+      {/* ---- What it covers --------------------------------------------- */}
+      <section id={service.area} aria-labelledby="covers-heading" className="relative pt-24 lg:pt-28">
+        <div className="shell">
+          <Reveal>
+            <Label>What it covers</Label>
+            <h2 id="covers-heading" className="display-lg mt-5 max-w-[20ch]">
+              {service.chapterHeading}
+            </h2>
+          </Reveal>
+          <div className="mt-12">
+            <CapabilityCards service={service} />
+          </div>
         </div>
       </section>
 
@@ -76,8 +86,8 @@ export function ServicePage({
       <section aria-labelledby="problem-heading" className="relative py-24 lg:py-28">
         <div className="shell grid gap-14 lg:grid-cols-[1fr_1.1fr] lg:gap-24">
           <Reveal>
-            <Label tone="champagne">Who this is for</Label>
-            <h2 id="problem-heading" className="display-md mt-5 max-w-[22ch]">
+            <Label>Who this is for</Label>
+            <h2 id="problem-heading" className="display-sentence mt-5 max-w-[28ch]">
               {service.audience}
             </h2>
             <p className="mt-8 max-w-[46ch] text-sm leading-relaxed text-[color:var(--color-muted)]">
@@ -105,17 +115,17 @@ export function ServicePage({
       <section aria-labelledby="process-heading" className="relative py-24 lg:py-28">
         <div className="shell">
           <Reveal>
-            <Label tone="champagne">The engagement</Label>
+            <Label>The engagement</Label>
             <h2 id="process-heading" className="display-lg mt-5 max-w-[16ch]">
               How the work runs.
             </h2>
           </Reveal>
 
-          <ol className="mt-14 grid gap-px bg-[color:var(--color-hairline)] lg:grid-cols-4">
+          <ol className="mt-14 grid gap-3 lg:grid-cols-4">
             {service.process.map((step, index) => (
               <Reveal as="li" key={step.title} delay={index * 90}>
-                <div className="panel flex h-full flex-col !border-0 p-8">
-                  <Label tone="champagne" as="span">
+                <div className="panel flex h-full flex-col p-7">
+                  <Label as="span">
                     {String(index + 1).padStart(2, "0")}
                   </Label>
                   <h3 className="display-sm mt-5">{step.title}</h3>
@@ -133,7 +143,7 @@ export function ServicePage({
       <section aria-labelledby="capabilities-heading" className="relative py-24 lg:py-28">
         <div className="shell grid gap-14 lg:grid-cols-[1.2fr_1fr] lg:gap-24">
           <Reveal>
-            <Label tone="champagne">What is included</Label>
+            <Label>What is included</Label>
             <h2 id="capabilities-heading" className="display-md mt-5">
               The capabilities behind it.
             </h2>
@@ -169,21 +179,21 @@ export function ServicePage({
       <section aria-labelledby="related-heading" className="relative py-24 lg:py-28">
         <div className="shell">
           <Reveal>
-            <Label tone="champagne">Also relevant</Label>
+            <Label>Also relevant</Label>
             <h2 id="related-heading" className="display-md mt-5">
-              The other two thirds.
+              The rest of the system.
             </h2>
           </Reveal>
 
-          <ul className="mt-12 grid gap-px bg-[color:var(--color-hairline)] md:grid-cols-2">
+          <ul className="mt-12 grid gap-3 md:grid-cols-3">
             {others.map((entry, index) => (
               <Reveal as="li" key={entry.slug} delay={index * 100}>
                 <Link
                   href={`/${entry.slug}`}
-                  className="panel panel-interactive group flex h-full flex-col justify-between gap-10 !border-0 p-8 lg:p-10"
+                  className="panel panel-interactive group flex h-full flex-col justify-between gap-10 p-7 lg:p-9"
                 >
                   <div>
-                    <Label tone="champagne" as="span">
+                    <Label as="span">
                       {entry.index}
                     </Label>
                     <h3 className="display-md mt-5">{entry.name}</h3>
@@ -201,6 +211,8 @@ export function ServicePage({
           </ul>
         </div>
       </section>
+
+      </div>
 
       <script
         type="application/ld+json"

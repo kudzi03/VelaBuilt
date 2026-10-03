@@ -2,13 +2,12 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { primaryNav } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
-import { SignalStill } from "@/components/signal/SignalStill";
 import { ArrowRight, Label } from "@/components/ui/Primitives";
 import { Monogram } from "@/components/chrome/Monogram";
 
 export const metadata: Metadata = pageMetadata({
   title: "Page not found",
-  description: "That page does not exist.",
+  description: "That page does not exist on velabuilt.com. The homepage, capabilities, work and the enquiry form are one link away.",
   path: "/404",
   noIndex: true,
 });
@@ -17,9 +16,8 @@ export default function NotFound() {
   return (
     <>
       {/* The world: off the path, early. */}
-      <SignalStill parked={0.18} />
 
-      <section className="relative flex min-h-[100svh] items-center overflow-hidden py-32">
+      <section data-chapter="page-quiet" className="relative flex min-h-[100svh] items-center py-32">
 
       <div className="shell relative">
         <Monogram
@@ -31,7 +29,7 @@ export default function NotFound() {
           404
         </Label>
         <h1 className="display-xl mt-5 max-w-[14ch]">
-          Nothing here. <span className="foil">Yet.</span>
+          Nothing here. Yet.
         </h1>
         <p className="lede mt-8 max-w-[42ch]">
           That page does not exist, or it has moved. Everything the site does have

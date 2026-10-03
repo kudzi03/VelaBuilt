@@ -33,10 +33,13 @@ export function organizationSchema(): Json {
     sameAs: [site.social.instagram],
     knowsAbout: [
       "Web design",
+      "Interactive and WebGL experiences",
       "Conversion optimization",
+      "AI agents",
+      "Voice agents",
       "Business process automation",
-      "Customer relationship management",
-      "Applied AI systems",
+      "Customer relationship management systems",
+      "Internal dashboards",
       "Technical SEO",
       "Structured data",
     ],
@@ -52,6 +55,20 @@ export function webSiteSchema(): Json {
     description: site.shortDescription,
     inLanguage: "en-US",
     publisher: { "@id": ORGANIZATION_ID },
+  };
+}
+
+export function webPageSchema(page: { path: string; name: string; description: string }): Json {
+  const url = absoluteUrl(page.path);
+  return {
+    "@type": "WebPage",
+    "@id": `${url}#webpage`,
+    url,
+    name: page.name,
+    description: page.description,
+    inLanguage: "en-US",
+    isPartOf: { "@id": WEBSITE_ID },
+    about: { "@id": ORGANIZATION_ID },
   };
 }
 

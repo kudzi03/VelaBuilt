@@ -38,13 +38,13 @@ export const site = {
   locale: "en_US",
 
   /** One sentence. Used verbatim in schema, meta description and the About page. */
-  tagline: "Systems for what’s next.",
+  tagline: "The systems a business runs on.",
   shortDescription:
-    "VelaBuilt is a creative technology studio building premium websites, follow-up systems and intelligent digital infrastructure for modern businesses.",
+    "VelaBuilt is a creative technology studio that designs and builds premium websites, AI agents, business automation and operational systems such as CRMs and dashboards.",
   longDescription:
-    "VelaBuilt is a creative technology studio. We build three things: websites that make a business easier to trust and contact, follow-up systems that stop good inquiries going cold, and the technical foundations that make a business easier for people, search engines and AI systems to find and understand. We design the experience and we build the infrastructure underneath it.",
+    "VelaBuilt is a creative technology studio. We design and build the digital infrastructure a business runs on: websites and interactive experiences that make it easier to trust and contact, AI agents grounded in its own information, automation that follows up every enquiry, and operational systems — CRMs, enquiry systems, dashboards — designed around how the business actually works.",
 
-  capabilities: ["Websites", "Automation", "AI Systems"] as const,
+  capabilities: ["Digital Experiences", "AI Systems", "Automation", "Business Systems"] as const,
 
   social: {
     instagram: "https://www.instagram.com/velabuilt",
@@ -63,20 +63,21 @@ assertContact();
 
 /** Primary navigation. Order is deliberate: understand → see → trust → act. */
 export const primaryNav = [
-  { label: "Solutions", href: "/#solutions" },
-  { label: "System Lab", href: "/system-lab" },
+  { label: "Capabilities", href: "/#capabilities" },
   { label: "Work", href: "/work" },
   { label: "Approach", href: "/approach" },
-  { label: "About", href: "/about" },
+  { label: "Studio", href: "/about" },
 ] as const;
 
 export const footerNav = [
   {
-    heading: "Solutions",
+    heading: "Capabilities",
     links: [
-      { label: "Website Conversion System", href: "/website-conversion-systems" },
-      { label: "Lead Follow-Up & Recovery", href: "/lead-follow-up-systems" },
-      { label: "Website Engine Optimization", href: "/website-engine-optimization" },
+      { label: "Digital Experiences", href: "/website-conversion-systems" },
+      { label: "AI Systems", href: "/ai-systems" },
+      { label: "Automation", href: "/lead-follow-up-systems" },
+      { label: "Business Systems", href: "/business-systems" },
+      { label: "Discoverability", href: "/website-engine-optimization" },
     ],
   },
   {
