@@ -67,7 +67,7 @@ export function Analytics() {
     <>
       <Script id="ga-init" strategy="afterInteractive">
         {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;
-gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'granted'});
+gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied'});
 var a=new Uint32Array(1);crypto.getRandomValues(a);var cid=a[0]+'.'+Math.floor(Date.now()/1000);
 gtag('js',new Date());
 gtag('config','${GA_MEASUREMENT_ID}',{client_storage:'none',client_id:cid,allow_google_signals:false,allow_ad_personalization_signals:false});`}
