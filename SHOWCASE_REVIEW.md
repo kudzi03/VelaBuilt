@@ -27,6 +27,15 @@ The demo uses original AI-generated photographs, locally served as WebP. Homepag
 
 Asset source and generation prompts: `public/demo/ember/ASSETS.md`.
 
+## Verification
+
+- TypeScript, all eight existing unit tests and the Next.js production build passed. Lint passed with one pre-existing `no-img-element` warning in `src/app/opengraph-image.tsx`.
+- Browser regression passed for 16 routes at 375px and 1440px: HTTP status, overflow, headings, metadata, valid JSON-LD, console/assets, no-JS content, reduced-motion homepage, keyboard focus and enquiry dialog. The mobile restaurant journey passed menu filtering, reservation, all five simulation steps, Escape and focus return. It created no non-analytics POSTs, cookies or browser storage; no ElevenLabs/LiveKit requests occurred and the retired session API returned 404.
+- Visually reviewed the hosted homepage showcase, desktop restaurant hero/menu, and mobile hero/form/confirmation/return navigation at 390px. Refined heading contrast, mobile image delivery, return-anchor spacing and final-step focus.
+- Compared rendered local production HTML with captured production baseline: title, description, canonical, H1 and social metadata preserved, apart from Next's generated social-image cache hash. The social-image source is unchanged. Organization/WebSite schema is identical; the homepage graph differs only in the obsolete voice-guide FAQ sentence. Robots rules match; the sitemap retains every existing URL and adds only the demo.
+- Existing analytics code and Google verification DNS records were inspected. Account-side GA4 receipt, Search Console ownership and production environment values remain unverified. No real enquiry or reservation was submitted.
+- The existing Vercel preview protection remains enabled; the preview may require the owner's Vercel sign-in. Automated browser regression used the local production build; authenticated hosted visual checks used the existing browser session. The full six-width matrix was not run.
+
 ## Rollback
 
 Before production approval, production is unchanged. To discard the preview, leave the production branch untouched. After an approved merge, revert the showcase change commit(s), or promote the previous `61c7ac5` deployment through the existing Vercel project. No data migration is required.

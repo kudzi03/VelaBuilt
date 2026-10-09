@@ -13,7 +13,7 @@ export function RestaurantShowcase() {
       </Reveal>
       <Reveal>
         <Link href="/demo/ember-and-grain" prefetch={false} className={styles.preview} aria-label="Explore Ember & Grain, a fictional restaurant website concept">
-          <Image src="/demo/ember/interior.webp" alt="An original restaurant concept: warm pendant lights, linen tables and an open hearth" fill sizes="(max-width: 768px) 100vw, 90vw" className={styles.image} />
+          <Image src="/demo/ember/interior.webp" alt="An original restaurant concept: warm pendant lights, linen tables and an open hearth" fill sizes="(max-width: 700px) 1000px, 90vw" className={styles.image} />
           <div className={styles.top}><span>Ember & Grain</span><span>Restaurant concept / 01</span></div>
           <div className={styles.title}>GOOD FOOD.<br /><span>LONG EVENINGS.</span></div>
           <div className={styles.bottom}><span>Original concept · Fictional restaurant</span><span className={styles.enter}>Enter the experience <span aria-hidden="true">↗</span></span></div>

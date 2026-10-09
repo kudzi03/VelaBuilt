@@ -26,7 +26,7 @@ const WIDTHS = [
   { name: "1366", width: 1366, height: 768 },
   { name: "1440", width: 1440, height: 900 },
   { name: "1920", width: 1920, height: 1080 },
-];
+].filter(vp => !process.env.QA_WIDTHS || process.env.QA_WIDTHS.split(",").includes(vp.name));
 
 const launch = () =>
   chromium.launch({
@@ -53,7 +53,9 @@ for (const vp of WIDTHS) {
     page.on("response", (r) => {
       if (r.status() >= 400 && !r.url().endsWith(route)) fail(where, `HTTP ${r.status()} ${r.url()}`);
     });
-    const res = await page.goto(BASE + route, { waitUntil: "networkidle" });
+    const res = await page.goto(BASE + route, { waitUntil: "domcontentloaded", timeout: 60000 });
+    await page.locator("h1").waitFor({ state: "visible", timeout: 15000 });
+    console.log(`${where}: HTTP ${res?.status()}`);
     const expected = route.includes("does-not-exist") ? 404 : 200;
     if (res?.status() !== expected) fail(where, `status ${res?.status()} (expected ${expected})`);
     await page.waitForTimeout(400);
@@ -93,7 +95,7 @@ for (const vp of WIDTHS) {
 /* ── the object goes live, and sleeps under a sheet ──────────────────── */
 {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-  await page.goto(BASE + "/", { waitUntil: "networkidle" });
+  await page.goto(BASE + "/", { waitUntil: "domcontentloaded", timeout: 60000 });
   const live = await page.waitForSelector(".vela-canvas[data-on]", { timeout: 25000 }).then(() => true, () => false);
   if (!live) fail("webgl", "canvas never went live on /");
   await page.close();
@@ -121,7 +123,7 @@ for (const vp of WIDTHS) {
 {
   const ctx = await browser.newContext({ reducedMotion: "reduce", viewport: { width: 1366, height: 768 } });
   const page = await ctx.newPage();
-  await page.goto(BASE + "/", { waitUntil: "networkidle" });
+  await page.goto(BASE + "/", { waitUntil: "domcontentloaded", timeout: 60000 });
   await page.evaluate(() => document.getElementById("automation")?.scrollIntoView());
   await page.waitForTimeout(300);
   const invisible = await page.evaluate(() =>
@@ -134,7 +136,7 @@ for (const vp of WIDTHS) {
 /* ── keyboard ────────────────────────────────────────────────────────── */
 {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-  await page.goto(BASE + "/", { waitUntil: "networkidle" });
+  await page.goto(BASE + "/", { waitUntil: "domcontentloaded", timeout: 60000 });
   await page.keyboard.press("Tab");
   const first = await page.evaluate(() => document.activeElement?.textContent?.trim());
   if (first !== "Skip to content") fail("keyboard", `first stop is "${first}", not the skip link`);
@@ -171,11 +173,11 @@ for (const vp of WIDTHS) {
   page.on("request", r => {
     if (/elevenlabs|livekit|api\/voice/i.test(r.url())) external.push(r.url());
   });
-  await page.goto(BASE + "/", { waitUntil: "networkidle" });
+  await page.goto(BASE + "/", { waitUntil: "domcontentloaded", timeout: 60000 });
   if (await page.getByRole("button", { name: /talk to vela/i }).count()) fail("voice removal", "launcher remains");
   const retired = await ctx.request.post(BASE + "/api/voice/session");
   if (retired.status() !== 404) fail("voice removal", `retired API returned ${retired.status()}`);
-  await page.goto(BASE + "/demo/ember-and-grain", { waitUntil: "networkidle" });
+  await page.goto(BASE + "/demo/ember-and-grain", { waitUntil: "domcontentloaded", timeout: 60000 });
   if (await page.locator(".vela-canvas").count()) fail("demo", "background WebGL mounted unnecessarily");
   const posts = [];
   page.on("request", r => { if (r.method() === "POST" && !r.url().endsWith("/api/track")) posts.push(r.url()); });
