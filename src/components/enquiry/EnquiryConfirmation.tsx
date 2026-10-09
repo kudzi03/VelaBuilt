@@ -16,7 +16,7 @@ const STAGES = [
   {
     key: "enquiry",
     title: "Inquiry",
-    body: "Received, recorded and referenced. It is no longer in anyone’s memory.",
+    body: "We have received your enquiry and saved it with a reference number.",
   },
   {
     key: "review",
@@ -131,9 +131,8 @@ export function EnquiryConfirmation({
           <div className="mt-12 border-t border-[color:var(--color-hairline)] pt-8">
             <Label tone="champagne">You&rsquo;re using a VelaBuilt system right now</Label>
             <p className="mt-4 max-w-[54ch] text-sm leading-relaxed text-[color:var(--color-muted)]">
-              Capture, validation, reference, record, notification, reply. The same
-              path we build for the businesses we work with — which is why nothing
-              you just sent depends on somebody remembering it.
+              Your enquiry was received, recorded and sent to us for review.
+              We build the same kind of clear follow-up for the businesses we work with.
             </p>
             <Link
               href="/lead-follow-up-systems"

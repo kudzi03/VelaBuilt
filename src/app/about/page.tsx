@@ -12,7 +12,7 @@ import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
 export const metadata: Metadata = pageMetadata({
   title: "About",
   description:
-    "VelaBuilt is a small studio that builds websites, AI agents, lead follow-up automation and CRMs for service businesses — scoped in writing, built properly.",
+    "VelaBuilt builds websites and practical tools that help businesses answer enquiries, follow up and stay organised.",
   path: "/about",
 });
 
@@ -40,7 +40,7 @@ export default function AboutPage() {
           <Reveal className="mt-10">
             <Label>About</Label>
             <h1 className="display-xl mt-6 max-w-[16ch]">
-              A creative technology studio.
+              Websites and tools that help businesses run better.
             </h1>
           </Reveal>
 
@@ -57,11 +57,11 @@ export default function AboutPage() {
           <Reveal>
             <Label>What we build</Label>
             <h2 id="what-heading" className="display-md mt-5 max-w-[18ch]">
-              Four areas, one system.
+              From first visit to follow-up.
             </h2>
             <p className="mt-8 max-w-[42ch] text-sm leading-relaxed text-[color:var(--color-muted)]">
-              The website brings the enquiry in; the agents, automation and systems
-              behind it make sure it is answered, followed up and recorded.
+              Your website helps people understand and contact you. The tools behind it
+              help your team answer, follow up and keep track of the work.
             </p>
           </Reveal>
 
@@ -103,19 +103,19 @@ export default function AboutPage() {
             {[
               {
                 q: "What is VelaBuilt?",
-                a: "A creative technology studio that designs and builds websites and interactive experiences, AI agents, business automation, and operational systems such as CRMs and dashboards.",
+                a: "A studio that builds websites and tools to help businesses answer enquiries, follow up and keep customer work organised.",
               },
               {
                 q: "Who does VelaBuilt work with?",
-                a: "Established businesses whose digital presence has fallen behind the quality of their work — typically winning work through reputation while losing opportunities online.",
+                a: "Businesses whose website no longer shows the quality of their work, or whose team loses time and opportunities to missed enquiries and repeated admin.",
               },
               {
                 q: "What makes VelaBuilt different?",
-                a: "We build the experience and the infrastructure underneath it. The same studio that designs the website builds the agents, automation and systems that handle what it generates — the website demonstration shows how those parts connect.",
+                a: "We can build both the website people see and the tools your team uses after someone gets in touch. The restaurant example shows how those steps can connect.",
               },
               {
                 q: "What does VelaBuilt not do?",
-                a: "We do not publish results we cannot evidence, guarantee rankings, or sell automation as a substitute for a business having something worth buying.",
+                a: "We do not publish results we cannot prove, promise search rankings or suggest that software can fix every business problem.",
               },
             ].map((item) => (
               <div key={item.q} className="panel p-7 lg:p-9">

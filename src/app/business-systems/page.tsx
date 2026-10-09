@@ -6,7 +6,7 @@ import { ServicePage } from "@/components/pages/ServicePage";
 const service = getService("business-systems");
 
 export const metadata: Metadata = pageMetadata({
-  title: "CRM systems, dashboards and business systems",
+  title: "Business tools to track customers and work",
   description: service.summary,
   path: `/${service.slug}`,
 });

@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/Primitives";
 export const metadata: Metadata = pageMetadata({
   title: "Start a project",
   description:
-    "Tell us what you are trying to improve — website, follow-up, automation, AI or discoverability — and we will reply with an honest assessment.",
+    "Tell us what is not working — your website, follow-up or day-to-day tools — and we will reply with an honest assessment.",
   path: "/start",
 });
 

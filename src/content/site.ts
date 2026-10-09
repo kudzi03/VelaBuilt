@@ -38,13 +38,13 @@ export const site = {
   locale: "en_US",
 
   /** One sentence. Used verbatim in schema, meta description and the About page. */
-  tagline: "The systems a business runs on.",
+  tagline: "A better website. Better follow-up.",
   shortDescription:
-    "VelaBuilt is a creative technology studio that designs and builds premium websites, AI agents, business automation and operational systems such as CRMs and dashboards.",
+    "VelaBuilt builds websites that help people understand and contact your business, plus tools that help you reply, follow up and keep work organised.",
   longDescription:
-    "VelaBuilt is a creative technology studio. We design and build the digital infrastructure a business runs on: websites and interactive experiences that make it easier to trust and contact, AI agents grounded in its own information, automation that follows up every enquiry, and operational systems — CRMs, enquiry systems, dashboards — designed around how the business actually works.",
+    "VelaBuilt builds websites that show what your business does and make it easy to get in touch. We also build tools that answer common questions using your information, help your team follow up, and keep enquiries and work in one place. We fit those tools to the way your business already works.",
 
-  capabilities: ["Digital Experiences", "AI Systems", "Automation", "Business Systems"] as const,
+  capabilities: ["Websites", "AI Assistants", "Follow-Up", "Business Tools"] as const,
 
   social: {
     instagram: "https://www.instagram.com/velabuilt",
@@ -63,7 +63,7 @@ assertContact();
 
 /** Primary navigation. Order is deliberate: understand → see → trust → act. */
 export const primaryNav = [
-  { label: "Capabilities", href: "/#capabilities" },
+  { label: "What we do", href: "/#capabilities" },
   { label: "Work", href: "/work" },
   { label: "Approach", href: "/approach" },
   { label: "Studio", href: "/about" },
@@ -71,13 +71,13 @@ export const primaryNav = [
 
 export const footerNav = [
   {
-    heading: "Capabilities",
+    heading: "What we do",
     links: [
-      { label: "Digital Experiences", href: "/website-conversion-systems" },
-      { label: "AI Systems", href: "/ai-systems" },
-      { label: "Automation", href: "/lead-follow-up-systems" },
-      { label: "Business Systems", href: "/business-systems" },
-      { label: "Discoverability", href: "/website-engine-optimization" },
+      { label: "Websites", href: "/website-conversion-systems" },
+      { label: "AI Assistants", href: "/ai-systems" },
+      { label: "Follow-Up", href: "/lead-follow-up-systems" },
+      { label: "Business Tools", href: "/business-systems" },
+      { label: "Get Found Online", href: "/website-engine-optimization" },
     ],
   },
   {
@@ -109,6 +109,6 @@ export const footerNav = [
 export const disclosures = [
   "VelaBuilt does not publish client results it cannot evidence.",
   "Work shown as CONCEPT is a study, not a delivered client project.",
-  "Work shown as SYSTEM DEMO uses sample data, not real customer records.",
+  "Work shown as WORKING EXAMPLE uses sample details, not real customer records.",
   "No performance, revenue or ranking guarantees are made anywhere on this site.",
 ] as const;

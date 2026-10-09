@@ -112,9 +112,9 @@ export function ServicePage({
       <section aria-labelledby="process-heading" className="relative py-24 lg:py-28">
         <div className="shell">
           <Reveal>
-            <Label>The engagement</Label>
+            <Label>Working together</Label>
             <h2 id="process-heading" className="display-lg mt-5 max-w-[16ch]">
-              How the work runs.
+              What happens next.
             </h2>
           </Reveal>
 
@@ -142,7 +142,7 @@ export function ServicePage({
           <Reveal>
             <Label>What is included</Label>
             <h2 id="capabilities-heading" className="display-md mt-5">
-              The capabilities behind it.
+              What we can help with.
             </h2>
             <ul className="mt-9 grid gap-x-10 gap-y-3 sm:grid-cols-2">
               {service.capabilities.map((capability) => (
@@ -178,7 +178,7 @@ export function ServicePage({
           <Reveal>
             <Label>Also relevant</Label>
             <h2 id="related-heading" className="display-md mt-5">
-              The rest of the system.
+              Other ways we can help.
             </h2>
           </Reveal>
 

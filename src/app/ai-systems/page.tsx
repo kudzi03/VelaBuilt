@@ -6,7 +6,7 @@ import { ServicePage } from "@/components/pages/ServicePage";
 const service = getService("ai-systems");
 
 export const metadata: Metadata = pageMetadata({
-  title: "AI agents and AI systems",
+  title: "AI assistants for customer questions and repeat work",
   description: service.summary,
   path: `/${service.slug}`,
 });

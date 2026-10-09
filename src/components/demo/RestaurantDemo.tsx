@@ -80,7 +80,7 @@ export function RestaurantDemo() {
   const details = booking ? [
     `Alex Morgan’s request for ${booking.guests} guests on ${dateLabel} at ${booking.time} is captured from the website.`,
     `“Hello Alex. We have your request for ${booking.guests} guests. Our team will check the table and confirm shortly.” A sample acknowledgement, shown here only.`,
-    `Alex Morgan · alex@example.com · ${booking.guests} guests · ${booking.occasion}. The sample CRM record keeps the request and its next action together.`,
+    `Alex Morgan · alex@example.com · ${booking.guests} guests · ${booking.occasion}. A sample customer record keeps the request and its next step together.`,
     `After the restaurant accepts, the sample booking is confirmed for ${dateLabel} at ${booking.time}. A reminder would be scheduled before the visit.`,
     "The day after the visit, a short thank-you and review request would complete the journey. If the guest replies, a person takes over.",
   ] : [];
@@ -116,7 +116,7 @@ export function RestaurantDemo() {
     <dialog ref={dialog} className={styles.dialog} aria-labelledby="reservation-title" onClose={() => { setOpen(false); opener.current?.focus(); }} onClick={e => { if (e.target === e.currentTarget) close(); }}>
       <div className={styles.dialogInner}><div className={styles.dialogTop}><p className={styles.eyebrow}>Ember & Grain / Demo reservation</p><button onClick={close} aria-label="Close reservation" className={styles.close}>×</button></div>
         <h2 id="reservation-title">{booking ? "An evening, connected." : "Let’s find your table."}</h2>
-        <p className={styles.disclosure}>Simulation only. No real booking, email or CRM update. Nothing entered here is saved or sent.</p>
+        <p className={styles.disclosure}>Example only. No real booking, email or customer record is created. Nothing entered here is saved or sent.</p>
         {!booking ? <form ref={form} onSubmit={submit} className={styles.form}>
           <p className={styles.sampleGuest}>Your sample guest: <strong>Alex Morgan</strong> · alex@example.com</p>
           <div className={styles.formGrid}><label>Date<input type="date" name="date" min={earliest} defaultValue={earliest} required /></label><label>Time<select name="time" defaultValue="19:00"><option>18:00</option><option>19:00</option><option>20:00</option></select></label><label>Guests<select name="guests" defaultValue="2"><option value="2">2 guests</option><option value="4">4 guests</option><option value="6">6 guests</option></select></label><label>The occasion<select name="occasion" defaultValue="An evening out"><option>An evening out</option><option>A celebration</option><option>A catch-up</option></select></label></div>

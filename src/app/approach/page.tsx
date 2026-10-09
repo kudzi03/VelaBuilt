@@ -12,7 +12,7 @@ import { faqSchema } from "@/lib/schema";
 export const metadata: Metadata = pageMetadata({
   title: "Approach",
   description:
-    "How VelaBuilt works: understand the problem before proposing a solution, demonstrate rather than describe, build the smallest thing that fixes it, and hand over something you can run.",
+    "How VelaBuilt works: understand what is going wrong, show a working example, build what you need and teach your team how to use it.",
   path: "/approach",
 });
 
@@ -26,46 +26,46 @@ const generalFaqs = faqsFor("home");
 const STAGES = [
   {
     title: "Understand the problem",
-    body: "Not the brief — the problem. Where work is being lost, what the business already tried, and what is actually in the way. Most projects go wrong here, before anyone opens a design tool.",
+    body: "We look at where work is getting lost, what you have already tried and what is in the way before recommending anything.",
   },
   {
     title: "Establish what is true",
-    body: "What the site does today, where inquiries go, what is measured and what is guessed. We would rather find out that a rebuild is unnecessary than sell one.",
+    body: "We check what your website and tools do today, where enquiries go and what you can actually measure. A rebuild may not be needed.",
   },
   {
-    title: "Demonstrate, don’t describe",
-    body: "We show the thing working before it is finished. A demonstration you can click settles arguments that a document cannot.",
+    title: "Show you how it will work",
+    body: "You can try a working example before the whole project is finished and tell us what needs to change.",
   },
   {
-    title: "Build the smallest thing that fixes it",
-    body: "Scope grows quietly and takes projects with it. We build what the problem requires, properly, and leave room for what comes next.",
+    title: "Build what you need",
+    body: "We focus on the problem you came to solve and leave room to add more later if it helps.",
   },
   {
     title: "Hand over the controls",
-    body: "Documentation, access and a walkthrough. If you cannot change the follow-up message yourself, we have not finished the job.",
+    body: "We give you access, clear instructions and a walkthrough. Your team should be able to change a follow-up message without calling us.",
   },
 ] as const;
 
 const PRINCIPLES = [
   {
     title: "Problems before terminology",
-    body: "You should not need to know what a webhook is to buy from us. We lead with the thing that is going wrong, and keep the implementation where it belongs — in the build.",
+    body: "You should not have to learn technical terms to tell us what is going wrong. We explain the proposed fix in words you can use.",
   },
   {
     title: "No invented proof",
     body: "No fabricated testimonials, no borrowed client logos, no ranking screenshots, no dashboards of made-up numbers. Concepts are labeled concepts. Demonstrations are labeled demonstrations.",
   },
   {
-    title: "Automation with a person in it",
-    body: "Systems act where the action is obvious and escalate where it is not. Nothing that commits the business happens without a human decision behind it.",
+    title: "Your team stays in charge",
+    body: "Tools can handle routine steps. A person makes decisions that affect the business or a customer.",
   },
   {
-    title: "Performance is a design requirement",
-    body: "A beautiful site that takes six seconds to load is a broken site. Speed, accessibility and structure are part of the design work, not a phase afterwards.",
+    title: "The website needs to work well",
+    body: "A beautiful website still needs to load quickly, work on a phone and be easy for everyone to use.",
   },
   {
     title: "You own it",
-    body: "Your accounts, your data, your domain, your exports. We build systems you could take elsewhere — which is the only honest way to ask you to stay.",
+    body: "Your accounts, information and domain belong to you. We show you how to access and take your information with you.",
   },
   {
     title: "We will say no",
@@ -91,8 +91,8 @@ export default function ApproachPage() {
 
           <Reveal delay={120}>
             <p className="lede mt-9 max-w-[54ch]">
-              Most digital projects fail quietly: the wrong problem is solved
-              beautifully. Everything below exists to stop that happening.
+              We start with the problem you want to fix, show you how the solution
+              will work and build only what your business needs.
             </p>
           </Reveal>
         </div>

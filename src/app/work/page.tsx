@@ -11,7 +11,7 @@ import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
 export const metadata: Metadata = pageMetadata({
   title: "Work",
   description:
-    "Concept studies and working system demonstrations from VelaBuilt, each labeled for what it is. Client work is published only when delivered and agreed.",
+    "Explore websites and working examples from VelaBuilt. Each is clearly marked as client work, a concept or a demonstration.",
   path: "/work",
 });
 
@@ -32,7 +32,7 @@ export default function WorkPage() {
           <Breadcrumbs crumbs={crumbs} />
 
           <Reveal className="mt-10">
-            <Label>Real ideas · Real systems · Real possibilities</Label>
+            <Label>Real work · Clear examples</Label>
             <h1 className="display-xl mt-6 max-w-[13ch]">
               Explore our work.
             </h1>
@@ -40,9 +40,8 @@ export default function WorkPage() {
 
           <Reveal delay={120}>
             <p className="lede mt-9 max-w-[54ch]">
-              Every piece carries a label: client work delivered for a business,
-              a concept study, or a working demonstration on sample data. The
-              labels are the point.
+              See what we have built and how it works. We clearly mark work done
+              for a client, ideas for possible projects and examples using sample information.
             </p>
           </Reveal>
         </div>
@@ -80,7 +79,7 @@ export default function WorkPage() {
         <div className="shell">
           <Reveal>
             <h2 id="other-heading" className="display-md">
-              Concepts &amp; system demonstrations
+              Ideas &amp; working examples
             </h2>
           </Reveal>
           <div className="mt-10">
@@ -104,7 +103,7 @@ export default function WorkPage() {
               "@type": "CollectionPage",
               name: "Work — VelaBuilt",
               description:
-                "Concept studies and system demonstrations, each labeled for what it is.",
+                "Client work, ideas and working examples, each clearly marked for what it is.",
               about: workCategories.map((category) => ({
                 "@type": "Thing",
                 name: category.label,

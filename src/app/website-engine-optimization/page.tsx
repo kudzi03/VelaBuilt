@@ -6,7 +6,7 @@ import { ServicePage } from "@/components/pages/ServicePage";
 const service = getService("website-engine-optimization");
 
 export const metadata: Metadata = pageMetadata({
-  title: "Discoverability: technical SEO and structured data",
+  title: "Get found online | SEO and clear business information",
   description: service.summary,
   path: `/${service.slug}`,
 });

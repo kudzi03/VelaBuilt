@@ -231,7 +231,7 @@ export function SystemLabRoom({
             It sits on the floor of a photograph, so it carries its own
             shadow: solid (90%) under the text line, falling away above it. */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-6 bg-[linear-gradient(0deg,rgb(5_5_6/0.9)_0%,rgb(5_5_6/0.9)_78%,rgb(5_5_6/0)_100%)] p-5 sm:p-7">
-          <Label className="!text-[0.78rem]">Structure only · no customer data</Label>
+          <Label className="!text-[0.78rem]">Example only · no customer data</Label>
           <Label tone="champagne" className="!text-[0.78rem]">
             {active.name}
           </Label>
@@ -291,7 +291,7 @@ function LabDetail({
       </div>
 
       <div>
-        <Label>Connects to</Label>
+        <Label>Works with</Label>
         <ul className="mt-4 flex flex-wrap gap-2">
           {active.connects.map((id) => {
             const unit = systemModules.find((entry) => entry.id === id);
@@ -311,7 +311,7 @@ function LabDetail({
         </ul>
 
         <div className="mt-8 border-t border-[color:var(--color-hairline)] pt-6">
-          <Label>What a person still decides</Label>
+          <Label>What your team decides</Label>
           <p className="mt-3 max-w-[44ch] text-sm leading-relaxed text-[color:var(--color-muted)]">
             {active.oversight}
           </p>

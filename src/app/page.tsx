@@ -14,7 +14,7 @@ import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
 import { CapabilityCards } from "@/components/home/CapabilityCards";
 
 export const metadata: Metadata = pageMetadata({
-  title: `${site.name} — Websites, AI agents, automation and business systems`,
+  title: `${site.name} — Websites, follow-up and business tools`,
   description: site.shortDescription,
   path: "/",
   bareTitle: true,
@@ -52,20 +52,20 @@ export default function HomePage() {
       >
         <div className="shell grid w-full gap-8 lg:grid-cols-[1.25fr_1fr] lg:items-end">
           <Reveal>
-            <p className="label">VelaBuilt · Digital infrastructure studio</p>
+            <p className="label">VelaBuilt · Websites and business tools</p>
             <h1 id="opening-heading" className="display-xl mt-5 max-w-[14ch]">
-              We build the systems a business runs on.
+              A better website. Fewer missed opportunities.
             </h1>
           </Reveal>
           <Reveal delay={160} className="ground lg:justify-self-end">
             <p className="lede">
-              Websites that carry the weight of the business. AI agents that answer from what it
-              actually knows. Automation that follows up every enquiry. And the CRMs and dashboards
-              that hold it together.
+              We build websites that make your business easy to understand and contact. Then we
+              connect the tools that help you answer questions, follow up with people and keep
+              track of the work.
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <Link href="#capabilities" className="btn btn-primary">
-                <span>Explore</span>
+                <span>See what we do</span>
                 <ArrowRight />
               </Link>
               <StartProjectLink variant="ghost">Start a project</StartProjectLink>
@@ -104,7 +104,7 @@ export default function HomePage() {
                 </div>
                 <Reveal delay={420} className="mt-8">
                   <Link href={`/${service.slug}`} className="btn btn-ghost">
-                    <span>{service.name}: how it works</span>
+                    <span>See how we help with {service.shortName.toLowerCase()}</span>
                     <ArrowRight />
                   </Link>
                 </Reveal>
@@ -128,7 +128,7 @@ export default function HomePage() {
               <div>
                 <p className="label">06 — Selected work</p>
                 <h2 id="work-heading" className="display-lg mt-5">
-                  Built, and in use.
+                  See the work for yourself.
                 </h2>
               </div>
               <Link href="/work" className="btn btn-ghost">
@@ -236,7 +236,7 @@ export default function HomePage() {
           <Reveal className="ground mx-auto max-w-[48rem] text-center">
             <p className="label">08 — Start</p>
             <h2 id="contact-heading" className="display-lg mt-5">
-              Tell us what you’re building.
+              Tell us what is not working.
             </h2>
             <p className="mx-auto mt-5 max-w-[44ch] leading-relaxed">
               Four short questions. A person reads every enquiry and

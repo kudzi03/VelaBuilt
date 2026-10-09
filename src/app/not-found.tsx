@@ -7,7 +7,7 @@ import { Monogram } from "@/components/chrome/Monogram";
 
 export const metadata: Metadata = pageMetadata({
   title: "Page not found",
-  description: "That page does not exist on velabuilt.com. The homepage, capabilities, work and the enquiry form are one link away.",
+  description: "That page does not exist on velabuilt.com. You can explore our services, see our work or tell us what you need help with.",
   path: "/404",
   noIndex: true,
 });

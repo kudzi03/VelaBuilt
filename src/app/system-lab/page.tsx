@@ -12,7 +12,7 @@ import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
 export const metadata: Metadata = pageMetadata({
   title: "System Lab",
   description:
-    "Interactive demonstrations of the systems VelaBuilt builds: CRM, booking, follow-up, messaging, pipeline, AI assistance and analytics — and how each one hands off to the next.",
+    "See how customer records, follow-up, booking and reporting can work together, with your team in charge of important decisions.",
   path: "/system-lab",
 });
 
@@ -31,21 +31,19 @@ export default function SystemLabPage() {
           <Breadcrumbs crumbs={crumbs} />
 
           <Reveal className="mt-10">
-            <CategoryBadge tone="champagne">Interactive system demonstrations</CategoryBadge>
+            <CategoryBadge tone="champagne">See how the tools work together</CategoryBadge>
             <h1 className="display-xl mt-6 max-w-[14ch]">
-              The room where the parts meet.
+              See what happens after someone gets in touch.
             </h1>
           </Reveal>
 
           <Reveal delay={120}>
             <p className="lede mt-9 max-w-[54ch]">
-              Businesses are sold tools and left to work out how they relate. This
-              is the map: what each system does, what it hands off to, and what a
-              person still decides.
+              Follow an enquiry from first contact through reply, booking and follow-up.
+              See where the tools help and where your team stays in charge.
             </p>
             <p className="mt-6 max-w-[54ch] text-sm text-[color:var(--color-faint)]">
-              Structure only. No customer records, no sample dashboards presented
-              as real data, no numbers we cannot evidence.
+              This is a demonstration. It does not show real customer records or real results.
             </p>
           </Reveal>
         </div>
@@ -56,7 +54,7 @@ export default function SystemLabPage() {
       <section aria-labelledby="lab-heading" className="relative pb-24" data-demo="system-lab">
         <div className="shell">
           <h2 id="lab-heading" className="sr-only">
-            System modules
+            Parts of the example
           </h2>
           <SystemLabRoom />
         </div>
@@ -66,9 +64,9 @@ export default function SystemLabPage() {
       <section aria-labelledby="reference-heading" className="relative py-24 lg:py-28">
         <div className="shell">
           <Reveal>
-            <Label>Reference</Label>
+            <Label>How each part helps</Label>
             <h2 id="reference-heading" className="display-lg mt-5 max-w-[18ch]">
-              Every module, in full.
+              Explore each step.
             </h2>
           </Reveal>
 
@@ -82,12 +80,12 @@ export default function SystemLabPage() {
                   </p>
 
                   <div className="mt-7">
-                    <Label>Sequence</Label>
+                    <Label>What happens</Label>
                     <FlowChain steps={unit.flow} className="mt-3.5" />
                   </div>
 
                   <div className="mt-7 border-t border-[color:var(--color-hairline)] pt-5">
-                    <Label>Human oversight</Label>
+                    <Label>What your team decides</Label>
                     <p className="mt-2.5 max-w-[46ch] text-sm leading-relaxed text-[color:var(--color-muted)]">
                       {unit.oversight}
                     </p>
@@ -99,7 +97,7 @@ export default function SystemLabPage() {
 
           <Reveal delay={120} className="mt-14">
             <StartProjectLink variant="primary" focus="follow-up">
-              Map this onto my business
+              Talk about my business
             </StartProjectLink>
           </Reveal>
         </div>

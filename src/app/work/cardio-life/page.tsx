@@ -10,7 +10,7 @@ import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
 export const metadata: Metadata = pageMetadata({
   title: "Cardio Life — corporate training, Botswana",
   description:
-    "A clearer digital presence for an accredited workplace training provider: positioning, information architecture and a direct path from training requirement to quotation.",
+    "A website that makes Cardio Life’s training and accreditation easy to check, with a clear way to request a quote.",
   path: "/work/cardio-life",
 });
 
@@ -24,12 +24,12 @@ const LIVE_URL = "https://www.cardiolife.co.bw/";
 
 const SERVICES = [
   "Website strategy",
-  "Positioning",
-  "Information architecture",
-  "UX/UI",
+  "Clear messaging",
+  "Page structure",
+  "Website design",
   "Development",
   "Mobile experience",
-  "Quotation journey",
+  "Quote requests",
 ] as const;
 
 /**
@@ -59,8 +59,8 @@ export default function CardioLifePage() {
 
           <Reveal delay={120}>
             <p className="lede mt-9 max-w-[46ch]">
-              A clearer digital presence for an accredited workplace training
-              provider.
+              A website that helps businesses find the right training, check
+              accreditation and ask for a quote.
             </p>
 
             <a

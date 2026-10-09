@@ -18,31 +18,31 @@ export const faqs: readonly FaqEntry[] = [
   {
     question: "What does VelaBuilt do?",
     answer:
-      "VelaBuilt designs and builds websites, AI agents, business automation and operational systems such as CRMs and dashboards. The work is usually connected: the website brings the enquiry in, and the systems behind it make sure it is answered, followed up and recorded.",
+      "VelaBuilt builds websites that help people understand and contact your business. We also build tools that answer common questions, help you follow up and keep customer work organised.",
     scope: "home",
   },
   {
     question: "Does VelaBuilt build websites?",
     answer:
-      "Yes — premium websites and interactive experiences, including real-time 3D where it earns its place. Each build covers positioning, design, engineering, performance, accessibility and the path from first visit to enquiry.",
+      "Yes. We build websites that show what you do, look right for your business, work well on a phone and make it easy for visitors to get in touch. Interactive features are included when they help the visitor.",
     scope: "home",
   },
   {
-    question: "Does VelaBuilt build AI agents?",
+    question: "Can VelaBuilt add an AI assistant?",
     answer:
-      "Yes. Voice and chat agents grounded in a business’s own information, with a defined set of actions and a person kept in charge of decisions that matter.",
+      "Yes. We build voice and chat assistants that answer using information you approve. They hand questions to your team when they do not know or a person needs to decide.",
     scope: "home",
   },
   {
-    question: "Can VelaBuilt automate business workflows?",
+    question: "Can VelaBuilt help us follow up and reduce admin?",
     answer:
-      "Yes. The most common are enquiry capture, qualification, follow-up sequences, reminders, booking and CRM updates — plus the repeated admin that sits between tools.",
+      "Yes. We can bring enquiries into one place, send timely follow-ups, set reminders, help with bookings and reduce repeated data entry.",
     scope: "home",
   },
   {
-    question: "Does VelaBuilt build CRM systems?",
+    question: "Can VelaBuilt help us keep customer details in one place?",
     answer:
-      "Yes — configured on an existing platform or built to fit, with the enquiry handling, dashboards and workflows around it. Which is right depends on the business, and we say which.",
+      "Yes. We can improve the customer system you already use or build one that fits your work. We will recommend the simpler option when it does the job.",
     scope: "home",
   },
   {
@@ -60,25 +60,25 @@ export const faqs: readonly FaqEntry[] = [
   {
     question: "Can you improve my existing website instead of rebuilding it?",
     answer:
-      "Sometimes, and we will tell you when that is the honest answer. If the structure and platform are sound, targeted work on message, conversion path and performance is faster and cheaper than a rebuild.",
+      "Yes, when the existing site is sound. Clearer words, a better path to contact and faster pages may be enough, and we will say so instead of recommending a rebuild.",
     scope: "website-conversion-systems",
   },
   {
     question: "How long does a website build take?",
     answer:
-      "It depends on scope, and the timeline is agreed in writing before work starts. The variable is rarely design or development — it is how long it takes to agree what the business is actually saying.",
+      "It depends on what the site needs. We agree on a timeline in writing before work starts, including time to get the message and content right.",
     scope: "website-conversion-systems",
   },
   {
-    question: "Will an AI agent make things up?",
+    question: "Will the AI assistant make things up?",
     answer:
-      "It should not, and it is built not to. The agent answers from an explicit knowledge base, is told what it must not invent — prices, commitments, results — and says it does not know rather than guessing.",
+      "It is built to answer from information you approve and to say when it does not know. It must not invent prices, promises or results.",
     scope: "ai-systems",
   },
   {
-    question: "Can an agent take actions, not just answer?",
+    question: "Can the assistant do more than answer questions?",
     answer:
-      "Yes, through tools defined in advance — opening a form, booking, looking something up, updating a record. It can only do what it has been given a tool for, and anything that commits the business can require a person’s approval.",
+      "Yes, within limits you approve. It can help with tasks such as opening a form, checking information or updating a record. Important decisions can require your team’s approval.",
     scope: "ai-systems",
   },
   {
@@ -90,25 +90,25 @@ export const faqs: readonly FaqEntry[] = [
   {
     question: "Will automated follow-up sound like a robot chasing my customers?",
     answer:
-      "Not if it is built properly. Messages use your language and stop the moment a person replies, the sequence is short rather than relentless, and anything that needs judgment is escalated to you.",
+      "The messages use your words and stop when someone replies. We keep them helpful and limited, and your team handles situations that need a personal response.",
     scope: "lead-follow-up-systems",
   },
   {
-    question: "Do we have to replace our current CRM?",
+    question: "Do we have to replace our customer records tool?",
     answer:
-      "Often not. If the platform is sound and only badly configured, fixing the configuration is the recommendation. A rebuild is only worth it when the platform itself is the constraint.",
+      "Usually not. If your current customer system can do the job, we can set it up to fit your work. We only recommend replacing it when it cannot meet your needs.",
     scope: "business-systems",
   },
   {
-    question: "Is this just SEO with a different name?",
+    question: "Is this the same as SEO?",
     answer:
-      "It includes technical SEO, but the goal is broader: making a business straightforward to find and accurate to describe, whether the visitor arrives through a search engine, a map or an AI assistant.",
+      "Search engine optimisation (SEO) is part of it. We also make your business information clear and consistent, so people can understand what you offer wherever they find you online.",
     scope: "website-engine-optimization",
   },
   {
     question: "Can you guarantee first-page rankings?",
     answer:
-      "No, and neither can anyone else honestly. We can make sure the foundations are correct, the site is fast and crawlable, and that you can see what changed.",
+      "No. Nobody can honestly promise a top ranking. We can fix issues that stop search engines finding or understanding your pages, then show you what changed.",
     scope: "website-engine-optimization",
   },
 ] as const;

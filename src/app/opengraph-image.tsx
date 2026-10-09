@@ -75,10 +75,10 @@ export default function OpengraphImage() {
                 fontWeight: 600,
               }}
             >
-              We build the systems a business runs on.
+              A better website. Fewer missed opportunities.
             </div>
             <div style={{ display: "flex", color: "#34322e", fontSize: 27, lineHeight: 1.4 }}>
-              Websites, AI agents, automation and business systems.
+              Websites, follow-up and tools that keep work organised.
             </div>
           </div>
 

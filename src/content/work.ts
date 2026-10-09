@@ -34,9 +34,9 @@ export const workCategories: readonly WorkCategoryMeta[] = [
   },
   {
     id: "system-demo",
-    label: "System Demo",
+    label: "Working Example",
     definition:
-      "Working demonstrations of systems we build, running on sample data. The mechanics are real; the records are not.",
+      "Working examples of tools we build, using made-up customer details so you can try them safely.",
   },
 ] as const;
 
@@ -74,15 +74,15 @@ export const workItems: readonly WorkItem[] = [
     problem:
       "HR, procurement and safety teams have to work out which training is required, satisfy themselves that the provider is genuinely accredited, and get to a quotation.",
     response:
-      "A focused commercial website that presents Cardio Life’s training and accreditation clearly, and gives prospective clients a direct path from training requirement to inquiry.",
+      "A website that clearly shows Cardio Life’s courses and accreditation, so a potential customer can find the right training and ask for a quote.",
     disciplines: [
       "Website strategy",
-      "Positioning",
-      "Information architecture",
-      "UX/UI",
+      "Clear messaging",
+      "Page structure",
+      "Website design",
       "Development",
       "Mobile experience",
-      "Quotation journey",
+      "Quote requests",
     ],
     href: "/work/cardio-life",
     liveUrl: "https://www.cardiolife.co.bw/",
@@ -96,8 +96,8 @@ export const workItems: readonly WorkItem[] = [
     problem:
       "An inquiry arrives on a Friday afternoon and is remembered on Tuesday, if at all.",
     response:
-      "An interactive walkthrough of capture, qualification, sequenced follow-up, escalation and booking — with the point a person takes over made explicit.",
-    disciplines: ["CRM", "Follow-up", "Booking", "AI assistance"],
+      "A working example of what happens after someone gets in touch: their request is recorded, followed up and passed to a person when needed.",
+    disciplines: ["Customer records", "Follow-up", "Booking", "AI help"],
     href: "/system-lab#follow-up",
   },
   {
@@ -107,8 +107,8 @@ export const workItems: readonly WorkItem[] = [
     problem:
       "Business owners are sold tools, then left to work out how the tools relate to each other.",
     response:
-      "A room of connected modules you can select to see exactly what hands off to what, and what a person still decides.",
-    disciplines: ["Systems design", "Interaction", "Documentation"],
+      "An interactive example showing how customer details, follow-up and booking can work together, and where your team stays in charge.",
+    disciplines: ["Connected tools", "Interactive example", "Clear instructions"],
     href: "/system-lab",
   },
   {
@@ -116,20 +116,20 @@ export const workItems: readonly WorkItem[] = [
     title: "Ember & Grain",
     category: "concept",
     problem: "A restaurant needs more than a beautiful first impression. It needs a clear path to a table.",
-    response: "A fictional restaurant concept with an immersive interior, seasonal menu and locally simulated reservation journey.",
+    response: "A fictional restaurant website where visitors can step inside, explore the menu and try a sample table request.",
     disciplines: ["Website design", "Development", "Booking journey"],
     href: "/demo/ember-and-grain",
     linkLabel: "Explore the concept",
   },
   {
     slug: "discoverability-concept",
-    title: "Entity & Answer Surface",
+    title: "Get Found and Understood",
     category: "concept",
     problem:
-      "A business is described inaccurately by the systems people now ask first.",
+      "People search for a business, but the information they find is incomplete or wrong.",
     response:
-      "A study in structuring a business as a consistent entity — pages, structured data and answer-first content that read the same to a person, a crawler and a language model.",
-    disciplines: ["Information architecture", "Structured data", "Content structure"],
+      "A study of how clear pages and consistent business facts help both people and search tools understand what a company offers.",
+    disciplines: ["Clear pages", "Consistent information", "Helpful answers"],
   },
 ] as const;
 
