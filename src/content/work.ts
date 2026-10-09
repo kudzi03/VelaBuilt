@@ -102,7 +102,7 @@ export const workItems: readonly WorkItem[] = [
   },
   {
     slug: "system-lab-demo",
-    title: "System Lab",
+    title: "See How It Works",
     category: "system-demo",
     problem:
       "Business owners are sold tools, then left to work out how the tools relate to each other.",

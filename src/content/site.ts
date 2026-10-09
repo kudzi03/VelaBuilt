@@ -86,7 +86,7 @@ export const footerNav = [
       { label: "Approach", href: "/approach" },
       { label: "About", href: "/about" },
       { label: "Work", href: "/work" },
-      { label: "System Lab", href: "/system-lab" },
+      { label: "See How It Works", href: "/system-lab" },
     ],
   },
   {

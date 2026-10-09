@@ -7,9 +7,9 @@ export function RestaurantShowcase() {
   return <section id="showcase" data-chapter="reading" className={`sheet ${styles.section}`} aria-labelledby="showcase-heading">
     <div className="shell">
       <Reveal className={styles.heading}>
-        <div><p className="label">In the making · An interactive concept</p>
+        <div><p className="label">Try an example website · Fictional restaurant</p>
           <h2 id="showcase-heading" className="display-lg mt-5">A first impression.<br />A next step.</h2></div>
-        <p className={styles.intro}>Step inside a restaurant website. Explore the menu, request a table, and see how one enquiry becomes a connected customer journey.</p>
+        <p className={styles.intro}>Step inside a restaurant website. Explore the menu, request a table, and see what happens after the restaurant hears from you.</p>
       </Reveal>
       <Reveal>
         <Link href="/demo/ember-and-grain" prefetch={false} className={styles.preview} aria-label="Explore Ember & Grain, a fictional restaurant website concept">
@@ -19,7 +19,7 @@ export function RestaurantShowcase() {
           <div className={styles.bottom}><span>Original concept · Fictional restaurant</span><span className={styles.enter}>Enter the experience <span aria-hidden="true">↗</span></span></div>
         </Link>
       </Reveal>
-      <div className={styles.caption}><p>Designed to draw you in. Built to carry the enquiry through.</p><p>Responsive website · Interactive menu · Simulated bookings</p></div>
+      <div className={styles.caption}><p>Designed to draw you in and make booking easy.</p><p>Works on phones · Interactive menu · Sample bookings</p></div>
     </div>
   </section>;
 }

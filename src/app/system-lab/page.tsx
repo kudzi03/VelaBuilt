@@ -10,7 +10,7 @@ import { CategoryBadge, Label } from "@/components/ui/Primitives";
 import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
 
 export const metadata: Metadata = pageMetadata({
-  title: "System Lab",
+  title: "See how enquiries and follow-up work together",
   description:
     "See how customer records, follow-up, booking and reporting can work together, with your team in charge of important decisions.",
   path: "/system-lab",
@@ -18,7 +18,7 @@ export const metadata: Metadata = pageMetadata({
 
 const crumbs = [
   { name: "Home", path: "/" },
-  { name: "System Lab", path: "/system-lab" },
+  { name: "See How It Works", path: "/system-lab" },
 ];
 
 export default function SystemLabPage() {
