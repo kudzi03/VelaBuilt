@@ -76,45 +76,7 @@ export default function HomePage() {
 
       <RestaurantShowcase />
 
-      {/* ── 02–05 · WHAT WE BUILD ────────────────────────────────────────── */}
-      <div id="capabilities">
-        <h2 className="sr-only">What VelaBuilt builds</h2>
-        {primaryServices.map((service, i) => (
-          <section
-            key={service.slug}
-            id={service.area}
-            data-chapter={service.area}
-            data-label={service.name}
-            aria-labelledby={`${service.area}-heading`}
-            className="chapter"
-          >
-            <div className="shell w-full">
-              <div className="ground max-w-[36rem]">
-                <Reveal>
-                  <p className="label chapter__index">
-                    {String(i + 2).padStart(2, "0")} — {service.name}
-                  </p>
-                  <h3 id={`${service.area}-heading`} className="display-lg mt-5">
-                    {service.chapterHeading}
-                  </h3>
-                  <p className="mt-6 max-w-[48ch] leading-relaxed">{service.chapterBody}</p>
-                </Reveal>
-                <div className="mt-9">
-                  <CapabilityCards service={service} headingLevel="h4" />
-                </div>
-                <Reveal delay={420} className="mt-8">
-                  <Link href={`/${service.slug}`} className="btn btn-ghost">
-                    <span>See how we help with {service.shortName.toLowerCase()}</span>
-                    <ArrowRight />
-                  </Link>
-                </Reveal>
-              </div>
-            </div>
-          </section>
-        ))}
-      </div>
-
-      {/* ── 06 · WORK ────────────────────────────────────────────────────── */}
+      {/* ── 02 · REAL CLIENT WORK ────────────────────────────────────────── */}
       {cardio ? (
         <section
           id="work"
@@ -123,10 +85,10 @@ export default function HomePage() {
           aria-labelledby="work-heading"
           className="sheet"
         >
-          <div className="shell py-24 lg:py-32">
+          <div className="shell py-16 lg:py-20">
             <Reveal className="flex flex-wrap items-end justify-between gap-6">
               <div>
-                <p className="label">06 — Selected work</p>
+                <p className="label">02 — Real client work</p>
                 <h2 id="work-heading" className="display-lg mt-5">
                   See the work for yourself.
                 </h2>
@@ -137,7 +99,7 @@ export default function HomePage() {
               </Link>
             </Reveal>
 
-            <article className="mt-14 grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:items-center">
+            <article className="mt-10 grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:items-center">
               <Reveal className="work-frame">
                 <Link href={cardio.href ?? "/work"} aria-label="Cardio Life — read the case study">
                   <Image
@@ -195,6 +157,44 @@ export default function HomePage() {
           </div>
         </section>
       ) : null}
+
+      {/* ── 03–06 · WHAT WE BUILD ────────────────────────────────────────── */}
+      <div id="capabilities">
+        <h2 className="sr-only">What VelaBuilt builds</h2>
+        {primaryServices.map((service, i) => (
+          <section
+            key={service.slug}
+            id={service.area}
+            data-chapter={service.area}
+            data-label={service.name}
+            aria-labelledby={`${service.area}-heading`}
+            className="chapter"
+          >
+            <div className="shell w-full">
+              <div className="ground max-w-[36rem]">
+                <Reveal>
+                  <p className="label chapter__index">
+                    {String(i + 3).padStart(2, "0")} — {service.name}
+                  </p>
+                  <h3 id={`${service.area}-heading`} className="display-lg mt-5">
+                    {service.chapterHeading}
+                  </h3>
+                  <p className="mt-6 max-w-[48ch] leading-relaxed">{service.chapterBody}</p>
+                </Reveal>
+                <div className="mt-9">
+                  <CapabilityCards service={service} headingLevel="h4" />
+                </div>
+                <Reveal delay={420} className="mt-8">
+                  <Link href={`/${service.slug}`} className="btn btn-ghost">
+                    <span>See how we help with {service.shortName.toLowerCase()}</span>
+                    <ArrowRight />
+                  </Link>
+                </Reveal>
+              </div>
+            </div>
+          </section>
+        ))}
+      </div>
 
       {/* ── 07 · PLAIN ANSWERS ───────────────────────────────────────────── */}
       <section

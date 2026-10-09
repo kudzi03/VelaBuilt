@@ -26,7 +26,7 @@ const PAGE = P(0.25, 0.06, 0.8, 0.95);
 const PAGE_M = P(0.2, 0.3, 0.44, 0.9);
 
 export const CHAPTERS: Record<string, ChapterSignal> = {
-  opening: entry("opening", "armature", P(0.03, 0.12, 0.84), P(0, 0.2, 0.92)),
+  opening: entry("opening", "armature", P(0.23, 0.2, 0.55), P(0, 0.245, 0.58)),
   digital: entry("digital", "planes", SIDE, SIDE_M),
   ai: entry("ai", "aperture", SIDE, SIDE_M),
   automation: entry("automation", "circuit", P(0.2, 0.01, 0.84), P(0, 0.235, 0.52)),
@@ -59,11 +59,11 @@ export function chapter(id: string | undefined | null): ChapterSignal | null {
 /** The homepage, in order, as the instrument strip counts it. */
 export const HOME_SEQUENCE = [
   { id: "opening", label: "VelaBuilt" },
+  { id: "work", label: "Work" },
   { id: "digital", label: "Digital Experiences" },
   { id: "ai", label: "AI Systems" },
   { id: "automation", label: "Automation" },
   { id: "systems", label: "Business Systems" },
-  { id: "work", label: "Work" },
   { id: "answers", label: "Answers" },
   { id: "contact", label: "Contact" },
 ] as const;

@@ -490,6 +490,12 @@
     border: 1px solid rgb(22 21 19 / 0.06);
   }
 
+  .vela-stage[data-stage-chapter="opening"] .vela-rings {
+    left: 73%;
+    top: 30%;
+    width: min(68svh, 80vw);
+  }
+
   [data-rings="off"] .vela-rings {
     opacity: 0;
     scale: 1.08;
@@ -499,6 +505,12 @@
     .vela-rings {
       top: 30%;
       width: 128vw;
+    }
+
+    .vela-stage[data-stage-chapter="opening"] .vela-rings {
+      left: 50%;
+      top: 25.5%;
+      width: min(100vw, 54svh);
     }
   }
 
@@ -510,6 +522,17 @@
     transition:
       transform 1400ms var(--ease-cinematic),
       opacity 900ms var(--ease-cinematic);
+  }
+
+  /* Match the opening placement before the stage's client effect runs. */
+  .vela-stage[data-stage-chapter="opening"] .vela-still-wrap {
+    transform: translate3d(23vw, -20svh, 0) scale(0.55);
+  }
+
+  @media (max-width: 819px) {
+    .vela-stage[data-stage-chapter="opening"] .vela-still-wrap {
+      transform: translate3d(0, -24.5svh, 0) scale(0.58);
+    }
   }
 
   .vela-still {
@@ -757,16 +780,25 @@
     box-shadow: 0 0 10px rgb(242 154 56 / 0.8);
   }
 
-  /* The opening: the object holds the centre; the words sit at the foot. */
+  /* The opening keeps the object above the message without making visitors
+     scroll through an empty screen before reaching the first example. */
   .chapter--opening {
     align-items: flex-end;
-    padding-bottom: clamp(5.5rem, 10svh, 7.5rem);
+    min-height: 84svh;
+    padding-bottom: clamp(3.5rem, 7svh, 5rem);
   }
 
   @media (max-width: 819px) {
     .chapter--opening {
-      padding-top: 58svh;
-      padding-bottom: 5rem;
+      min-height: auto;
+      padding-top: 37svh;
+      padding-bottom: 3rem;
+    }
+  }
+
+  @media (max-width: 359px) {
+    .chapter--opening .display-xl {
+      font-size: 1.7rem;
     }
   }
 

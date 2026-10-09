@@ -178,6 +178,7 @@ export function VelaStage({ still }: { readonly still: ReactNode }) {
     <div
       className="vela-stage"
       data-live={live || undefined}
+      data-stage-chapter={chapter}
       data-rings={chapter === "opening" || chapter === "contact" ? "on" : "off"}
     >
       <div className="vela-bg" aria-hidden="true" />
