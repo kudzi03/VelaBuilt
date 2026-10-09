@@ -6,8 +6,7 @@
  * Routes × widths: console errors, failed requests, horizontal overflow,
  * exactly one <h1>, no text under 12px, JSON-LD that parses, and the WebGL
  * object actually going live. Then: no-JavaScript and reduced-motion
- * fallbacks, a keyboard walk, the enquiry dialog, and the voice entry flow
- * (consent sheet, microphone refused, Vela unavailable).
+ * fallbacks, a keyboard walk, the enquiry dialog, and the restaurant demo and complete voice removal.
  *
  * Set CHROME_PATH to use a specific Chromium. Software GL flags are passed so
  * it runs in CI containers; real hardware is faster.
@@ -16,7 +15,7 @@ import { chromium } from "playwright";
 
 const BASE = process.argv[2]?.startsWith("http") ? process.argv[2] : "http://127.0.0.1:3000";
 const ROUTES = [
-  "/", "/website-conversion-systems", "/ai-systems", "/lead-follow-up-systems", "/business-systems",
+  "/", "/demo/ember-and-grain", "/website-conversion-systems", "/ai-systems", "/lead-follow-up-systems", "/business-systems",
   "/website-engine-optimization", "/work", "/work/cardio-life", "/system-lab", "/approach", "/about",
   "/start", "/privacy", "/cookies", "/this-route-does-not-exist",
 ];
@@ -164,28 +163,44 @@ for (const vp of WIDTHS) {
   await page.close();
 }
 
-/* ── voice entry: consent first, refusal and unavailability handled ──── */
+/* ── public voice integration is gone; demo stays local ─────────────── */
 {
-  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, permissions: [] });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await ctx.newPage();
-  let sdkEarly = false;
-  page.on("request", (r) => {
-    if (/elevenlabs/.test(r.url())) sdkEarly = true;
+  const external = [];
+  page.on("request", r => {
+    if (/elevenlabs|livekit|api\/voice/i.test(r.url())) external.push(r.url());
   });
   await page.goto(BASE + "/", { waitUntil: "networkidle" });
-  if (sdkEarly) fail("voice", "contacted ElevenLabs before the visitor chose to talk");
-  await page.getByRole("button", { name: /talk to vela/i }).first().click();
-  const consent = await page.waitForSelector("dialog.voice-consent[open]", { timeout: 5000 }).then(() => true, () => false);
-  if (!consent) fail("voice", "consent sheet did not open");
-  const micBefore = await page.evaluate(() => navigator.permissions.query({ name: "microphone" }).then((p) => p.state).catch(() => "?"));
-  if (micBefore === "granted") fail("voice", "microphone granted before consent");
-  await page.getByRole("button", { name: /start talking/i }).click();
-  const panel = await page.waitForSelector(".voice-panel [role=alert]", { timeout: 15000 }).then((h) => h.textContent(), () => null);
-  if (!panel) fail("voice", "no plain failure message when the microphone is refused or Vela is unavailable");
-  const stillWorks = await page.getByRole("link", { name: /^work$/i }).first().isVisible();
-  if (!stillWorks) fail("voice", "navigation unusable after a voice failure");
-  await page.getByRole("button", { name: /^close$/i }).click().catch(() => {});
-  console.log("voice failure message:", panel?.trim());
+  if (await page.getByRole("button", { name: /talk to vela/i }).count()) fail("voice removal", "launcher remains");
+  const retired = await ctx.request.post(BASE + "/api/voice/session");
+  if (retired.status() !== 404) fail("voice removal", `retired API returned ${retired.status()}`);
+  await page.goto(BASE + "/demo/ember-and-grain", { waitUntil: "networkidle" });
+  if (await page.locator(".vela-canvas").count()) fail("demo", "background WebGL mounted unnecessarily");
+  const posts = [];
+  page.on("request", r => { if (r.method() === "POST" && !r.url().endsWith("/api/track")) posts.push(r.url()); });
+  await page.getByRole("button", { name: "From the hearth", exact: true }).click();
+  await page.getByLabel("Vegetarian dishes only").check();
+  if (await page.getByRole("heading", { name: "Wood-fired linefish" }).count()) fail("demo", "vegetarian filter left fish visible");
+  if (!await page.getByRole("heading", { name: "The autumn garden" }).isVisible()) fail("demo", "vegetarian dish missing");
+  await page.getByRole("button", { name: /find a table/i }).click();
+  await page.getByLabel("Guests", { exact: true }).selectOption("4");
+  await page.getByLabel("Time", { exact: true }).selectOption("20:00");
+  await page.getByRole("button", { name: /send a demo request/i }).click();
+  await page.locator("#demo-confirmation").waitFor();
+  for (const label of ["instant response", "guest record", "booking & reminder", "the follow-up"]) {
+    await page.getByRole("button", { name: new RegExp(`show ${label}`, "i") }).click();
+  }
+  if (!await page.getByRole("link", { name: /build a journey like this/i }).isVisible()) fail("demo", "journey did not reach the follow-up");
+  if (posts.length) fail("demo", `simulation sent real requests: ${posts.join(", ")}`);
+  if (external.length) fail("voice removal", `voice requests remain: ${external.join(", ")}`);
+  if ((await ctx.cookies()).length) fail("demo", "cookies created");
+  const storage = await page.evaluate(() => localStorage.length + sessionStorage.length);
+  if (storage) fail("demo", "simulation persisted browser storage");
+  await page.keyboard.press("Escape");
+  if (await page.locator("dialog[open]").count()) fail("demo", "Escape failed to close reservation");
+  const restored = await page.evaluate(() => document.activeElement?.textContent);
+  if (!restored?.includes("Find a table")) fail("demo", "reservation did not return focus to opener");
   await ctx.close();
 }
 
@@ -194,4 +209,4 @@ if (failures.length) {
   console.log(`\n${failures.length} failure(s):\n` + [...new Set(failures)].map((f) => ` ✗ ${f}`).join("\n"));
   process.exit(1);
 }
-console.log(`\n✓ ${ROUTES.length} routes × ${WIDTHS.length} widths, no-JS, reduced motion, keyboard, enquiry, voice entry — all clean`);
+console.log(`\n✓ ${ROUTES.length} routes × ${WIDTHS.length} widths, no-JS, reduced motion, keyboard, enquiry, restaurant journey, voice removal — all clean`);

@@ -18,13 +18,7 @@ import type { ShapeId } from "./geometry";
  * What Vela is doing. The object's behaviour is keyed off this, so the list
  * is the design: each state has a distinct physical response.
  */
-export type Presence = "dormant"; slow internal movement
-  | "aware" // pointer or focus is on the object
-  | "connecting" // the visitor pressed it; session opening, mic being asked for
-  | "listening" // the visitor has the floor
-  | "thinking" // the visitor finished; the agent has not started speaking
-  | "speaking" // the agent has the floor
-  | "acting"; // a client tool is moving the site
+export type Presence = "dormant";
 
 /** How the object is placed in the frame for a given chapter. */
 export interface Placement {
