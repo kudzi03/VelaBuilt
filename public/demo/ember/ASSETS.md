@@ -1,5 +1,15 @@
 # Original concept images
 
+## Walkthrough video
+
+`walkthrough.mp4`: original image-to-video generation using the interior below. Runway task `a303f923-9ab8-46e1-9a1b-2f9ecba5e096`, generated 2026-10-09 using Gen-4 Turbo, 1280 × 720, 24 fps, 5.04 seconds. User approved the five-second, 25-credit generation. An earlier attempt rejected the website image hostname and refunded its credits; the successful request used a direct Runway upload. The deployed H.264 file is silent, optimised with CRF 21 and fast-start, 1,865,944 bytes. This is generated footage with a gentle forward camera move and lateral sway; it is not a real restaurant recording or an interactive 3D tour.
+
+Prompt: “Continuous smooth eye-level steadicam tracking shot physically moving forward down the restaurant's central aisle toward the arched doorway. The camera travels several metres into the room, passing close to the foreground tables and chairs, which slide naturally out of frame on both sides. Strong realistic perspective parallax between nearby furniture and the distant architecture. The pendant lamps pass overhead as the far arch draws closer. Warm candlelight and the hearth flicker subtly. Preserve the elegant restaurant's architecture, stationary furniture, walnut, linen and amber blue-hour atmosphere. Slow gently at the end. One coherent cinematic architectural walkthrough.”
+
+The prompt describes intended movement; the inspected result is subtler than the original reference's doorway entry and room turn. No source-video pixels, branding or watermark are included in the deployed clip.
+
+## Still images
+
 Created with the built-in ImageGen tool on 2026-10-09 for this fictional concept. Neither image is copied from the supplied reference clip. Images are AI-generated concept photography, not photographs of an existing client or restaurant. Source PNGs remain in the local Codex generated-images directory; the deployable assets are the WebP files beside this document.
 
 - `interior.webp`: 1536 × 1024, 297,706 bytes.

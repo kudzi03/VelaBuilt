@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { site } from "@/content/site";
+import { RestaurantArrival } from "./RestaurantArrival";
 import styles from "./RestaurantDemo.module.css";
 
 const menus = {
@@ -42,21 +43,6 @@ export function RestaurantDemo() {
   const dialog = useRef<HTMLDialogElement>(null);
   const form = useRef<HTMLFormElement>(null);
   const opener = useRef<HTMLElement | null>(null);
-  const hero = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const el = hero.current;
-    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    let frame = 0;
-    const update = () => {
-      frame = 0;
-      const y = Math.max(0, Math.min(1, -el.getBoundingClientRect().top / el.offsetHeight));
-      el.style.setProperty("--travel", `${y * 7}%`);
-    };
-    const scroll = () => { if (!frame) frame = requestAnimationFrame(update); };
-    window.addEventListener("scroll", scroll, { passive: true });
-    return () => { window.removeEventListener("scroll", scroll); cancelAnimationFrame(frame); };
-  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -101,15 +87,7 @@ export function RestaurantDemo() {
 
   return <div className={styles.demo} data-demo="ember-and-grain">
     <div className={styles.studioBar}><Link href="/#showcase">← Back to VelaBuilt</Link><span>Fictional restaurant · Interactive concept</span><Link href="/start">Build something like this ↗</Link></div>
-    <section ref={hero} className={styles.hero} aria-labelledby="restaurant-title">
-      <div className={styles.heroImage}><Image src="/demo/ember/interior.webp" alt="Warmly lit restaurant interior with linen tables, arched windows and an open hearth; original concept imagery" fill sizes="(max-width: 800px) 1200px, 100vw" priority /></div>
-      <nav className={styles.nav} aria-label="Restaurant concept">
-        <a href="#restaurant-title" className={styles.brand}>e<span>&</span>g<span className={styles.brandLine}>Ember & Grain</span></a>
-        <div><a href="#story">Our table</a><a href="#menu">The menu</a><button onClick={reserve} className={styles.navBook}>Find a table <span aria-hidden="true">↗</span></button></div>
-      </nav>
-      <div className={styles.heroWords}><p className={styles.eyebrow}>A little fire. A lot of heart.</p><h1 id="restaurant-title"><span>EMBER</span><span><i>&</i> GRAIN</span></h1></div>
-      <div className={styles.heroBottom}><p>Food with a sense of place.<br />Evenings with no reason to rush.</p><a href="#story">Come on in <span aria-hidden="true">↓</span></a><span className={styles.heroNote}>Seasonal kitchen<br />An original VelaBuilt concept</span></div>
-    </section>
+    <RestaurantArrival reserve={reserve} bookingOpen={open} />
 
     <section id="story" className={styles.story} aria-labelledby="story-title">
       <div className={styles.storyHead}><p className={styles.eyebrow}>01 / Around our table</p><p>Unhurried by nature.<br />Generous by design.</p></div>
