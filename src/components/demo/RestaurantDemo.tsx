@@ -142,7 +142,7 @@ export function RestaurantDemo() {
           <p className={styles.journeyLabel}>Behind the experience · Step {step + 1} of 5</p>
           <ol className={styles.steps} aria-label="Simulated customer journey">{stages.map((label, i) => <li key={label} data-active={i === step} data-complete={i < step}><span>{i < step ? "✓" : String(i + 1).padStart(2, "0")}</span>{label}</li>)}</ol>
           <div className={styles.stepDetail} aria-live="polite" aria-atomic="true"><h3>{stages[step]}</h3><p>{details[step]}</p><small>{step === 3 ? "Human approval before a booking is confirmed." : "Illustrative behaviour · no external service is connected."}</small></div>
-          <div className={styles.journeyActions}>{step < 4 ? <button className={styles.darkButton} onClick={() => setStep(s => s + 1)}>Show {stages[step + 1].toLowerCase()} <span aria-hidden="true">→</span></button> : <Link href="/start" onClick={close} className={styles.darkButton}>Build a journey like this ↗</Link>}<button className={styles.textLink} onClick={() => { setBooking(null); setStep(0); }}>Try another request</button></div>
+          <div className={styles.journeyActions}>{step < 4 ? <button className={styles.darkButton} onClick={() => setStep(s => s + 1)}>Show {stages[step + 1]?.toLowerCase()} <span aria-hidden="true">→</span></button> : <Link href="/start" onClick={close} className={styles.darkButton}>Build a journey like this ↗</Link>}<button className={styles.textLink} onClick={() => { setBooking(null); setStep(0); }}>Try another request</button></div>
         </div>}
       </div>
     </dialog>
