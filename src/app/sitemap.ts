@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
   const core: MetadataRoute.Sitemap = [
+    { url: absoluteUrl("/demo/ember-and-grain"), lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: absoluteUrl("/"), lastModified: now, changeFrequency: "monthly", priority: 1 },
     { url: absoluteUrl("/system-lab"), lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: absoluteUrl("/work"), lastModified: now, changeFrequency: "monthly", priority: 0.7 },

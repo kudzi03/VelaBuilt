@@ -156,7 +156,7 @@ export const services: readonly Service[] = [
       "Businesses answering the same questions, reading the same documents or handling the same requests by hand, every day.",
     chapterHeading: "Agents that answer, and know when to hand over.",
     chapterBody:
-      "Voice and chat agents that answer from your own information, act through tools you define, and escalate to a person when judgment is needed. Vela, the voice on this site, is one of them.",
+      "Voice and chat agents that answer from your own information, act through tools you define, and escalate to a person when judgment is needed.",
     items: [
       {
         id: "ai-agents",
@@ -171,7 +171,7 @@ export const services: readonly Service[] = [
       {
         id: "intelligent-interfaces",
         name: "Intelligent interfaces",
-        body: "Interfaces that respond to what a person is asking. This site’s guide can move you through it.",
+        body: "Interfaces that respond to what a person is asking. Built around the information and actions your customers need.",
       },
     ],
     problems: [

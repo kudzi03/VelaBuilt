@@ -24,14 +24,8 @@ import type { Focus } from "@/content/enquiry-flow";
  * hand-written focus management that can drift out of correctness.
  */
 
-export interface EnquiryPrefill {
-  readonly focus?: Focus;
-  /** Drafted by Vela, only with the visitor's agreement. Editable before sending. */
-  readonly message?: string;
-}
-
 interface EnquiryDialogContextValue {
-  readonly open: (focus?: Focus, prefill?: EnquiryPrefill) => void;
+  readonly open: (focus?: Focus) => void;
   readonly close: () => void;
   readonly isOpen: boolean;
 }
@@ -52,13 +46,10 @@ export function EnquiryDialogProvider({ children }: { readonly children: ReactNo
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [initialFocus, setInitialFocus] = useState<Focus | undefined>();
-  const [initialMessage, setInitialMessage] = useState<string | undefined>();
-  // Re-mounts the flow when a new prefill arrives while the dialog is open.
   const [generation, setGeneration] = useState(0);
 
-  const open = useCallback((focus?: Focus, prefill?: EnquiryPrefill) => {
-    setInitialFocus(prefill?.focus ?? focus);
-    setInitialMessage(prefill?.message);
+  const open = useCallback((focus?: Focus) => {
+    setInitialFocus(focus);
     setGeneration((g) => g + 1);
     setIsOpen(true);
   }, []);
@@ -118,7 +109,6 @@ export function EnquiryDialogProvider({ children }: { readonly children: ReactNo
             <EnquiryFlow
               key={generation}
               initialFocus={initialFocus}
-              initialMessage={initialMessage}
               onClose={close}
               headingId="enquiry-dialog-title"
               variant="dialog"

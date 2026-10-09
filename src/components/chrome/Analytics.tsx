@@ -73,7 +73,6 @@ export function Analytics() {
       }
     };
 
-    const onTalk = () => track("vela_talk_click", { page_path: window.location.pathname });
 
     const onScroll = () => {
       if (scrolled.current) return;
@@ -86,11 +85,9 @@ export function Analytics() {
     };
 
     document.addEventListener("click", onClick, { capture: true });
-    window.addEventListener("vela:talk", onTalk);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       document.removeEventListener("click", onClick, { capture: true });
-      window.removeEventListener("vela:talk", onTalk);
       window.removeEventListener("scroll", onScroll);
     };
   }, []);

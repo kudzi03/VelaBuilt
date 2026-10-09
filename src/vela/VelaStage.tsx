@@ -3,22 +3,20 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { chapter as chapterFor, CHAPTERS } from "./chapters";
-import { setChapter, setPresence, vela, useVelaSnapshot } from "./store";
+import { setChapter, vela, useVelaSnapshot } from "./store";
 
 /**
  * THE STAGE — one fixed layer behind every page.
  *
  * It lives in the root layout, so the object is never torn down between
  * routes: navigating is the same structure walking somewhere else, not a new
- * scene loading. Three layers, cheapest first:
+ * scene loading. Two decorative layers, cheapest first:
  *
  *   1. the server-rendered still (passed in as `still`) — paints with the HTML
  *   2. the WebGL renderer — imported after the page is idle, fades in on its
  *      first frame, never on the critical path of the largest paint
- *   3. the hit target — a real <button> that tracks the object on screen,
- *      so "talk to it" works by pointer, touch and keyboard alike
  *
- * Decorative to assistive technology except for the button, which is named.
+ * Entirely decorative to assistive technology.
  */
 
 type Mode = "still" | "canvas";
@@ -42,11 +40,10 @@ function detectTier(): { ok: boolean; tier: "full" | "lite"; reducedMotion: bool
 
 export function VelaStage({ still }: { readonly still: ReactNode }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const hitRef = useRef<HTMLButtonElement>(null);
   const stillRef = useRef<HTMLDivElement>(null);
   const [mode, setMode] = useState<Mode>("still");
   const [live, setLive] = useState(false);
-  const { presence, chapter, voiceOpen } = useVelaSnapshot();
+  const { chapter } = useVelaSnapshot();
   const pathname = usePathname();
 
   /* The renderer: after idle, only if the device can carry it. */
@@ -81,14 +78,6 @@ export function VelaStage({ still }: { readonly still: ReactNode }) {
           onFail: () => {
             setMode("still");
             setLive(false);
-          },
-          onLayout: (cx, cy, radius) => {
-            const hit = hitRef.current;
-            if (hit) {
-              const d = Math.max(96, radius * 1.5);
-              hit.style.transform = `translate3d(${cx - d / 2}px, ${cy - d / 2}px, 0)`;
-              hit.style.width = hit.style.height = `${d}px`;
-            }
           },
         });
         renderer = r;
@@ -184,8 +173,6 @@ export function VelaStage({ still }: { readonly still: ReactNode }) {
     };
   }, [pathname]);
 
-  const c = CHAPTERS[chapter];
-  const touchable = !!c && c.placement.presence > 0.5 && (chapter === "opening" || chapter === "contact");
 
   return (
     <div
@@ -199,23 +186,6 @@ export function VelaStage({ still }: { readonly still: ReactNode }) {
         {still}
       </div>
       <canvas ref={canvasRef} className="vela-canvas" aria-hidden="true" data-on={mode === "canvas" || undefined} />
-      <button
-        ref={hitRef}
-        type="button"
-        className="vela-hit"
-        data-touchable={touchable || undefined}
-        tabIndex={touchable ? 0 : -1}
-        aria-label={voiceOpen ? "Vela is open" : "Talk to Vela, VelaBuilt’s voice guide"}
-        onPointerEnter={() => presence === "dormant" && setPresence("aware")}
-        onPointerLeave={() => vela.presence === "aware" && setPresence("dormant")}
-        onFocus={() => presence === "dormant" && setPresence("aware")}
-        onBlur={() => vela.presence === "aware" && setPresence("dormant")}
-        onClick={() => window.dispatchEvent(new CustomEvent("vela:talk"))}
-      >
-        <span className="vela-hit__label" data-show={presence === "aware" && !voiceOpen || undefined}>
-          Talk to Vela
-        </span>
-      </button>
     </div>
   );
 }

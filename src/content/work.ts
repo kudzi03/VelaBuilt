@@ -112,14 +112,14 @@ export const workItems: readonly WorkItem[] = [
     href: "/system-lab",
   },
   {
-    slug: "vela-voice-guide",
-    title: "Vela, the guide on this site",
-    category: "system-demo",
-    problem:
-      "A website that can only be read, when a visitor would rather ask.",
-    response:
-      "A voice agent grounded in VelaBuilt’s own information that can move the site while it talks — through a short list of enumerated actions and nothing else. The structure behind the page is its presence: it listens, computes and speaks.",
-    disciplines: ["AI agents", "Voice", "Real-time 3D", "Interaction design"],
+    slug: "ember-and-grain",
+    title: "Ember & Grain",
+    category: "concept",
+    problem: "A restaurant needs more than a beautiful first impression. It needs a clear path to a table.",
+    response: "A fictional restaurant concept with an immersive interior, seasonal menu and locally simulated reservation journey.",
+    disciplines: ["Website design", "Development", "Booking journey"],
+    href: "/demo/ember-and-grain",
+    linkLabel: "Explore the concept",
   },
   {
     slug: "discoverability-concept",

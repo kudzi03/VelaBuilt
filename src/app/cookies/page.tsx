@@ -56,7 +56,7 @@ const SECTIONS = [
   {
     title: "Nothing is loaded from anyone else",
     body: [
-      "Only one, and only if you choose it: talking to Vela connects you to the voice service that runs her, described on the privacy page. Fonts, images and scripts are served from this domain. There are no tag managers, advertising pixels, embeds or social widgets.",
+      "Fonts, images and scripts are served from this domain. There are no tag managers, advertising pixels, embeds or social widgets.",
     ],
   },
   {

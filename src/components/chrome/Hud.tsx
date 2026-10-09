@@ -10,7 +10,7 @@ import { HOME_SEQUENCE } from "@/vela/chapters";
  * information is in the document's headings.
  */
 export function Hud() {
-  const { chapter, voiceOpen } = useVelaSnapshot();
+  const { chapter } = useVelaSnapshot();
   const pathname = usePathname();
   const i = pathname === "/" ? HOME_SEQUENCE.findIndex((c) => c.id === chapter) : -1;
   const at = HOME_SEQUENCE[i];
@@ -20,7 +20,7 @@ export function Hud() {
       <div className="shell flex h-16 items-center justify-between">
         <span className="w-24" />
         <span className="scroll-glyph" data-show={pathname === "/" && chapter === "opening" ? "" : undefined} />
-        <p className="label hud__counter text-right" data-show={at && !voiceOpen ? "" : undefined}>
+        <p className="label hud__counter text-right" data-show={at ? "" : undefined}>
           {at ? (
             <>
               <span className="text-[color:var(--color-ivory)]">{String(i + 1).padStart(2, "0")}</span> /{" "}

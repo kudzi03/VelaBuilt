@@ -1,3 +1,4 @@
+import { RestaurantShowcase } from "@/components/home/RestaurantShowcase";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,8 +12,6 @@ import { Reveal } from "@/components/ui/Reveal";
 import { ArrowRight } from "@/components/ui/Primitives";
 import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
 import { CapabilityCards } from "@/components/home/CapabilityCards";
-import { FocusReceiver } from "@/components/home/FocusReceiver";
-import { TalkButton } from "@/voice/VoiceRoot";
 
 export const metadata: Metadata = pageMetadata({
   title: `${site.name} — Websites, AI agents, automation and business systems`,
@@ -42,7 +41,6 @@ export default function HomePage() {
 
   return (
     <>
-      <FocusReceiver />
 
       {/* ── 01 · OPENING ─────────────────────────────────────────────────── */}
       <section
@@ -70,11 +68,13 @@ export default function HomePage() {
                 <span>Explore</span>
                 <ArrowRight />
               </Link>
-              <TalkButton className="btn">Talk to Vela</TalkButton>
+              <StartProjectLink variant="ghost">Start a project</StartProjectLink>
             </div>
           </Reveal>
         </div>
       </section>
+
+      <RestaurantShowcase />
 
       {/* ── 02–05 · WHAT WE BUILD ────────────────────────────────────────── */}
       <div id="capabilities">
@@ -239,12 +239,12 @@ export default function HomePage() {
               Tell us what you’re building.
             </h2>
             <p className="mx-auto mt-5 max-w-[44ch] leading-relaxed">
-              Four short questions, or a conversation with Vela. A person reads every enquiry and
+              Four short questions. A person reads every enquiry and
               replies with an honest assessment — including when we are not the right people for it.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <StartProjectLink variant="primary">Start a project</StartProjectLink>
-              <TalkButton className="btn">Talk to Vela</TalkButton>
+              <Link href={`mailto:${site.email}`} className="btn">Email the studio</Link>
             </div>
             <p className="mt-6 text-sm text-[color:var(--color-muted)]">
               Or email{" "}

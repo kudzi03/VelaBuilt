@@ -1,11 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { SiteHeader } from "@/components/chrome/SiteHeader";
-import { SiteFooter } from "@/components/chrome/SiteFooter";
-import { VelaStage } from "@/vela/VelaStage";
 import { VelaStill } from "@/vela/VelaStill";
-import { Hud } from "@/components/chrome/Hud";
-import { VoiceRoot } from "@/voice/VoiceRoot";
+import { SiteExperience } from "@/components/chrome/SiteExperience";
 import { Analytics } from "@/components/chrome/Analytics";
 import { EnquiryDialogProvider } from "@/components/enquiry/EnquiryDialogProvider";
 import { site } from "@/content/site";
@@ -105,15 +101,8 @@ export default function RootLayout({
           Skip to content
         </a>
 
-        <VelaStage still={<VelaStill />} />
         <EnquiryDialogProvider>
-          <div className="site">
-            <SiteHeader />
-            <main id="main">{children}</main>
-            <SiteFooter />
-          </div>
-          <Hud />
-          <VoiceRoot />
+          <SiteExperience still={<VelaStill />}>{children}</SiteExperience>
         </EnquiryDialogProvider>
         <Analytics />
 

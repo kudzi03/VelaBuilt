@@ -6,11 +6,11 @@
  *
  * Per frame, on the CPU (all of it small):
  *   · 192 node positions — staggered travel between structures, drift,
- *     contraction by voice state
+ *     gentle ambient contraction
  *   · member and pane alphas — the outgoing structure dissolves as its nodes
  *     leave; the incoming one forms as they land
  *   · energy — pulses that travel along members and hop across joints,
- *     inward while Vela listens, outward while it speaks
+ *     following the ambient structure
  * Embers and smoke are animated entirely on the GPU.
  *
  * The loop sleeps when the tab is hidden, when a solid sheet covers the
@@ -66,12 +66,6 @@ interface Profile {
 
 const PROFILE: Record<Presence, Profile> = {
   dormant: { contract: 1, spin: 0.05, spawn: 1.1, flow: "random", speed: 0.5, energy: 0.55, core: 0.3 },
-  aware: { contract: 1.035, spin: 0.07, spawn: 2.6, flow: "random", speed: 0.7, energy: 0.8, core: 0.45 },
-  connecting: { contract: 0.95, spin: 0.14, spawn: 7, flow: "inward", speed: 1.4, energy: 0.9, core: 0.55 },
-  listening: { contract: 0.9, spin: 0.03, spawn: 3, flow: "inward", speed: 0.85, energy: 0.75, core: 0.6 },
-  thinking: { contract: 0.93, spin: 0.24, spawn: 18, flow: "random", speed: 1.9, energy: 1, core: 0.75 },
-  speaking: { contract: 1.02, spin: 0.07, spawn: 3, flow: "outward", speed: 1.05, energy: 1, core: 0.8 },
-  acting: { contract: 1, spin: 0.16, spawn: 12, flow: "random", speed: 1.6, energy: 1, core: 0.75 },
 };
 
 /** How each structure is held in space: the armature turns, the others are posed. */
@@ -212,7 +206,6 @@ export class ArmatureRenderer {
   private emberW = 1;
   private driftW = 1;
   private place = { x: 0, y: 0, scale: 1, presence: 1 };
-  private levels = { input: 0, output: 0 };
 
   // GL resources
   /** Settles once the GL resources exist; `start()` waits for it. */
@@ -495,23 +488,7 @@ export class ArmatureRenderer {
 
     if (vela.shape !== this.shape) this.retarget(vela.shape);
 
-    // Voice levels, when a session is live.
-    const lv = vela.readLevels?.() ?? { input: 0, output: 0 };
-    this.levels.input = damp(this.levels.input, lv.input, 14, dt);
-    this.levels.output = damp(this.levels.output, lv.output, 10, dt);
-
     const target = { ...PROFILE[vela.presence] };
-    if (vela.presence === "listening") {
-      target.contract -= this.levels.input * 0.07;
-      target.spawn += this.levels.input * 26;
-      target.core += this.levels.input * 0.4;
-    }
-    if (vela.presence === "speaking") {
-      target.contract += this.levels.output * 0.08;
-      target.spawn += this.levels.output * 30;
-      target.core += this.levels.output * 0.9;
-      target.energy += this.levels.output * 0.4;
-    }
     const rate = reduced ? 1000 : 3;
     this.p.contract = damp(this.p.contract, target.contract, rate * 1.6, dt);
     this.p.spin = damp(this.p.spin, target.spin, rate, dt);

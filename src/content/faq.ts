@@ -30,7 +30,7 @@ export const faqs: readonly FaqEntry[] = [
   {
     question: "Does VelaBuilt build AI agents?",
     answer:
-      "Yes. Voice and chat agents grounded in a business’s own information, with a defined set of actions and a person kept in charge of decisions that matter. Vela, the voice guide on this site, is one.",
+      "Yes. Voice and chat agents grounded in a business’s own information, with a defined set of actions and a person kept in charge of decisions that matter.",
     scope: "home",
   },
   {

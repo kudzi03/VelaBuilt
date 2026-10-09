@@ -1,8 +1,8 @@
 /**
- * THE BRIDGE between the page, the voice and the object.
+ * THE BRIDGE between the page and the object.
  *
  * The render loop reads plain fields from `vela` every frame. React reads the
- * few things it displays (voice presence, active chapter) through
+ * few things it displays (visual presence, active chapter) through
  * `useVelaSnapshot`, which only re-renders when one of those actually changes.
  * Nothing here causes a React render per frame, and nothing in the render
  * loop waits on React.
@@ -18,8 +18,7 @@ import type { ShapeId } from "./geometry";
  * What Vela is doing. The object's behaviour is keyed off this, so the list
  * is the design: each state has a distinct physical response.
  */
-export type Presence =
-  | "dormant" // nobody is talking; slow internal movement
+export type Presence = "dormant"; slow internal movement
   | "aware" // pointer or focus is on the object
   | "connecting" // the visitor pressed it; session opening, mic being asked for
   | "listening" // the visitor has the floor
@@ -49,10 +48,9 @@ export interface ChapterSignal {
 interface Snapshot {
   readonly presence: Presence;
   readonly chapter: string;
-  readonly voiceOpen: boolean;
 }
 
-/** Mutable, per-frame. Written by drivers and the voice layer; read by the loop. */
+/** Mutable, per-frame. Written by page drivers; read by the loop. */
 export const vela = {
   presence: "dormant" as Presence,
   shape: "armature" as ShapeId,
@@ -63,23 +61,20 @@ export const vela = {
   scrollVelocity: 0,
   /** True while a solid sheet covers the whole viewport: the loop can sleep. */
   covered: false,
-  /** Set by the voice layer while a session is live; returns 0–1 levels. */
-  readLevels: null as null | (() => { input: number; output: number }),
   /** A one-shot flare, e.g. when a tool fires. Decays in the loop. */
   flare: 0,
   /** Wakes a demand-driven loop (reduced motion). Replaced by the canvas. */
   invalidate: () => {},
 };
 
-let snapshot: Snapshot = { presence: "dormant", chapter: "opening", voiceOpen: false };
+let snapshot: Snapshot = { presence: "dormant", chapter: "opening" };
 const listeners = new Set<() => void>();
 
 function emit(next: Partial<Snapshot>) {
   const merged = { ...snapshot, ...next };
   if (
     merged.presence === snapshot.presence &&
-    merged.chapter === snapshot.chapter &&
-    merged.voiceOpen === snapshot.voiceOpen
+    merged.chapter === snapshot.chapter
   )
     return;
   snapshot = merged;
@@ -90,10 +85,6 @@ export function setPresence(presence: Presence) {
   vela.presence = presence;
   emit({ presence });
   vela.invalidate();
-}
-
-export function setVoiceOpen(voiceOpen: boolean) {
-  emit({ voiceOpen });
 }
 
 export function setChapter(signal: ChapterSignal, mobile: boolean) {

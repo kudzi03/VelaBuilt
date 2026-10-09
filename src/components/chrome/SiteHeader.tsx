@@ -6,12 +6,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { primaryNav } from "@/content/site";
 import { Wordmark } from "./Monogram";
 import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
-import { TalkButton } from "@/voice/VoiceRoot";
 import { useVelaSnapshot } from "@/vela/store";
 
 /**
  * Quiet at the edge. The wordmark, four destinations with a lit marker under
- * the current one, and two ways to act: talk to Vela, or start a project.
+ * the current one, and two ways to act: start a project.
  * Transparent over the field until the visitor scrolls, then a frosted strip.
  */
 export function SiteHeader() {
@@ -80,8 +79,8 @@ export function SiteHeader() {
         </ul>
 
         <div className="flex items-center gap-2">
-          <TalkButton className="btn btn-ghost hidden sm:inline-flex">Talk to Vela</TalkButton>
-          <StartProjectLink variant="primary" withArrow={false} className="hidden lg:inline-flex">
+          
+          <StartProjectLink variant="primary" withArrow={false} className="inline-flex">
             Start a project
           </StartProjectLink>
           <button
@@ -124,7 +123,7 @@ export function SiteHeader() {
             ))}
           </ul>
           <div className="mt-10 flex flex-col gap-3">
-            <TalkButton className="btn w-full">Talk to Vela</TalkButton>
+            
           </div>
         </div>
       </div>

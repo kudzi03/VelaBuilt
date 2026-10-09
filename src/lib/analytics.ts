@@ -27,8 +27,6 @@ export const TRACK_EVENTS = [
   "phone_click", // tel:
   "whatsapp_click", // wa.me / whatsapp
   "book_call_click", // a scheduling link (Calendly, Cal.com, Google booking)
-  "vela_talk_click", // a Talk to Vela control pressed
-  "vela_conversation_start", // Vela actually connected
   "demo_interaction", // System Lab / demo interaction
   "scroll", // 90% depth on a page
 ] as const;

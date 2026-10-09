@@ -65,30 +65,11 @@ function legacyHostRedirects() {
  *               enquiry confirmation — which echoes nothing the visitor typed.
  *   style-src   'unsafe-inline' is required by React inline styles and the
  *               critical CSS Next inlines.
- *   worker-src  'self' blob:. The object is plain WebGL2 and spawns no
- *               workers; blob: is for the voice SDK's AudioWorklet (below).
+ *   worker-src  'self' only. The decorative object uses plain WebGL2.
  *   font-src    'self' only: fonts are self-hosted by next/font at build time,
  *               so no third-party font origin is ever contacted at runtime.
  */
 const isDev = process.env.NODE_ENV === "development";
-
-/**
- * The voice guide's origins.
- *
- * Kept as a named list rather than inlined, so what the site is allowed to
- * talk to is a thing you can read in one place. ElevenLabs' conversational
- * API is reached over WebSocket; its WebRTC transport runs on LiveKit, and
- * the SDK picks between them depending on how the session was minted, so
- * both are permitted and nothing else is.
- */
-const VOICE_ORIGINS = [
-  // The conversational API, and the WebRTC transport it hands the session
-  // to. Found by running it: the SDK mints a token against api.elevenlabs.io
-  // and then connects to livekit.rtc.elevenlabs.io, so allowing only the
-  // first gets you a 200 followed by a silent refusal.
-  "https://*.elevenlabs.io",
-  "wss://*.elevenlabs.io",
-].join(" ");
 
 const contentSecurityPolicy = [
   "default-src 'self'",
@@ -96,13 +77,9 @@ const contentSecurityPolicy = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
-  `connect-src 'self' ${VOICE_ORIGINS}${isDev ? " ws: wss:" : ""}`,
-  // The SDK runs its audio processing in an AudioWorklet, which it
-  // instantiates from a blob URL. Without blob: here the worklet is blocked
-  // and the microphone produces silence with no error worth the name.
-  "worker-src 'self' blob:",
-  // Synthesised speech arrives as blobs.
-  "media-src 'self' blob: data:",
+  `connect-src 'self'${isDev ? " ws: wss:" : ""}`,
+  "worker-src 'self'",
+  "media-src 'self'",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -123,18 +100,14 @@ const securityHeaders = [
     key: "Permissions-Policy",
     value: [
       "accelerometer=()",
-      // Vela speaks only after the visitor presses Start talking, so this
-      // permits our own origin and nobody else's.
-      "autoplay=(self)",
+      "autoplay=()",
       "camera=()",
       "display-capture=()",
       "encrypted-media=()",
       "geolocation=()",
       "gyroscope=()",
       "magnetometer=()",
-      // The voice guide. Requested on a deliberate press, never on load, and
-      // never granted to an embedded third party.
-      "microphone=(self)",
+      "microphone=()",
       "payment=()",
       "usb=()",
       "interest-cohort=()",

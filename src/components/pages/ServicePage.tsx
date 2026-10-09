@@ -3,8 +3,6 @@ import { services, type Service } from "@/content/services";
 import { faqsFor } from "@/content/faq";
 import { graph, breadcrumbSchema, faqSchema, serviceSchema, webPageSchema } from "@/lib/schema";
 import { CapabilityCards } from "@/components/home/CapabilityCards";
-import { FocusReceiver } from "@/components/home/FocusReceiver";
-import { TalkButton } from "@/voice/VoiceRoot";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { FaqSection } from "@/components/ui/FaqSection";
 import { Reveal } from "@/components/ui/Reveal";
@@ -37,7 +35,6 @@ export function ServicePage({
 
   return (
     <>
-      <FocusReceiver />
 
       {/* ---- Opening: the structure stands in this area's form ----------- */}
       <section data-chapter={service.chapter} className="page-hero">
@@ -60,7 +57,7 @@ export function ServicePage({
               <StartProjectLink variant="primary" focus={focus}>
                 {service.cta}
               </StartProjectLink>
-              <TalkButton className="btn">Ask Vela about it</TalkButton>
+              <Link href="/start" className="btn">Discuss your project</Link>
             </div>
           </Reveal>
         </div>

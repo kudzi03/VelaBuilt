@@ -111,7 +111,7 @@ export default function AboutPage() {
               },
               {
                 q: "What makes VelaBuilt different?",
-                a: "We build the experience and the infrastructure underneath it. The same studio that designs the website builds the agents, automation and systems that handle what it generates — this site and its voice guide, Vela, are an example.",
+                a: "We build the experience and the infrastructure underneath it. The same studio that designs the website builds the agents, automation and systems that handle what it generates — the website demonstration shows how those parts connect.",
               },
               {
                 q: "What does VelaBuilt not do?",

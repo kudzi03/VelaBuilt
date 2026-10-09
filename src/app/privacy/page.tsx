@@ -29,7 +29,7 @@ const SECTIONS = [
   {
     title: "What this site collects",
     body: [
-      "While you browse, anonymous usage data through Google Analytics: which pages are viewed, roughly where the visit came from (country, the referring site or search), the type of device and browser, and which buttons are pressed — for example Start a project, an email link, or Talk to Vela. These are sent to this site’s own server, which passes them to Google Analytics without your network address — only the country and region it indicates. No cookies are set and nothing is written to your browser, so a later visit cannot be linked to this one. There are no advertising pixels, no third-party embeds and no cookies set by this site.",
+      "While you browse, anonymous usage data through Google Analytics: which pages are viewed, roughly where the visit came from (country, the referring site or search), the type of device and browser, and which buttons are pressed — for example Start a project, an email link, or a demonstration. These are sent to this site’s own server, which passes them to Google Analytics without your network address — only the country and region it indicates. No cookies are set and nothing is written to your browser, so a later visit cannot be linked to this one. There are no advertising pixels, no third-party embeds and no cookies set by this site.",
       "Google Analytics never receives your name, email address, or anything you type into the form. When an inquiry is sent it is told only that one was sent and which area it was about — for example, website or follow-up.",
       "When you complete the Start a Project form we receive what you typed: your name, your email address, optionally your company and website, your answers to the three questions, and anything you wrote in the message field.",
     ],
@@ -61,12 +61,8 @@ const SECTIONS = [
     ],
   },
   {
-    title: "Talking to Vela",
-    body: [
-      "Vela, the voice guide on this site, is an AI agent built by VelaBuilt and run on ElevenLabs. Nothing is recorded until you choose to talk: the microphone is requested only after you press Start talking, and only while the conversation is open. You can mute it or end the conversation at any time, or type instead.",
-      "Your speech is transcribed and answered by ElevenLabs and the language model behind the agent. The audio of the conversation is not stored. The text transcript is kept for 30 days so the studio can check the guide is answering correctly, and is then deleted.",
-      "Vela can move you around this site and open the enquiry form. It cannot send an enquiry. If it offers to summarise your conversation into the form, you are asked to confirm first, and you can edit or delete the summary before you send anything.",
-    ],
+    title: "Restaurant demonstration",
+    body: ["The restaurant concept uses fictional sample details. Its booking, reply, CRM record and follow-up are simulated in the open page only. No reservation is made, no message is sent, and no demo form details are stored or sent to our server."],
   },
   {
     title: "Your rights",

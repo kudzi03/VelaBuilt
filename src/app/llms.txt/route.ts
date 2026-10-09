@@ -44,7 +44,6 @@ export function GET() {
     "",
     `- Email: ${site.email}`,
     `- Enquiry: ${site.url}/start`,
-    `- Voice guide: Vela, on ${site.url} (AI, runs on ElevenLabs)`,
     "",
   ];
   return new Response(lines.join("\n"), {
