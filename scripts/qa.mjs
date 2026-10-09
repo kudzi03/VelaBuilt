@@ -184,8 +184,8 @@ for (const vp of WIDTHS) {
   if (await page.getByRole("heading", { name: "Wood-fired linefish" }).count()) fail("demo", "vegetarian filter left fish visible");
   if (!await page.getByRole("heading", { name: "The autumn garden" }).isVisible()) fail("demo", "vegetarian dish missing");
   await page.getByRole("button", { name: /find a table/i }).click();
-  await page.getByLabel("Guests", { exact: true }).selectOption("4");
-  await page.getByLabel("Time", { exact: true }).selectOption("20:00");
+  await page.locator('select[name="guests"]').selectOption("4");
+  await page.locator('select[name="time"]').selectOption("20:00");
   await page.getByRole("button", { name: /send a demo request/i }).click();
   await page.locator("#demo-confirmation").waitFor();
   for (const label of ["instant response", "guest record", "booking & reminder", "the follow-up"]) {

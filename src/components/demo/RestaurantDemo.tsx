@@ -72,6 +72,13 @@ export function RestaurantDemo() {
     dialog.current?.showModal(); setOpen(true);
   }
   function close() { dialog.current?.close(); }
+  function advance() {
+    const next = Math.min(step + 1, stages.length - 1);
+    setStep(next);
+    if (next === stages.length - 1) {
+      requestAnimationFrame(() => document.getElementById("demo-build-link")?.focus());
+    }
+  }
   function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
@@ -88,14 +95,14 @@ export function RestaurantDemo() {
     `Alex Morgan’s request for ${booking.guests} guests on ${dateLabel} at ${booking.time} is captured from the website.`,
     `“Hello Alex. We have your request for ${booking.guests} guests. Our team will check the table and confirm shortly.” A sample acknowledgement, shown here only.`,
     `Alex Morgan · alex@example.com · ${booking.guests} guests · ${booking.occasion}. The sample CRM record keeps the request and its next action together.`,
-    `After the restaurant accepts, the sample booking is confirmed for ${dateLabel} at ${booking.time}. A reminder would be scheduled for the day before.`,
+    `After the restaurant accepts, the sample booking is confirmed for ${dateLabel} at ${booking.time}. A reminder would be scheduled before the visit.`,
     "The day after the visit, a short thank-you and review request would complete the journey. If the guest replies, a person takes over.",
   ] : [];
 
   return <div className={styles.demo} data-demo="ember-and-grain">
     <div className={styles.studioBar}><Link href="/#showcase">← Back to VelaBuilt</Link><span>Fictional restaurant · Interactive concept</span><Link href="/start">Build something like this ↗</Link></div>
     <section ref={hero} className={styles.hero} aria-labelledby="restaurant-title">
-      <div className={styles.heroImage}><Image src="/demo/ember/interior.webp" alt="Warmly lit restaurant interior with linen tables, arched windows and an open hearth; original concept imagery" fill sizes="100vw" priority /></div>
+      <div className={styles.heroImage}><Image src="/demo/ember/interior.webp" alt="Warmly lit restaurant interior with linen tables, arched windows and an open hearth; original concept imagery" fill sizes="(max-width: 800px) 1200px, 100vw" priority /></div>
       <nav className={styles.nav} aria-label="Restaurant concept">
         <a href="#restaurant-title" className={styles.brand}>e<span>&</span>g<span className={styles.brandLine}>Ember & Grain</span></a>
         <div><a href="#story">Our table</a><a href="#menu">The menu</a><button onClick={reserve} className={styles.navBook}>Find a table <span aria-hidden="true">↗</span></button></div>
@@ -142,7 +149,7 @@ export function RestaurantDemo() {
           <p className={styles.journeyLabel}>Behind the experience · Step {step + 1} of 5</p>
           <ol className={styles.steps} aria-label="Simulated customer journey">{stages.map((label, i) => <li key={label} data-active={i === step} data-complete={i < step}><span>{i < step ? "✓" : String(i + 1).padStart(2, "0")}</span>{label}</li>)}</ol>
           <div className={styles.stepDetail} aria-live="polite" aria-atomic="true"><h3>{stages[step]}</h3><p>{details[step]}</p><small>{step === 3 ? "Human approval before a booking is confirmed." : "Illustrative behaviour · no external service is connected."}</small></div>
-          <div className={styles.journeyActions}>{step < 4 ? <button className={styles.darkButton} onClick={() => setStep(s => s + 1)}>Show {stages[step + 1]?.toLowerCase()} <span aria-hidden="true">→</span></button> : <Link href="/start" onClick={close} className={styles.darkButton}>Build a journey like this ↗</Link>}<button className={styles.textLink} onClick={() => { setBooking(null); setStep(0); }}>Try another request</button></div>
+          <div className={styles.journeyActions}>{step < stages.length - 1 ? <button className={styles.darkButton} onClick={advance}>Show {stages[step + 1]?.toLowerCase()} <span aria-hidden="true">→</span></button> : <Link id="demo-build-link" href="/start" onClick={close} className={styles.darkButton}>Build a journey like this ↗</Link>}<button className={styles.textLink} onClick={() => { setBooking(null); setStep(0); }}>Try another request</button></div>
         </div>}
       </div>
     </dialog>
