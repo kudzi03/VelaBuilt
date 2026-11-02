@@ -67,6 +67,29 @@ export interface WorkItem {
 
 export const workItems: readonly WorkItem[] = [
   {
+    slug: "kingson-engineering",
+    title: "Kingson Engineering",
+    category: "client-work",
+    context: "Steelwork & fabrication · Harare, Zimbabwe",
+    problem:
+      "Customers need to see the quality of the steelwork, understand the workshop’s capabilities and know what to send for an accurate quotation.",
+    response:
+      "A cinematic website combining project films, detailed service pages and technical specifications with a clear path from exploring the work to requesting a price.",
+    disciplines: [
+      "Website strategy",
+      "Art direction",
+      "Website design",
+      "Development",
+      "Video integration",
+      "Mobile experience",
+      "Search structure",
+      "Enquiry flow",
+    ],
+    href: "/work/kingson-engineering",
+    liveUrl: "https://www.kingsonengineering.co.zw/",
+    linkLabel: "Read the case study",
+  },
+  {
     slug: "cardio-life",
     title: "Cardio Life",
     category: "client-work",

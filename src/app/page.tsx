@@ -30,7 +30,7 @@ export const metadata: Metadata = pageMetadata({
  * scripts off or motion reduced, this reads top to bottom as a complete page.
  */
 export default function HomePage() {
-  const cardio = workItems.find((w) => w.slug === "cardio-life");
+  const clientWork = workItems.filter((work) => work.category === "client-work");
   const answers = faqsFor("home");
 
   const structuredData = graph([
@@ -77,7 +77,7 @@ export default function HomePage() {
       <RestaurantShowcase />
 
       {/* ── 02 · REAL CLIENT WORK ────────────────────────────────────────── */}
-      {cardio ? (
+      {clientWork.length > 0 ? (
         <section
           id="work"
           data-chapter="work"
@@ -99,61 +99,63 @@ export default function HomePage() {
               </Link>
             </Reveal>
 
-            <article className="mt-10 grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:items-center">
-              <Reveal className="work-frame">
-                <Link href={cardio.href ?? "/work"} aria-label="Cardio Life — read the case study">
-                  <Image
-                    src="/work/cardio-life/desktop.webp"
-                    alt="The Cardio Life website on desktop: training courses and accreditation, with a quotation path."
-                    width={1600}
-                    height={1000}
-                    sizes="(min-width: 1024px) 58vw, 100vw"
-                    className="work-frame__shot"
-                  />
-                </Link>
-                <Image
-                  src="/work/cardio-life/mobile.webp"
-                  alt="The Cardio Life website on a phone."
-                  width={780}
-                  height={1328}
-                  sizes="(min-width: 1024px) 14vw, 30vw"
-                  className="work-frame__phone"
-                />
-              </Reveal>
-              <Reveal delay={150}>
-                <p className="label">{cardio.context}</p>
-                <h3 className="display-md mt-4">{cardio.title}</h3>
-                <p className="mt-5 leading-relaxed">{cardio.response}</p>
-                <p className="mt-4 text-sm leading-relaxed text-[color:var(--color-muted)]">
-                  {cardio.problem}
-                </p>
-                <ul className="mt-6 flex flex-wrap gap-x-4 gap-y-1.5">
-                  {cardio.disciplines.map((d) => (
-                    <li key={d} className="label">
-                      {d}
-                    </li>
-                  ))}
-                </ul>
-                {cardio.priorToStudio ? (
-                  <p className="mt-6 text-sm text-[color:var(--color-muted)]">
-                    Delivered by the founder before the VelaBuilt studio identity existed.
-                  </p>
-                ) : null}
-                <div className="mt-8 flex flex-wrap gap-3">
-                  <Link href={cardio.href ?? "/work"} className="btn btn-primary">
-                    <span>Read the case study</span>
-                    <ArrowRight />
+            {clientWork.map((project) => (
+              <article key={project.slug} className="mt-10 grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:items-center">
+                <Reveal className="work-frame">
+                  <Link href={project.href ?? "/work"} aria-label={`${project.title} — read the case study`}>
+                    <Image
+                      src={`/work/${project.slug}/desktop.webp`}
+                      alt={`${project.title} website on desktop.`}
+                      width={1600}
+                      height={1000}
+                      sizes="(min-width: 1024px) 58vw, 100vw"
+                      className="work-frame__shot"
+                    />
                   </Link>
-                  {cardio.liveUrl ? (
-                    <a href={cardio.liveUrl} className="btn" target="_blank" rel="noopener noreferrer">
-                      <span>Visit the live site</span>
-                      <span aria-hidden="true">↗</span>
-                      <span className="sr-only">(opens in a new tab)</span>
-                    </a>
+                  <Image
+                    src={`/work/${project.slug}/mobile.webp`}
+                    alt={`${project.title} website on a phone.`}
+                    width={780}
+                    height={1328}
+                    sizes="(min-width: 1024px) 14vw, 30vw"
+                    className="work-frame__phone"
+                  />
+                </Reveal>
+                <Reveal delay={150}>
+                  <p className="label">{project.context}</p>
+                  <h3 className="display-md mt-4">{project.title}</h3>
+                  <p className="mt-5 leading-relaxed">{project.response}</p>
+                  <p className="mt-4 text-sm leading-relaxed text-[color:var(--color-muted)]">
+                    {project.problem}
+                  </p>
+                  <ul className="mt-6 flex flex-wrap gap-x-4 gap-y-1.5">
+                    {project.disciplines.map((d) => (
+                      <li key={d} className="label">
+                        {d}
+                      </li>
+                    ))}
+                  </ul>
+                  {project.priorToStudio ? (
+                    <p className="mt-6 text-sm text-[color:var(--color-muted)]">
+                      Delivered by the founder before the VelaBuilt studio identity existed.
+                    </p>
                   ) : null}
-                </div>
-              </Reveal>
-            </article>
+                  <div className="mt-8 flex flex-wrap gap-3">
+                    <Link href={project.href ?? "/work"} className="btn btn-primary">
+                      <span>Read the case study</span>
+                      <ArrowRight />
+                    </Link>
+                    {project.liveUrl ? (
+                      <a href={project.liveUrl} className="btn" target="_blank" rel="noopener noreferrer">
+                        <span>Visit the live site</span>
+                        <span aria-hidden="true">↗</span>
+                        <span className="sr-only">(opens in a new tab)</span>
+                      </a>
+                    ) : null}
+                  </div>
+                </Reveal>
+              </article>
+            ))}
           </div>
         </section>
       ) : null}
