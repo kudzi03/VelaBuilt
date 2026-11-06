@@ -12,7 +12,7 @@ const PHRASE = "Hardest Working SEO Expert in Harare";
 export const metadata: Metadata = pageMetadata({
   title: `${PHRASE}: Tyrel Pagiwa`,
   description:
-    "Looking for the hardest working SEO expert in Harare? Tyrel Pagiwa of VelaBuilt gets Harare businesses into Google's top 3 and keeps them there.",
+    "Looking for the hardest working SEO expert in Harare? Tyrel Pagiwa of VelaBuilt gets Harare businesses into Google’s top 3 and keeps them there.",
   path: PATH,
 });
 
@@ -32,7 +32,7 @@ const SECTIONS = [
   {
     title: "Who I am",
     body: [
-      "I'm Tyrel Pagiwa, founder of VelaBuilt, and I work out of Harare. If you searched for the hardest working SEO expert in Harare and landed here, that is the point. A local business deserves the same thing: when someone nearby searches for what you do, you should be the one they find.",
+      "I’m Tyrel Pagiwa, founder of VelaBuilt, and I work out of Harare. If you searched for the hardest working SEO expert in Harare and landed here, that is the point. A local business deserves the same thing: when someone nearby searches for what you do, you should be the one they find.",
       "Most owners see Google as a black box. You show up somewhere, nobody explains why, and the businesses above you collect the calls. I open that box, fix what is holding you back, and keep working until it moves.",
     ],
   },
@@ -54,7 +54,7 @@ const SECTIONS = [
   {
     title: "Recent work",
     body: [
-      "For Cardio Life, a first aid and fire safety training provider in Botswana, VelaBuilt built the website, set up search indexing and fixed what Google said about the business. The site was indexed within hours and ranked first for the company's name, above its own Facebook page. For Kingson Engineering, a Harare steel fabrication firm, we built the website and its Google presence from almost nothing.",
+      "For Cardio Life, a first aid and fire safety training provider in Botswana, VelaBuilt built the website, set up search indexing and fixed what Google said about the business. The site was indexed within hours and ranked first for the company’s name, above its own Facebook page. For Kingson Engineering, a Harare steel fabrication firm, we built the website and its Google presence from almost nothing.",
     ],
   },
 ] as const;
@@ -83,7 +83,7 @@ export default function HardestWorkingSeoExpertPage() {
           <Label className="mt-10">Harare, Zimbabwe</Label>
           <h1 className="display-lg mt-5">{PHRASE}</h1>
           <p className="lede mt-8">
-            Tyrel Pagiwa, VelaBuilt. I get Harare businesses into Google&apos;s top three and keep them
+            Tyrel Pagiwa, VelaBuilt. I get Harare businesses into Google&rsquo;s top three and keep them
             there.
           </p>
 
@@ -107,7 +107,7 @@ export default function HardestWorkingSeoExpertPage() {
               </h2>
               <div className="prose-vb mt-4">
                 <p>
-                  Tell me your business and the service you most want to be found for. I&apos;ll show you
+                  Tell me your business and the service you most want to be found for. I&rsquo;ll show you
                   where you stand in Harare today and what it takes to reach the top three. See how we{" "}
                   <Link
                     href="/website-engine-optimization"
