@@ -18,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: absoluteUrl("/work"), lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: absoluteUrl("/work/kingson-engineering"), lastModified: now, changeFrequency: "yearly", priority: 0.7 },
     { url: absoluteUrl("/work/cardio-life"), lastModified: now, changeFrequency: "yearly", priority: 0.7 },
+    { url: absoluteUrl("/hardest-working-seo-expert-in-harare"), lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: absoluteUrl("/approach"), lastModified: now, changeFrequency: "yearly", priority: 0.6 },
     { url: absoluteUrl("/about"), lastModified: now, changeFrequency: "yearly", priority: 0.6 },
     { url: absoluteUrl("/start"), lastModified: now, changeFrequency: "yearly", priority: 0.9 },
