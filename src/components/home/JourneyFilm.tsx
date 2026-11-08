@@ -7,18 +7,22 @@ import styles from "./Journey.module.css";
 /**
  * THE FILM — one continuous shot behind the homepage opening.
  *
- * Sections opt in with `data-film-key="<n>"`. While a section is under the
- * middle of the viewport the film holds on keyframe n; in the last part of
- * the section it plays on to the next section's keyframe. Scrolling back
- * plays it in reverse. Scroll is never hijacked: the page scrolls normally
- * and the film follows.
+ * Sections opt in with `data-film-key="<n>"`. When a section scrolls into
+ * place, the film *plays* from where it is to keyframe n at normal speed
+ * (faster if the visitor has skipped ahead), then holds. Playing, rather than
+ * seeking on every scroll frame, is what keeps it smooth: decoding forward is
+ * cheap, random seeks are not. Going back fades to that keyframe's still and
+ * settles the video underneath it.
  *
- * Decorative. Every word is in the sections, in HTML. Without JavaScript the
- * first keyframe shows as a still; under reduced motion or Save-Data no video
- * is fetched and the still changes to each section's keyframe instead.
+ * Scroll is never hijacked; the page scrolls normally and the film follows.
+ * Decorative: every word is in the sections. Without JavaScript the first
+ * keyframe shows as a still; under reduced motion or Save-Data no video is
+ * fetched and the still changes to each section's keyframe instead.
  */
 
-const HOLD = 0.45; // share of a section spent holding still on its keyframe
+const BASE_RATE = 1.25; // a 5-second transition plays in 4
+const MAX_RATE = 4;
+const LINE = 0.6; // a section becomes current when its top passes 60% of the viewport
 const still = (key: number) => `/journey/k${key}.webp`;
 
 export function JourneyFilm() {
@@ -35,99 +39,110 @@ export function JourneyFilm() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const filmOn = !reduced && !nav.connection?.saveData;
 
-    let target = 0;
-    let shown = 0;
-    let stillKey = 0;
+    let key = -1; // the keyframe the film is heading to
     let raf = 0;
-    let measureQueued = 0;
+    let queued = 0;
+    let ready = false;
 
-    if (filmOn) {
-      video.src = window.innerWidth < 820 ? "/journey/film-540.mp4" : "/journey/film-720.mp4";
-      video.addEventListener("loadeddata", () => layer.setAttribute("data-video", ""), { once: true });
-    }
-
-    // iOS only paints seeked frames after the video has played once.
-    const unlock = () => {
-      video.play().then(() => video.pause(), () => {});
+    const showStill = (k: number) => {
+      const src = still(k);
+      if (!img.src.endsWith(src)) img.src = src;
     };
-    if (filmOn) window.addEventListener("pointerdown", unlock, { once: true, passive: true });
-    if (filmOn) window.addEventListener("touchstart", unlock, { once: true, passive: true });
 
-    const sections = () => [...document.querySelectorAll<HTMLElement>("[data-film-key]")];
-
-    const measure = () => {
-      measureQueued = 0;
-      const list = sections();
-      const line = window.innerHeight * 0.5;
-      let i = -1;
-      list.forEach((s, n) => {
-        if (s.getBoundingClientRect().top <= line) i = n;
-      });
-      const first = list[0]?.getBoundingClientRect();
-      const last = list[list.length - 1]?.getBoundingClientRect();
-      const visible = !!first && !!last && first.top < window.innerHeight && last.bottom > 0;
-
-      layer.toggleAttribute("data-hidden", !visible);
-      root.toggleAttribute("data-film", visible);
-      if (i < 0) i = 0;
-
-      const cur = list[i];
-      const next = list[i + 1];
-      if (!cur) return;
-      const r = cur.getBoundingClientRect();
-      const p = Math.min(1, Math.max(0, (line - r.top) / r.height));
-      const a = Number(cur.dataset.filmKey);
-      const b = next ? Number(next.dataset.filmKey) : a;
-      const t = Math.min(1, Math.max(0, (p - HOLD) / (1 - HOLD)));
-      const eased = t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
-      target = (a + (b - a) * eased) * FILM_SECONDS_PER_STAGE;
-
-      if (!filmOn) {
-        const key = eased > 0.5 ? b : a;
-        if (key !== stillKey) {
-          stillKey = key;
-          img.src = still(key);
-        }
+    // Watch playback until the target keyframe is reached, then hold on it exactly.
+    const watch = () => {
+      raf = 0;
+      const target = key * FILM_SECONDS_PER_STAGE;
+      if (video.currentTime >= target - 0.02 || video.ended) {
+        video.pause();
+        if (Math.abs(video.currentTime - target) > 0.04) video.currentTime = target;
         return;
       }
-      if (!raf) raf = requestAnimationFrame(step);
+      const behind = (target - video.currentTime) / FILM_SECONDS_PER_STAGE;
+      video.playbackRate = Math.min(MAX_RATE, BASE_RATE * Math.max(1, behind));
+      raf = requestAnimationFrame(watch);
     };
 
-    // Ease the film toward the scroll position so it moves like a camera, not a slider.
-    const step = () => {
-      raf = 0;
-      shown += (target - shown) * 0.14;
-      if (Math.abs(target - shown) < 0.004) shown = target;
-      if (video.readyState >= 1) {
-        const t = Math.min(shown, (video.duration || shown + 1) - 0.05);
-        if (Math.abs(video.currentTime - t) > 0.01) video.currentTime = t;
+    const goTo = (k: number) => {
+      if (k === key) return;
+      const back = k < key;
+      key = k;
+      showStill(k);
+      if (!filmOn || !ready) return;
+      cancelAnimationFrame(raf);
+      const target = k * FILM_SECONDS_PER_STAGE;
+      if (back || video.currentTime > target) {
+        // Reverse playback isn't native; fade to the still and settle underneath it.
+        video.pause();
+        layer.removeAttribute("data-video");
+        video.currentTime = target;
+        video.addEventListener("seeked", () => key === k && layer.setAttribute("data-video", ""), { once: true });
+        return;
       }
-      if (shown !== target) raf = requestAnimationFrame(step);
+      layer.setAttribute("data-video", "");
+      video.play().then(() => (raf = requestAnimationFrame(watch)), () => {
+        // Autoplay refused (rare for muted inline video): stay on the still.
+        layer.removeAttribute("data-video");
+      });
+    };
+
+    const measure = () => {
+      queued = 0;
+      const list = [...document.querySelectorAll<HTMLElement>("[data-film-key]")];
+      if (!list.length) return;
+      const vh = window.innerHeight;
+      const first = list[0]!.getBoundingClientRect();
+      const last = list[list.length - 1]!.getBoundingClientRect();
+      const visible = first.top < vh && last.bottom > 0;
+      layer.toggleAttribute("data-hidden", !visible);
+      // The instrument strip sits on the bottom edge: it reads light only while the film is behind it.
+      root.toggleAttribute("data-film", visible && last.bottom > vh - 64);
+
+      let current = list[0]!;
+      for (const s of list) if (s.getBoundingClientRect().top <= vh * LINE) current = s;
+      goTo(Number(current.dataset.filmKey));
     };
 
     const onScroll = () => {
-      if (!measureQueued) measureQueued = requestAnimationFrame(measure);
+      if (!queued) queued = requestAnimationFrame(measure);
     };
 
+    if (filmOn) {
+      video.src = window.innerWidth < 820 ? "/journey/film-720.mp4" : "/journey/film-1080.mp4";
+      video.addEventListener(
+        "loadeddata",
+        () => {
+          ready = true;
+          // Land on the right frame if the page opened part-way down.
+          const k = key;
+          key = -1;
+          video.currentTime = Math.max(0, k) * FILM_SECONDS_PER_STAGE;
+          video.addEventListener("seeked", () => {
+            key = k;
+            layer.setAttribute("data-video", "");
+            onScroll();
+          }, { once: true });
+        },
+        { once: true },
+      );
+    }
+
     measure();
-    shown = target;
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
-    video.addEventListener("loadedmetadata", onScroll);
     return () => {
       cancelAnimationFrame(raf);
-      cancelAnimationFrame(measureQueued);
+      cancelAnimationFrame(queued);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
-      window.removeEventListener("pointerdown", unlock);
-      window.removeEventListener("touchstart", unlock);
+      video.pause();
       root.removeAttribute("data-film");
     };
   }, []);
 
   return (
     <div ref={layerRef} className={styles.film} aria-hidden="true">
-      {/* eslint-disable-next-line @next/next/no-img-element -- swapped by script under reduced motion; next/image would fight that */}
+      {/* eslint-disable-next-line @next/next/no-img-element -- swapped by script per chapter; next/image would fight that */}
       <img ref={imgRef} src={still(0)} alt="" className={styles.still} fetchPriority="high" decoding="async" />
       <video ref={videoRef} className={styles.video} muted playsInline preload="auto" disablePictureInPicture />
       <div className={styles.grade} />

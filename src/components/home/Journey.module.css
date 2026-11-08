@@ -34,7 +34,7 @@
 
 .video {
   opacity: 0;
-  transition: opacity 700ms var(--ease-cinematic);
+  transition: opacity 450ms var(--ease-cinematic);
 }
 
 .film[data-video] .video {
@@ -58,11 +58,11 @@
 .chapter {
   position: relative;
   display: grid;
-  min-height: 240svh;
+  min-height: 165svh;
 }
 
 .hero {
-  min-height: 185svh;
+  min-height: 130svh;
 }
 
 .heroInner {
@@ -76,7 +76,7 @@
 .cardSlot {
   position: sticky;
   top: calc(var(--nav-height) + 14svh);
-  margin-top: 45svh;
+  margin-top: 35svh;
 }
 
 /* Reading ground over the film. Local tokens flip the shared classes to light. */
@@ -92,9 +92,10 @@
   padding: clamp(1.4rem, 2.4vw, 2.1rem);
   border: 1px solid var(--color-hairline);
   border-radius: var(--r-sheet);
-  background: rgb(10 11 13 / 0.6);
-  -webkit-backdrop-filter: blur(18px) saturate(1.15);
-  backdrop-filter: blur(18px) saturate(1.15);
+  /* Solid tint, no backdrop blur: re-blurring a playing film every frame is
+     the single most expensive thing this page could do. */
+  background: linear-gradient(160deg, rgb(14 15 18 / 0.8), rgb(10 11 13 / 0.68));
+  box-shadow: 0 30px 80px -40px rgb(0 0 0 / 0.6);
   color: var(--color-ivory-dim);
 }
 
@@ -129,12 +130,12 @@
 
 @media (max-width: 819px) {
   .chapter {
-    min-height: 210svh;
+    min-height: 150svh;
   }
 
   .cardSlot {
     top: calc(var(--nav-height) + 30svh);
-    margin-top: 60svh;
+    margin-top: 45svh;
   }
 
   .card {

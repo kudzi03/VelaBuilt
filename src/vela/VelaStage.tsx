@@ -132,6 +132,8 @@ export function VelaStage({ still }: { readonly still: ReactNode }) {
         const r = el.getBoundingClientRect();
         if (r.top <= line && r.bottom > line) found = el.dataset.chapter ?? null;
         if (el.classList.contains("sheet") && r.top <= 0 && r.bottom >= vh) covered = true;
+        // The homepage film is an opaque full-screen layer whenever any of its chapters is on screen.
+        if (el.hasAttribute("data-film-key") && r.top < vh && r.bottom > 0) covered = true;
       }
       if (covered !== vela.covered) {
         vela.covered = covered;
