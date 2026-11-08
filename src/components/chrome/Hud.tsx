@@ -19,7 +19,7 @@ export function Hud() {
     <div className="hud" aria-hidden="true">
       <div className="shell flex h-16 items-center justify-between">
         <span className="w-24" />
-        <span className="scroll-glyph" data-show={pathname === "/" && chapter === "opening" ? "" : undefined} />
+        <span className="scroll-glyph" data-show={pathname === "/" && chapter === HOME_SEQUENCE[0]?.id ? "" : undefined} />
         <p className="label hud__counter text-right" data-show={at ? "" : undefined}>
           {at ? (
             <>

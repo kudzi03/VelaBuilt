@@ -3,15 +3,17 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { site } from "@/content/site";
-import { primaryServices, services } from "@/content/services";
+import { services } from "@/content/services";
 import { faqsFor } from "@/content/faq";
 import { workItems } from "@/content/work";
+import { journeyOpening, journeyStages } from "@/content/journey";
 import { pageMetadata } from "@/lib/seo";
 import { faqSchema, graph, serviceSchema, webPageSchema } from "@/lib/schema";
 import { Reveal } from "@/components/ui/Reveal";
 import { ArrowRight } from "@/components/ui/Primitives";
 import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
-import { CapabilityCards } from "@/components/home/CapabilityCards";
+import { JourneyFilm } from "@/components/home/JourneyFilm";
+import styles from "@/components/home/Journey.module.css";
 
 export const metadata: Metadata = pageMetadata({
   title: `${site.name} — Websites, follow-up and business tools`,
@@ -21,13 +23,15 @@ export const metadata: Metadata = pageMetadata({
 });
 
 /**
- * THE HOMEPAGE IS ONE SPACE.
+ * THE HOMEPAGE OPENS WITH ONE CUSTOMER'S JOURNEY.
  *
- * The object behind the page is the same structure throughout; each section
- * below names the form it takes (`data-chapter`), and it rebuilds itself as
- * the visitor arrives. Solid sheets travel over it where there is reading to
- * do. Every word is real HTML in document order: with the canvas gone,
- * scripts off or motion reduced, this reads top to bottom as a complete page.
+ * A single film (JourneyFilm) plays behind the opening chapters as the visitor
+ * scrolls: from being found, to trust, to an enquiry, follow-up and a record,
+ * ending on a booked job. The object steps out while the film runs
+ * (`journey-*` chapters) and returns for the contact chapter. Solid sheets
+ * travel over both where there is reading to do. Every word is real HTML in
+ * document order: with scripts off or motion reduced, this reads top to
+ * bottom as a complete page.
  */
 export default function HomePage() {
   const clientWork = workItems.filter((work) => work.category === "client-work");
@@ -42,30 +46,26 @@ export default function HomePage() {
   return (
     <>
 
-      {/* ── 01 · OPENING ─────────────────────────────────────────────────── */}
+      {/* ── OPENING · the film starts here ──────────────────────────────── */}
+      <JourneyFilm />
       <section
         id="opening"
-        data-chapter="opening"
-        data-label="VelaBuilt"
+        data-chapter={journeyOpening.id}
+        data-film-key={journeyOpening.key}
+        data-label={journeyOpening.label}
         aria-labelledby="opening-heading"
-        className="chapter chapter--opening"
+        className={`${styles.chapter} ${styles.hero}`}
       >
-        <div className="shell grid w-full gap-8 lg:grid-cols-[1.25fr_1fr] lg:items-end">
-          <Reveal>
-            <p className="label">VelaBuilt · Websites and business tools</p>
+        <div className={`shell ${styles.heroInner}`}>
+          <Reveal className={`${styles.card} ${styles.heroCard}`}>
+            <p className="label label-champagne">{journeyOpening.eyebrow}</p>
             <h1 id="opening-heading" className="display-xl mt-5 max-w-[14ch]">
-              A better website. Fewer missed opportunities.
+              {journeyOpening.heading}
             </h1>
-          </Reveal>
-          <Reveal delay={160} className="ground lg:justify-self-end">
-            <p className="lede">
-              We build websites that make your business easy to understand and contact. Then we
-              connect the tools that help you answer questions, follow up with people and keep
-              track of the work.
-            </p>
+            <p className={`lede ${styles.body}`}>{journeyOpening.body}</p>
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <Link href="#capabilities" className="btn btn-primary">
-                <span>See what we do</span>
+                <span>Follow the journey</span>
                 <ArrowRight />
               </Link>
               <StartProjectLink variant="ghost">Start a project</StartProjectLink>
@@ -74,9 +74,52 @@ export default function HomePage() {
         </div>
       </section>
 
-      <RestaurantShowcase />
+      {/* ── THE JOURNEY · one customer, first search to booked job ─────────── */}
+      <div id="capabilities">
+        <h2 className="sr-only">What VelaBuilt builds, step by step</h2>
+        {journeyStages.map((stage) => (
+          <section
+            key={stage.id}
+            id={stage.id}
+            data-chapter={stage.id}
+            data-film-key={stage.key}
+            data-label={stage.label}
+            aria-labelledby={`${stage.id}-heading`}
+            className={styles.chapter}
+          >
+            <div className="shell">
+              <div className={styles.cardSlot}>
+                <div className={styles.card}>
+                  <p className="label label-champagne">{stage.eyebrow}</p>
+                  <h3 id={`${stage.id}-heading`} className="display-lg mt-5">
+                    {stage.heading}
+                  </h3>
+                  <p className={styles.body}>{stage.body}</p>
+                  {stage.tags.length > 0 ? (
+                    <ul className={`label ${styles.tags}`}>
+                      {stage.tags.map((tag) => (
+                        <li key={tag}>{tag}</li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  {stage.service ? (
+                    <Link href={`/${stage.service}`} className={`btn btn-ghost ${styles.more}`}>
+                      <span>{stage.linkLabel}</span>
+                      <ArrowRight />
+                    </Link>
+                  ) : (
+                    <div className="mt-7">
+                      <StartProjectLink variant="primary">Start a project</StartProjectLink>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
+        ))}
+      </div>
 
-      {/* ── 02 · REAL CLIENT WORK ────────────────────────────────────────── */}
+      {/* ── REAL CLIENT WORK ─────────────────────────────────────────────── */}
       {clientWork.length > 0 ? (
         <section
           id="work"
@@ -88,7 +131,7 @@ export default function HomePage() {
           <div className="shell py-16 lg:py-20">
             <Reveal className="flex flex-wrap items-end justify-between gap-6">
               <div>
-                <p className="label">02 — Real client work</p>
+                <p className="label">Real client work</p>
                 <h2 id="work-heading" className="display-lg mt-5">
                   See the work for yourself.
                 </h2>
@@ -160,45 +203,9 @@ export default function HomePage() {
         </section>
       ) : null}
 
-      {/* ── 03–06 · WHAT WE BUILD ────────────────────────────────────────── */}
-      <div id="capabilities">
-        <h2 className="sr-only">What VelaBuilt builds</h2>
-        {primaryServices.map((service, i) => (
-          <section
-            key={service.slug}
-            id={service.area}
-            data-chapter={service.area}
-            data-label={service.name}
-            aria-labelledby={`${service.area}-heading`}
-            className="chapter"
-          >
-            <div className="shell w-full">
-              <div className="ground max-w-[36rem]">
-                <Reveal>
-                  <p className="label chapter__index">
-                    {String(i + 3).padStart(2, "0")} — {service.name}
-                  </p>
-                  <h3 id={`${service.area}-heading`} className="display-lg mt-5">
-                    {service.chapterHeading}
-                  </h3>
-                  <p className="mt-6 max-w-[48ch] leading-relaxed">{service.chapterBody}</p>
-                </Reveal>
-                <div className="mt-9">
-                  <CapabilityCards service={service} headingLevel="h4" />
-                </div>
-                <Reveal delay={420} className="mt-8">
-                  <Link href={`/${service.slug}`} className="btn btn-ghost">
-                    <span>See how we help with {service.shortName.toLowerCase()}</span>
-                    <ArrowRight />
-                  </Link>
-                </Reveal>
-              </div>
-            </div>
-          </section>
-        ))}
-      </div>
+      <RestaurantShowcase />
 
-      {/* ── 07 · PLAIN ANSWERS ───────────────────────────────────────────── */}
+      {/* ── PLAIN ANSWERS ────────────────────────────────────────────────── */}
       <section
         id="answers"
         data-chapter="answers"
@@ -209,7 +216,7 @@ export default function HomePage() {
         <div className="shell py-24 lg:py-32">
           <Reveal className="grid gap-6 lg:grid-cols-[1fr_1.6fr]">
             <div>
-              <p className="label">07 — Plain answers</p>
+              <p className="label">Plain answers</p>
               <h2 id="answers-heading" className="display-lg mt-5 max-w-[12ch]">
                 VelaBuilt, in plain terms.
               </h2>
@@ -236,7 +243,7 @@ export default function HomePage() {
       >
         <div className="shell w-full">
           <Reveal className="ground mx-auto max-w-[48rem] text-center">
-            <p className="label">08 — Start</p>
+            <p className="label">Start</p>
             <h2 id="contact-heading" className="display-lg mt-5">
               Tell us what is not working.
             </h2>

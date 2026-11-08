@@ -1,0 +1,150 @@
+/*
+ * The homepage opening: one film behind, the journey in front.
+ * The film is dark and photographic, so the reading cards carry the site's
+ * own tokens flipped to light-on-dark; every shared class (.label, .display-*,
+ * .btn) renders correctly inside them without new variants.
+ */
+
+.film {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: #0d0f12;
+  transition:
+    opacity 600ms var(--ease-cinematic),
+    visibility 0s linear 0s;
+}
+
+.film[data-hidden] {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 600ms var(--ease-cinematic),
+    visibility 0s linear 600ms;
+}
+
+.still,
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video {
+  opacity: 0;
+  transition: opacity 700ms var(--ease-cinematic);
+}
+
+.film[data-video] .video {
+  opacity: 1;
+}
+
+/* A light grade: vignette, and enough weight at the bottom edge for the hero. */
+.grade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 50% 45%, transparent 58%, rgb(0 0 0 / 0.42) 100%),
+    linear-gradient(to bottom, rgb(0 0 0 / 0.18), transparent 22%, transparent 62%, rgb(0 0 0 / 0.38));
+}
+
+/* ---- Chapters ---------------------------------------------------------- */
+
+/* Grid so the inner shell stretches to the chapter's full height: the sticky
+   card needs that much room to hold while its keyframe is on screen. */
+.chapter {
+  position: relative;
+  display: grid;
+  min-height: 240svh;
+}
+
+.hero {
+  min-height: 185svh;
+}
+
+.heroInner {
+  align-self: start; /* first screen only, not the whole grid row */
+  min-height: 100svh;
+  display: flex;
+  align-items: flex-end;
+  padding-block: calc(var(--nav-height) + 2rem) clamp(3rem, 9svh, 6rem);
+}
+
+.cardSlot {
+  position: sticky;
+  top: calc(var(--nav-height) + 14svh);
+  margin-top: 45svh;
+}
+
+/* Reading ground over the film. Local tokens flip the shared classes to light. */
+.card {
+  --color-ivory: #f5f0e8;
+  --color-ivory-dim: rgb(245 240 232 / 0.88);
+  --color-muted: rgb(245 240 232 / 0.74);
+  --color-champagne: #f3b86f;
+  --color-paper: #16140f;
+  --color-hairline: rgb(255 255 255 / 0.16);
+  --color-hairline-strong: rgb(255 255 255 / 0.34);
+  max-width: 34rem;
+  padding: clamp(1.4rem, 2.4vw, 2.1rem);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--r-sheet);
+  background: rgb(10 11 13 / 0.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
+  backdrop-filter: blur(18px) saturate(1.15);
+  color: var(--color-ivory-dim);
+}
+
+.heroCard {
+  max-width: 46rem;
+}
+
+.body {
+  margin-top: 1.1rem;
+  max-width: 46ch;
+  line-height: 1.6;
+}
+
+.tags {
+  margin: 1.4rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tags li {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--color-hairline);
+  border-radius: 999px;
+}
+
+.more {
+  margin-top: 1.1rem;
+}
+
+@media (max-width: 819px) {
+  .chapter {
+    min-height: 210svh;
+  }
+
+  .cardSlot {
+    top: calc(var(--nav-height) + 30svh);
+    margin-top: 60svh;
+  }
+
+  .card {
+    border-radius: var(--r);
+  }
+}
+
+/* "OPPORTUNITIES." is the longest word; it has to fit inside the card on a phone. */
+@media (max-width: 479px) {
+  .heroCard h1 {
+    font-size: min(2.05rem, 6.9vw);
+  }
+}

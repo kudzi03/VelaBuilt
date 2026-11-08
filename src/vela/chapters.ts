@@ -7,6 +7,7 @@
  * a page is not a new scene, it is the same structure standing somewhere else.
  */
 
+import { journeyOpening, journeyStages } from "@/content/journey";
 import type { ShapeId } from "./geometry";
 import type { ChapterSignal, Placement } from "./store";
 
@@ -48,6 +49,11 @@ export const CHAPTERS: Record<string, ChapterSignal> = {
   "page-quiet": entry("page-quiet", "armature", P(0.3, 0.05, 0.6, 0.35), P(0.25, 0.32, 0.36, 0.3)),
   /** Solid reading ground: the object steps out entirely. */
   reading: entry("reading", "armature", P(0.3, 0, 0.6, 0), P(0.3, 0, 0.4, 0)),
+
+  /** The homepage film (src/content/journey.ts): the object steps out while it plays. */
+  ...Object.fromEntries(
+    [journeyOpening, ...journeyStages].map(({ id }) => [id, entry(id, "armature", P(0.3, 0, 0.6, 0), P(0.3, 0, 0.4, 0))]),
+  ),
 };
 
 export type ChapterId = keyof typeof CHAPTERS;
@@ -57,13 +63,13 @@ export function chapter(id: string | undefined | null): ChapterSignal | null {
 }
 
 /** The homepage, in order, as the instrument strip counts it. */
-export const HOME_SEQUENCE = [
-  { id: "opening", label: "VelaBuilt" },
+export const HOME_SEQUENCE: readonly { readonly id: string; readonly label: string }[] = [
+  { id: journeyOpening.id, label: journeyOpening.label },
+  ...journeyStages.map(({ id, label }) => ({ id, label })),
   { id: "work", label: "Work" },
-  { id: "digital", label: "Digital Experiences" },
-  { id: "ai", label: "AI Systems" },
-  { id: "automation", label: "Automation" },
-  { id: "systems", label: "Business Systems" },
   { id: "answers", label: "Answers" },
   { id: "contact", label: "Contact" },
-] as const;
+];
+
+/** Journey chapter ids, for anything that marks "what we do" as current. */
+export const JOURNEY_CHAPTERS: readonly string[] = journeyStages.map(({ id }) => id);

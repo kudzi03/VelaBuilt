@@ -7,6 +7,7 @@ import { primaryNav } from "@/content/site";
 import { Wordmark } from "./Monogram";
 import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
 import { useVelaSnapshot } from "@/vela/store";
+import { JOURNEY_CHAPTERS } from "@/vela/chapters";
 
 /**
  * Quiet at the edge. The wordmark, four destinations with a lit marker under
@@ -54,7 +55,7 @@ export function SiteHeader() {
   const isActive = (href: string) => {
     if (href === "/#capabilities") {
       return (
-        (pathname === "/" && ["digital", "ai", "automation", "systems"].includes(chapter)) ||
+        (pathname === "/" && JOURNEY_CHAPTERS.includes(chapter)) ||
         ["/website-conversion-systems", "/ai-systems", "/lead-follow-up-systems", "/business-systems", "/website-engine-optimization"].includes(pathname)
       );
     }
