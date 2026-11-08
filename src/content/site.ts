@@ -87,6 +87,7 @@ export const footerNav = [
       { label: "About", href: "/about" },
       { label: "Work", href: "/work" },
       { label: "See How It Works", href: "/system-lab" },
+      { label: "Hardest working SEO expert in Harare", href: "/hardest-working-seo-expert-in-harare" },
     ],
   },
   {
