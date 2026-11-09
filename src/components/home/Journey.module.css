@@ -9,7 +9,10 @@
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: #0d0f12;
+  /* 130-byte blurred hero frame: the scene paints with the HTML, before any image arrives. */
+  background: #0d0f12
+    url("data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAABwBACdASogABIAPt1cpUyopSOiMAgBEBuJZzgAClrCHf4cVgwqXyKvn3dugAD+6oECYMoe77n99pkY2s3w1VZpCcycm0wBXFWqEo3v7of0GORtEpjbsW+if8TUoqb7kY13PpS44hYQsIUKU3CAAA==")
+    center / cover no-repeat;
   transition:
     opacity 600ms var(--ease-cinematic),
     visibility 0s linear 0s;
@@ -30,6 +33,16 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* Two stills crossfade; the film sits over them once its frames are here. */
+.still {
+  opacity: 0;
+  transition: opacity 1100ms var(--ease-cinematic);
+}
+
+.still[data-on] {
+  opacity: 1;
 }
 
 .video {
