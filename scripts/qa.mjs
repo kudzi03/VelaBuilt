@@ -92,12 +92,12 @@ for (const vp of WIDTHS) {
   await ctx.close();
 }
 
-/* ── the object goes live, and sleeps under a sheet ──────────────────── */
+/* ── the film's held frame comes alive (water shader) ─────────────────── */
 {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await page.goto(BASE + "/", { waitUntil: "domcontentloaded", timeout: 60000 });
-  const live = await page.waitForSelector(".vela-canvas[data-on]", { timeout: 25000 }).then(() => true, () => false);
-  if (!live) fail("webgl", "canvas never went live on /");
+  const live = await page.waitForSelector("[class*=film] canvas[data-on]", { timeout: 25000 }).then(() => true, () => false);
+  if (!live) fail("webgl", "water never went live on /");
   await page.close();
 }
 
@@ -111,8 +111,8 @@ for (const vp of WIDTHS) {
       [...document.querySelectorAll(".reveal")].filter((el) => getComputedStyle(el).opacity === "0").length,
     );
     if (hidden) fail(`no-js ${route}`, `${hidden} sections invisible`);
-    const still = await page.locator(".vela-still").count();
-    if (route === "/" && !still) fail("no-js /", "server-rendered still missing");
+    const still = await page.locator("img[src='/journey/k0.webp']").count();
+    if (route === "/" && !still) fail("no-js /", "opening film still missing");
   }
   const form = await page.locator("form[action='/api/enquiry']").count();
   if (!form) fail("no-js /start", "native enquiry form missing");

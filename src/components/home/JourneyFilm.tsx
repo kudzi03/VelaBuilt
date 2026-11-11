@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { FILM_SECONDS_PER_STAGE } from "@/content/journey";
+import { createWater } from "./water";
 import styles from "./Journey.module.css";
 
 /**
@@ -18,6 +19,9 @@ import styles from "./Journey.module.css";
  * the stills and the film takes over as it arrives. On a slow connection the visitor sees a calm sequence of stills,
  * never a frozen frame.
  *
+ * While it holds on a keyframe the water shader (./water) keeps the frame
+ * alive: ripples, reflections, lantern flicker.
+ *
  * Scroll is never hijacked. Decorative: every word is in the sections.
  * Without JavaScript the first keyframe shows; under reduced motion or
  * Save-Data no video is fetched and the stills carry the whole sequence.
@@ -33,6 +37,7 @@ export function JourneyFilm() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const imgARef = useRef<HTMLImageElement>(null);
   const imgBRef = useRef<HTMLImageElement>(null);
+  const waterRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const layer = layerRef.current!;
@@ -49,18 +54,35 @@ export function JourneyFilm() {
     let raf = 0;
     let queued = 0;
     let ready = false;
+    let onScreen = true;
+    const water = reduced ? null : createWater(waterRef.current!);
+
+    /* Whatever the visitor is looking at, held still: give it to the water. */
+    const rest = () => {
+      if (!water) return;
+      if (!onScreen) return water.hide();
+      if (layer.hasAttribute("data-video")) {
+        if (video.paused && !video.seeking && video.readyState >= 2) water.show(video, key);
+        else water.hide(true);
+        return;
+      }
+      const img = imgs[front]!;
+      if (img.getAttribute("src") === still(key) && img.complete && img.naturalWidth) water.show(img, key, 1100);
+      else water.hide();
+    };
 
     /* Stills: two layers so a change is a crossfade, never a cut. */
     const showStill = (k: number) => {
       const src = still(k);
       const cur = imgs[front]!;
-      if (cur.getAttribute("src") === src) return;
+      if (cur.getAttribute("src") === src) return rest();
       const next = imgs[1 - front]!;
       const reveal = () => {
         if (key !== k) return; // the visitor has moved on
         next.setAttribute("data-on", "");
         cur.removeAttribute("data-on");
         front = 1 - front;
+        rest();
       };
       // Only the load event: while a new src is pending, `complete` and
       // `naturalWidth` still describe the previous image.
@@ -76,8 +98,14 @@ export function JourneyFilm() {
       return false;
     };
 
-    const hideVideo = () => layer.removeAttribute("data-video");
-    const showVideo = () => layer.setAttribute("data-video", "");
+    const hideVideo = () => {
+      layer.removeAttribute("data-video");
+      rest();
+    };
+    const showVideo = () => {
+      layer.setAttribute("data-video", "");
+      rest();
+    };
 
     /* Watch playback until the target keyframe, then hold on it exactly. */
     const watch = () => {
@@ -86,6 +114,7 @@ export function JourneyFilm() {
       if (video.currentTime >= target - 0.02 || video.ended) {
         video.pause();
         if (Math.abs(video.currentTime - target) > 0.04) video.currentTime = target;
+        rest();
         return;
       }
       if (video.readyState < 3) {
@@ -119,6 +148,7 @@ export function JourneyFilm() {
       const target = k * FILM_SECONDS_PER_STAGE;
       if (back || from > target) return settleOn(k);
       if (!layer.hasAttribute("data-video") || !buffered(from, target)) return settleOn(k);
+      water?.hide(true);
       video.play().then(() => (raf = requestAnimationFrame(watch)), () => settleOn(k));
     };
 
@@ -131,6 +161,10 @@ export function JourneyFilm() {
       const last = list[list.length - 1]!.getBoundingClientRect();
       const visible = first.top < vh && last.bottom > 0;
       layer.toggleAttribute("data-hidden", !visible);
+      if (visible !== onScreen) {
+        onScreen = visible;
+        rest();
+      }
       // The instrument strip sits on the bottom edge: it reads light only while the film is behind it.
       root.toggleAttribute("data-film", visible && last.bottom > vh - 64);
 
@@ -170,6 +204,9 @@ export function JourneyFilm() {
       });
     }
 
+    video.addEventListener("seeked", rest);
+    // The opening still may still be arriving when the page hydrates.
+    if (!imgs[0]!.complete) imgs[0]!.addEventListener("load", rest, { once: true });
     measure();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
@@ -179,7 +216,9 @@ export function JourneyFilm() {
       cancelAnimationFrame(queued);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      video.removeEventListener("seeked", rest);
       video.pause();
+      water?.dispose();
       root.removeAttribute("data-film");
     };
   }, []);
@@ -191,6 +230,7 @@ export function JourneyFilm() {
       {/* eslint-disable-next-line @next/next/no-img-element -- second crossfade layer */}
       <img ref={imgBRef} alt="" className={styles.still} decoding="async" />
       <video ref={videoRef} className={styles.video} muted playsInline preload="auto" disablePictureInPicture />
+      <canvas ref={waterRef} className={styles.water} />
       <div className={styles.grade} />
     </div>
   );

@@ -27,7 +27,8 @@
 }
 
 .still,
-.video {
+.video,
+.water {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -51,6 +52,16 @@
 }
 
 .film[data-video] .video {
+  opacity: 1;
+}
+
+/* The water shader over a held frame: fades in once it has painted. */
+.water {
+  opacity: 0;
+  transition: opacity 600ms var(--ease-cinematic);
+}
+
+.water[data-on] {
   opacity: 1;
 }
 

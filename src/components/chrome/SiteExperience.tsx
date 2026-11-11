@@ -8,11 +8,11 @@ import { SiteFooter } from "./SiteFooter";
 import { Hud } from "./Hud";
 
 /** The concept has its own navigation; the studio keeps its existing chrome. */
-export function SiteExperience({ children, still }: { children: ReactNode; still: ReactNode }) {
+export function SiteExperience({ children }: { children: ReactNode }) {
   const demo = usePathname() === "/demo/ember-and-grain";
   if (demo) return <main id="main">{children}</main>;
   return <>
-    <VelaStage still={still} />
+    <VelaStage />
     <div className="site">
       <SiteHeader />
       <main id="main">{children}</main>

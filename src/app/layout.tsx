@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { VelaStill } from "@/vela/VelaStill";
 import { SiteExperience } from "@/components/chrome/SiteExperience";
 import { Analytics } from "@/components/chrome/Analytics";
 import { EnquiryDialogProvider } from "@/components/enquiry/EnquiryDialogProvider";
@@ -63,7 +62,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#efebe5",
+  themeColor: "#0b0d10",
   colorScheme: "light",
   width: "device-width",
   initialScale: 1,
@@ -102,7 +101,7 @@ export default function RootLayout({
         </a>
 
         <EnquiryDialogProvider>
-          <SiteExperience still={<VelaStill />}>{children}</SiteExperience>
+          <SiteExperience>{children}</SiteExperience>
         </EnquiryDialogProvider>
         <Analytics />
 

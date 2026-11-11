@@ -3,44 +3,45 @@
 /* ==========================================================================
    VELABUILT — the design system
 
-   A high-key field, one dark structure in it, and type that behaves like an
+   Night on the salt pan, the world of the homepage film, on every page.
+   Salt-white type on a blue-black ground, and type that behaves like an
    instrument panel. Two families: Archivo (expanded for display, normal
    width for reading) and Geist Mono for labels and counters. Two radii.
-   Colour is graphite on warm ivory; light is amber and appears only as light
-   — on the object, on the active marker, in an active state — never as a
-   decorative fill.
+   Light is lantern amber and appears only as light — on the active marker,
+   in an active state, in the film — never as a decorative fill.
 
-   Token names below predate this system (they come from the dark build) and
-   are kept so shared components restyle without edits. Their roles:
+   Token names come from the first dark build and are kept so shared
+   components restyle without edits. Their roles:
      --color-ivory      primary text          --color-void      page ground
      --color-ivory-dim  body text             --color-champagne accent text
+     --color-paper      solid reading ground (sheets, dialogs, button ink)
    ========================================================================== */
 
 @theme {
-  --color-void: #f4f1ec;
-  --color-obsidian: #ece8e1;
-  --color-graphite: #e8e3db;
-  --color-graphite-raised: #faf8f5;
-  --color-graphite-edge: #d9d3c9;
-  --color-slate: #cfc8bd;
+  --color-void: #0b0d10;
+  --color-obsidian: #0f1216;
+  --color-graphite: #14181d;
+  --color-graphite-raised: #1a1f25;
+  --color-graphite-edge: #262c33;
+  --color-slate: #333a42;
 
-  --color-ivory: #151412;
-  --color-ivory-dim: #34322e;
-  --color-muted: #5a564f;
-  --color-faint: #67625a;
+  --color-ivory: #f2ede4;
+  --color-ivory-dim: #d6d0c5;
+  --color-muted: #a9a399;
+  --color-faint: #8e897f;
 
-  --color-champagne-light: #8f601f;
-  --color-champagne: #7a4f15;
-  --color-champagne-core: #b77a2e;
-  --color-champagne-deep: #d49a4e;
-  --color-champagne-shadow: #f0dcba;
+  --color-champagne-light: #f7cd94;
+  --color-champagne: #f3b86f;
+  --color-champagne-core: #e3a356;
+  --color-champagne-deep: #b77a2e;
+  --color-champagne-shadow: #3a2a16;
 
-  --color-paper: #f7f5f1;
+  --color-paper: #101317;
   --color-ember: #f29a38;
   --color-amber: #e3892a;
 
-  --color-hairline: rgb(22 21 19 / 0.13);
-  --color-hairline-strong: rgb(22 21 19 / 0.26);
+  --color-hairline: rgb(255 255 255 / 0.12);
+  --color-hairline-strong: rgb(255 255 255 / 0.28);
 
   --font-display: var(--font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif;
@@ -66,7 +67,7 @@
   }
 
   :root {
-    color-scheme: light;
+    color-scheme: dark;
     --nav-height: 4.5rem;
     --r: 12px;
     --r-sheet: 28px;
@@ -74,9 +75,9 @@
   }
 
   html {
-    /* The field. The stage paints its own gradient over this; this is what
+    /* The night. The stage paints its own sky over this; this is what
        shows before it and on an overscroll. */
-    background-color: #ebe7e0;
+    background-color: #0b0d10;
     -webkit-text-size-adjust: 100%;
   }
 
@@ -131,8 +132,8 @@
   }
 
   ::selection {
-    background: #f3cf97;
-    color: var(--color-ivory);
+    background: #f3b86f;
+    color: #0b0d10;
   }
 
   img,
@@ -272,8 +273,8 @@
     background: var(--color-paper);
     border-radius: var(--r-sheet) var(--r-sheet) 0 0;
     box-shadow:
-      0 -1px 0 rgb(22 21 19 / 0.06),
-      0 -30px 80px -40px rgb(22 21 19 / 0.25);
+      0 -1px 0 var(--color-hairline),
+      0 -30px 80px -40px rgb(0 0 0 / 0.7);
   }
 
   .sheet + .sheet {
@@ -281,15 +282,17 @@
     box-shadow: 0 -1px 0 var(--color-hairline);
   }
 
+  /* Opaque on purpose: hairline grids draw their dividers as 1px gaps
+     between panels, so a see-through panel would show the line through it. */
   .panel {
     position: relative;
-    background: rgb(250 248 245 / 0.72);
+    background: var(--color-graphite);
     border: 1px solid var(--color-hairline);
     border-radius: var(--r);
   }
 
   .sheet .panel {
-    background: rgb(255 255 255 / 0.55);
+    background: #13171c;
   }
 
   .panel-interactive {
@@ -302,7 +305,7 @@
   .panel-interactive:hover,
   .panel-interactive:focus-within {
     border-color: var(--color-hairline-strong);
-    background: rgb(255 255 255 / 0.8);
+    background: var(--color-graphite-raised);
   }
 
   .seam {
@@ -317,7 +320,7 @@
 
   @media (max-width: 819px) {
     .ground {
-      background: rgb(247 245 241 / 0.9);
+      background: rgb(11 13 16 / 0.9);
       -webkit-backdrop-filter: blur(10px);
       backdrop-filter: blur(10px);
       border: 1px solid var(--color-hairline);
@@ -380,7 +383,7 @@
   }
 
   .btn-primary:hover {
-    --btn-bg: #2a2825;
+    --btn-bg: #ffffff;
   }
 
   .btn-ghost {
@@ -404,7 +407,7 @@
   .field {
     width: 100%;
     padding: 0.9rem 1rem;
-    background: rgb(255 255 255 / 0.7);
+    background: rgb(255 255 255 / 0.04);
     border: 1px solid var(--color-hairline-strong);
     border-radius: 10px;
     color: var(--color-ivory);
@@ -426,139 +429,27 @@
   .field:focus {
     outline: none;
     border-color: var(--color-ivory);
-    background: #fff;
+    background: rgb(255 255 255 / 0.07);
   }
 
   .field[aria-invalid="true"] {
-    border-color: #a8412a;
+    border-color: #e0785f;
   }
 
   /* ==========================================================================
      THE STAGE
      ========================================================================== */
 
-  .vela-stage {
-    display: contents;
-  }
-
-  .vela-bg,
-  .vela-rings,
-  .vela-still-wrap,
-  .vela-canvas {
+  .vela-bg {
     position: fixed;
     pointer-events: none;
-  }
-
-  .vela-bg {
     inset: 0;
     z-index: 0;
+    /* The pan at night: deep sky, a faint warm glow on the horizon, the
+       flat below it a shade lighter than the sky. */
     background:
-      radial-gradient(90% 70% at 50% 42%, #f8f6f2 0%, #efebe5 42%, #e1dcd3 78%, #d6d0c6 100%);
-  }
-
-  /* An instrument's rings: a hairline, and a band of fine ticks. */
-  .vela-rings {
-    z-index: 0;
-    left: 50%;
-    top: 46.5%;
-    width: min(96svh, 118vw);
-    aspect-ratio: 1;
-    translate: -50% -50%;
-    border-radius: 50%;
-    border: 1px solid rgb(22 21 19 / 0.07);
-    transition:
-      opacity 1200ms var(--ease-cinematic),
-      scale 1600ms var(--ease-cinematic);
-  }
-
-  .vela-rings::before,
-  .vela-rings::after {
-    content: "";
-    position: absolute;
-    border-radius: 50%;
-  }
-
-  .vela-rings::before {
-    inset: 14%;
-    background: repeating-conic-gradient(rgb(22 21 19 / 0.2) 0 0.22deg, transparent 0.22deg 2deg);
-    -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 8px), #000 calc(100% - 8px), #000 100%, transparent 100%);
-    mask: radial-gradient(closest-side, transparent calc(100% - 8px), #000 calc(100% - 8px), #000 100%, transparent 100%);
-  }
-
-  .vela-rings::after {
-    inset: 14%;
-    border: 1px solid rgb(22 21 19 / 0.06);
-  }
-
-  .vela-stage[data-stage-chapter="opening"] .vela-rings {
-    left: 73%;
-    top: 30%;
-    width: min(68svh, 80vw);
-  }
-
-  [data-rings="off"] .vela-rings {
-    opacity: 0;
-    scale: 1.08;
-  }
-
-  @media (max-width: 819px) {
-    .vela-rings {
-      top: 30%;
-      width: 128vw;
-    }
-
-    .vela-stage[data-stage-chapter="opening"] .vela-rings {
-      left: 50%;
-      top: 25.5%;
-      width: min(100vw, 54svh);
-    }
-  }
-
-  .vela-still-wrap {
-    z-index: 0;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    transition:
-      transform 1400ms var(--ease-cinematic),
-      opacity 900ms var(--ease-cinematic);
-  }
-
-  /* Match the opening placement before the stage's client effect runs. */
-  .vela-stage[data-stage-chapter="opening"] .vela-still-wrap {
-    transform: translate3d(23vw, -20svh, 0) scale(0.55);
-  }
-
-  @media (max-width: 819px) {
-    .vela-stage[data-stage-chapter="opening"] .vela-still-wrap {
-      transform: translate3d(0, -24.5svh, 0) scale(0.58);
-    }
-  }
-
-  .vela-still {
-    width: calc(min(30svh, 36vw) * 2.6 / 1.15);
-    height: auto;
-    aspect-ratio: 1;
-    margin-top: -7svh;
-  }
-
-  @media (max-width: 819px) {
-    .vela-still {
-      margin-top: -40svh;
-    }
-  }
-
-  .vela-canvas {
-    inset: 0;
-    z-index: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    transition: opacity 1400ms var(--ease-cinematic);
-  }
-
-  .vela-canvas[data-on] {
-    opacity: 1;
+      radial-gradient(70% 22% at 50% 68%, rgb(243 184 111 / 0.07), transparent 70%),
+      linear-gradient(180deg, #07090c 0%, #0c1118 52%, #121a24 67.5%, #0d1117 68%, #0b0d10 100%);
   }
 
   /* ==========================================================================
@@ -575,8 +466,11 @@
       box-shadow 500ms var(--ease-cinematic);
   }
 
+  /* Over the homepage film the sky can be bright: the light nav always
+     stands on night ground there, with or without JavaScript. */
+  html:has([data-film-key]) .site-header,
   .site-header[data-scrolled] {
-    background: rgb(244 241 236 / 0.78);
+    background: rgb(11 13 16 / 0.78);
     -webkit-backdrop-filter: blur(14px) saturate(1.2);
     backdrop-filter: blur(14px) saturate(1.2);
     box-shadow: 0 1px 0 var(--color-hairline);
@@ -703,10 +597,8 @@
   }
 
   @media (max-width: 819px) {
-    /* The object holds the top of the screen; the chapter starts beneath it. */
     .chapter {
-      align-items: flex-end;
-      padding-top: 46svh;
+      padding-top: calc(var(--nav-height) + 2rem);
       padding-bottom: 5rem;
     }
   }
@@ -736,7 +628,7 @@
     padding: 1.25rem 1.25rem 1.35rem;
     border: 1px solid var(--color-hairline);
     border-radius: var(--r);
-    background: rgb(250 248 245 / 0.62);
+    background: rgb(255 255 255 / 0.03);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     transition:
@@ -747,7 +639,7 @@
 
   .cap-card[data-lit] {
     border-color: rgb(227 137 42 / 0.65);
-    background: rgb(255 255 255 / 0.86);
+    background: rgb(243 184 111 / 0.07);
     box-shadow:
       0 0 0 1px rgb(227 137 42 / 0.25),
       0 18px 50px -24px rgb(227 137 42 / 0.55);
@@ -765,13 +657,13 @@
   }
 
   .btn-secondary {
-    --btn-bg: rgb(250 248 245 / 0.6);
+    --btn-bg: rgb(255 255 255 / 0.04);
   }
 
   .cap-card:has(> [data-lit]),
   .cap-card[data-lit] {
     border-color: rgb(227 137 42 / 0.65);
-    background: rgb(255 255 255 / 0.86);
+    background: rgb(243 184 111 / 0.07);
     box-shadow:
       0 0 0 1px rgb(227 137 42 / 0.25),
       0 18px 50px -24px rgb(227 137 42 / 0.55);
@@ -799,7 +691,7 @@
   @media (max-width: 819px) {
     .chapter--opening {
       min-height: auto;
-      padding-top: 37svh;
+      padding-top: calc(var(--nav-height) + 2rem);
       padding-bottom: 3rem;
     }
   }
@@ -819,7 +711,7 @@
   @media (min-width: 820px) {
     .chapter--contact .ground {
       padding: 2.25rem 2.5rem;
-      background: rgb(247 245 241 / 0.72);
+      background: rgb(16 19 23 / 0.82);
       -webkit-backdrop-filter: blur(12px);
       backdrop-filter: blur(12px);
       border: 1px solid var(--color-hairline);
@@ -827,20 +719,20 @@
     }
   }
 
-  /* Inner pages: the object stands to the right of the opening; the reading
-     that follows is on a sheet. */
+  /* Inner pages: the opening stands on the night pan; the reading that
+     follows is on a sheet. */
   .page-hero {
     position: relative;
     display: flex;
     align-items: flex-end;
-    min-height: 88svh;
+    min-height: 72svh;
     padding-block: calc(var(--nav-height) + 3rem) 5rem;
   }
 
   @media (max-width: 819px) {
     .page-hero {
       min-height: auto;
-      padding-top: calc(var(--nav-height) + 30svh);
+      padding-top: calc(var(--nav-height) + 4rem);
       padding-bottom: 3.5rem;
     }
   }
@@ -856,7 +748,7 @@
     height: auto;
     border-radius: var(--r);
     border: 1px solid var(--color-hairline);
-    box-shadow: 0 40px 90px -50px rgb(22 21 19 / 0.55);
+    box-shadow: 0 40px 90px -50px rgb(0 0 0 / 0.8);
     transition: transform 1200ms var(--ease-cinematic);
   }
 
@@ -872,7 +764,7 @@
     height: auto;
     border-radius: 14px;
     border: 1px solid var(--color-hairline-strong);
-    box-shadow: 0 30px 60px -30px rgb(22 21 19 / 0.6);
+    box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.8);
   }
 
   .answers {
@@ -926,7 +818,7 @@
   }
 
   .enquiry-dialog::backdrop {
-    background: rgb(232 227 219 / 0.72);
+    background: rgb(5 6 8 / 0.72);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
   }
@@ -940,7 +832,7 @@
     background: var(--color-paper);
     border: 1px solid var(--color-hairline);
     border-radius: var(--r-sheet);
-    box-shadow: 0 40px 120px -40px rgb(22 21 19 / 0.45);
+    box-shadow: 0 40px 120px -40px rgb(0 0 0 / 0.8);
   }
 
   @media (max-width: 40rem) {

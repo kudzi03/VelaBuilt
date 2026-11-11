@@ -1,12 +1,8 @@
 import { buildArmature } from "./geometry";
 
 /**
- * The first frame, drawn on the server.
- *
- * The same armature the renderer animates, projected once to SVG at the pose
- * the renderer starts from. It is the object at first paint — before any
- * script — and it is the object for visitors without WebGL or on data saver.
- * The canvas fades in over it and it steps back.
+ * The VelaBuilt armature, projected once to SVG. The object no longer stands
+ * on the site; this drawing remains as the mark on the share image.
  */
 
 const YAW = 0.4;
@@ -43,34 +39,4 @@ export function stillPaths() {
     ((pa[2] + pb[2]) / 2 > 0 ? near : far).push(d);
   }
   return { near: near.join(""), far: far.join(""), viewBox: STILL_VIEWBOX };
-}
-
-export function VelaStill() {
-  const { near, far } = stillPaths();
-
-  return (
-    <svg
-      className="vela-still"
-      viewBox={STILL_VIEWBOX}
-      aria-hidden="true"
-      focusable="false"
-    >
-      <defs>
-        <radialGradient id="vela-still-core">
-          <stop offset="0" stopColor="#140f0a" stopOpacity="0.55" />
-          <stop offset="0.55" stopColor="#140f0a" stopOpacity="0.18" />
-          <stop offset="1" stopColor="#140f0a" stopOpacity="0" />
-        </radialGradient>
-        <radialGradient id="vela-still-ember">
-          <stop offset="0" stopColor="#fff4dc" stopOpacity="0.9" />
-          <stop offset="0.35" stopColor="#f29a38" stopOpacity="0.35" />
-          <stop offset="1" stopColor="#f29a38" stopOpacity="0" />
-        </radialGradient>
-      </defs>
-      <circle r="0.78" fill="url(#vela-still-core)" />
-      <path d={far} stroke="#161512" strokeOpacity="0.22" strokeWidth="0.006" fill="none" />
-      <path d={near} stroke="#161512" strokeOpacity="0.72" strokeWidth="0.007" fill="none" />
-      <circle r="0.2" fill="url(#vela-still-ember)" />
-    </svg>
-  );
 }
