@@ -15,7 +15,7 @@ import { Reveal } from "@/components/ui/Reveal";
  */
 export function WorkGrid({ items }: { readonly items: readonly WorkItem[] }) {
   return (
-    <ul className="grid gap-px bg-[color:var(--color-hairline)] md:grid-cols-2">
+    <ul className="hairline-grid grid gap-px bg-[color:var(--color-hairline)] md:grid-cols-2">
       {items.map((item, index) => {
         const category = workCategories.find((entry) => entry.id === item.category)!;
         const inner = (

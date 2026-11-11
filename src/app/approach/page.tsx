@@ -136,7 +136,7 @@ export default function ApproachPage() {
             </h2>
           </Reveal>
 
-          <ul className="mt-14 grid gap-px bg-[color:var(--color-hairline)] md:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-14 hairline-grid grid gap-px bg-[color:var(--color-hairline)] md:grid-cols-2 lg:grid-cols-3">
             {PRINCIPLES.map((principle, index) => (
               <Reveal as="li" key={principle.title} delay={index * 60}>
                 <div className="panel h-full !border-0 p-8">

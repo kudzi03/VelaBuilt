@@ -1143,3 +1143,16 @@
     animation: none;
   }
 }
+
+/* Hairline grids draw their dividers as 1px gaps over a hairline ground.
+   That ground waits for its cells: before they fade in it would read as a
+   grey slab on the night background. */
+@media (prefers-reduced-motion: no-preference) {
+  .hairline-grid {
+    transition: background-color 900ms var(--ease-cinematic);
+  }
+
+  .js .hairline-grid:has(> .reveal:not([data-revealed="true"])) {
+    background-color: transparent;
+  }
+}

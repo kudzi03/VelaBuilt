@@ -70,7 +70,7 @@ export default function SystemLabPage() {
             </h2>
           </Reveal>
 
-          <div className="mt-14 grid gap-px bg-[color:var(--color-hairline)] md:grid-cols-2">
+          <div className="mt-14 hairline-grid grid gap-px bg-[color:var(--color-hairline)] md:grid-cols-2">
             {systemModules.map((unit, index) => (
               <Reveal as="article" key={unit.id} delay={index * 60}>
                 <div id={unit.id} className="panel h-full !border-0 p-8 lg:p-10">
