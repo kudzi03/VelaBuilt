@@ -1,0 +1,272 @@
+/*
+ * OUR WORK. Flat by default (a row that scrolls sideways): that is the
+ * no-JS and reduced-motion layout. `data-ring` turns the row into the ring.
+ */
+
+.root {
+  margin-top: 3rem;
+}
+
+.stage {
+  position: relative;
+  border-radius: var(--r-sheet);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.ring {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  padding: 3rem 1.5rem;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+}
+
+.panel {
+  --w: min(17rem, 60vw);
+  position: relative;
+  flex: 0 0 var(--w);
+  width: var(--w);
+  scroll-snap-align: center;
+}
+
+.face {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+  border: 1px solid var(--color-hairline-strong);
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--color-paper);
+  color: var(--color-ivory-dim);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.face:focus-visible {
+  outline: 2px solid var(--color-champagne);
+  outline-offset: 3px;
+}
+
+.media {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: radial-gradient(80% 60% at 50% 30%, #1c2533, #0d1014);
+}
+
+.shot {
+  object-fit: cover;
+  object-position: top center;
+}
+
+.cap {
+  display: grid;
+  align-content: start;
+  gap: 0.4rem;
+  padding: 0.9rem 1rem 1.1rem;
+  border-top: 1px solid var(--color-hairline);
+}
+
+.flatText {
+  margin-top: 0.3rem;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+/* The sketch on a working example or concept: what it does, in four words. */
+.sketch {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 1rem 1.1rem;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ivory-dim);
+}
+
+.sketch li {
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--color-hairline);
+  border-radius: 8px;
+  background: rgb(255 255 255 / 0.03);
+}
+
+.sketch li::before {
+  content: "";
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-right: 0.55rem;
+  border-radius: 50%;
+  background: var(--color-champagne);
+  box-shadow: 0 0 8px var(--color-ember);
+  vertical-align: 0.05em;
+}
+
+.chain li {
+  text-align: center;
+  border-radius: 999px;
+}
+
+.chain li::before {
+  display: none;
+}
+
+.chain li + li::after {
+  content: none;
+}
+
+.back {
+  display: none;
+}
+
+.detail {
+  display: none;
+}
+
+/* ---- The ring ----------------------------------------------------------- */
+
+.root[data-ring] .stage {
+  height: clamp(30rem, 52vw, 40rem);
+  perspective: 1500px;
+  perspective-origin: 50% 40%;
+  touch-action: pan-y;
+  cursor: grab;
+  user-select: none;
+}
+
+.root[data-ring] .stage[data-dragging] {
+  cursor: grabbing;
+}
+
+.root[data-ring] .ring {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 0;
+  height: 0;
+  padding: 0;
+  overflow: visible;
+  transform-style: preserve-3d;
+}
+
+.root[data-ring] .panel {
+  position: absolute;
+  left: calc(var(--w) / -2);
+  top: -9.5rem;
+  height: 19rem;
+  transform-style: preserve-3d;
+}
+
+/* Panels turned aside dim their picture, never their caption, so the one in
+   front reads first and every caption stays readable. */
+.root[data-ring] .face {
+  opacity: var(--face, 1);
+  transition: opacity 300ms linear;
+}
+
+.root[data-ring] .media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #05070a;
+  opacity: var(--shade, 0);
+  pointer-events: none;
+}
+
+/* The far side of a panel: sailcloth. */
+.root[data-ring] .back {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: var(--r);
+  background: linear-gradient(170deg, #a99c86, #5f5647);
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  opacity: 0.55;
+}
+
+.root[data-ring] .flatText {
+  display: none;
+}
+
+.root[data-ring] .detail {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1.25rem 2rem;
+  margin-top: 1rem;
+  padding: 1.4rem 1.6rem;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--r);
+  background: var(--color-paper);
+}
+
+.nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.round {
+  display: grid;
+  place-items: center;
+  width: 2.9rem;
+  height: 2.9rem;
+  border: 1px solid var(--color-hairline-strong);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-ivory);
+  cursor: pointer;
+  transition: border-color 300ms var(--ease-cinematic);
+}
+
+.round:hover {
+  border-color: var(--color-ivory);
+}
+
+.text {
+  min-width: 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+@media (max-width: 819px) {
+  .root[data-ring] .stage {
+    height: 27rem;
+  }
+
+  .root[data-ring] .panel {
+    --w: min(14rem, 58vw);
+    top: -8rem;
+    height: 16rem;
+  }
+
+  .root[data-ring] .detail {
+    grid-template-columns: 1fr;
+    padding: 1.2rem;
+  }
+
+  .actions {
+    justify-content: flex-start;
+  }
+}

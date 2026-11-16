@@ -86,7 +86,7 @@ export function RestaurantDemo() {
   ] : [];
 
   return <div className={styles.demo} data-demo="ember-and-grain">
-    <div className={styles.studioBar}><Link href="/#showcase">← Back to VelaBuilt</Link><span>Fictional restaurant · Interactive concept</span><Link href="/start">Build something like this ↗</Link></div>
+    <div className={styles.studioBar}><Link href="/#work">← Back to VelaBuilt</Link><span>Fictional restaurant · Interactive concept</span><Link href="/start">Build something like this ↗</Link></div>
     <RestaurantArrival reserve={reserve} bookingOpen={open} />
 
     <section id="story" className={styles.story} aria-labelledby="story-title">

@@ -1,6 +1,4 @@
-import { RestaurantShowcase } from "@/components/home/RestaurantShowcase";
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { site } from "@/content/site";
 import { services } from "@/content/services";
@@ -13,6 +11,8 @@ import { Reveal } from "@/components/ui/Reveal";
 import { ArrowRight } from "@/components/ui/Primitives";
 import { StartProjectLink } from "@/components/enquiry/StartProjectLink";
 import { JourneyFilm } from "@/components/home/JourneyFilm";
+import { WorkRing } from "@/components/home/WorkRing";
+import { Scene } from "@/components/home/Scene";
 import styles from "@/components/home/Journey.module.css";
 
 export const metadata: Metadata = pageMetadata({
@@ -34,7 +34,6 @@ export const metadata: Metadata = pageMetadata({
  * bottom as a complete page.
  */
 export default function HomePage() {
-  const clientWork = workItems.filter((work) => work.category === "client-work");
   const answers = faqsFor("home");
 
   const structuredData = graph([
@@ -119,91 +118,30 @@ export default function HomePage() {
         ))}
       </div>
 
-      {/* ── REAL CLIENT WORK ─────────────────────────────────────────────── */}
-      {clientWork.length > 0 ? (
-        <section
-          id="work"
-          data-chapter="work"
-          data-label="Work"
-          aria-labelledby="work-heading"
-          className="sheet"
-        >
-          <div className="shell py-16 lg:py-20">
-            <Reveal className="flex flex-wrap items-end justify-between gap-6">
-              <div>
-                <p className="label">Real client work</p>
-                <h2 id="work-heading" className="display-lg mt-5">
-                  See the work for yourself.
-                </h2>
-              </div>
-              <Link href="/work" className="btn btn-ghost">
-                <span>All work</span>
-                <ArrowRight />
-              </Link>
-            </Reveal>
-
-            {clientWork.map((project) => (
-              <article key={project.slug} className="mt-10 grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:items-center">
-                <Reveal className="work-frame">
-                  <Link href={project.href ?? "/work"} aria-label={`${project.title} — read the case study`}>
-                    <Image
-                      src={`/work/${project.slug}/desktop.webp`}
-                      alt={`${project.title} website on desktop.`}
-                      width={1600}
-                      height={1000}
-                      sizes="(min-width: 1024px) 58vw, 100vw"
-                      className="work-frame__shot"
-                    />
-                  </Link>
-                  <Image
-                    src={`/work/${project.slug}/mobile.webp`}
-                    alt={`${project.title} website on a phone.`}
-                    width={780}
-                    height={1328}
-                    sizes="(min-width: 1024px) 14vw, 30vw"
-                    className="work-frame__phone"
-                  />
-                </Reveal>
-                <Reveal delay={150}>
-                  <p className="label">{project.context}</p>
-                  <h3 className="display-md mt-4">{project.title}</h3>
-                  <p className="mt-5 leading-relaxed">{project.response}</p>
-                  <p className="mt-4 text-sm leading-relaxed text-[color:var(--color-muted)]">
-                    {project.problem}
-                  </p>
-                  <ul className="mt-6 flex flex-wrap gap-x-4 gap-y-1.5">
-                    {project.disciplines.map((d) => (
-                      <li key={d} className="label">
-                        {d}
-                      </li>
-                    ))}
-                  </ul>
-                  {project.priorToStudio ? (
-                    <p className="mt-6 text-sm text-[color:var(--color-muted)]">
-                      Delivered by the founder before the VelaBuilt studio identity existed.
-                    </p>
-                  ) : null}
-                  <div className="mt-8 flex flex-wrap gap-3">
-                    <Link href={project.href ?? "/work"} className="btn btn-primary">
-                      <span>Read the case study</span>
-                      <ArrowRight />
-                    </Link>
-                    {project.liveUrl ? (
-                      <a href={project.liveUrl} className="btn" target="_blank" rel="noopener noreferrer">
-                        <span>Visit the live site</span>
-                        <span aria-hidden="true">↗</span>
-                        <span className="sr-only">(opens in a new tab)</span>
-                      </a>
-                    ) : null}
-                  </div>
-                </Reveal>
-              </article>
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      <RestaurantShowcase />
+      {/* ── OUR WORK · every piece in one turning ring ─────────────────────── */}
+      <section
+        id="work"
+        data-chapter="work"
+        data-label="Work"
+        aria-labelledby="work-heading"
+        className="sheet"
+      >
+        <div className="shell py-16 lg:py-24">
+          <Reveal className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <p className="label">Our work</p>
+              <h2 id="work-heading" className="display-lg mt-5">
+                See the work for yourself.
+              </h2>
+            </div>
+            <Link href="/work" className="btn btn-ghost">
+              <span>All work</span>
+              <ArrowRight />
+            </Link>
+          </Reveal>
+          <WorkRing items={workItems} />
+        </div>
+      </section>
 
       {/* ── PLAIN ANSWERS ────────────────────────────────────────────────── */}
       <section
@@ -221,14 +159,14 @@ export default function HomePage() {
                 VelaBuilt, in plain terms.
               </h2>
             </div>
-            <dl className="answers">
-              {answers.map((a) => (
-                <div key={a.question} className="answers__row">
-                  <dt className="display-sm">{a.question}</dt>
-                  <dd className="mt-2.5 leading-relaxed text-[color:var(--color-ivory-dim)]">{a.answer}</dd>
-                </div>
+            <div className="answers">
+              {answers.map((a, i) => (
+                <details key={a.question} name="answers" className="answers__row" open={i === 0}>
+                  <summary className="display-sm">{a.question}</summary>
+                  <p className="mt-2.5 max-w-[64ch] leading-relaxed text-[color:var(--color-ivory-dim)]">{a.answer}</p>
+                </details>
               ))}
-            </dl>
+            </div>
           </Reveal>
         </div>
       </section>
@@ -241,7 +179,8 @@ export default function HomePage() {
         aria-labelledby="contact-heading"
         className="chapter chapter--contact"
       >
-        <div className="shell w-full">
+        <Scene frame={4} fade />
+        <div className="shell relative z-[1] w-full">
           <Reveal className="ground mx-auto max-w-[48rem] text-center">
             <p className="label">Start</p>
             <h2 id="contact-heading" className="display-lg mt-5">
